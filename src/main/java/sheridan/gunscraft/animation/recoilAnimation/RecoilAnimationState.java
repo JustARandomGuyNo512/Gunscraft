@@ -36,14 +36,12 @@ public class RecoilAnimationState {
             return;
         }
         if (data != this.data) {
-            clear();
-            this.data = data;
+            clearAndDisable();
             enable = false;
         }
         long dis = System.currentTimeMillis() - lastTickTime;
         if (dis > 100) {
-            clear();
-            enable = false;
+            clearAndDisable();
             return;
         }
         float timeDis = dis * data.timeSpeed;
@@ -114,5 +112,10 @@ public class RecoilAnimationState {
         moveUpSpeed = 0;
         moveUp = 0;
         lastTickTime = 0;
+    }
+
+    public void clearAndDisable() {
+        clear();
+        enable = false;
     }
 }

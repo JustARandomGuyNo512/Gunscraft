@@ -42,11 +42,9 @@ public class RecoilAnimationHandler {
 
     public static void clear(boolean isMainHand) {
         if (isMainHand) {
-            stateMain.clear();
-            stateMain.enable = false;
+            stateMain.clearAndDisable();
         } else {
-            stateOff.clear();
-            stateOff.enable = false;
+            stateOff.clearAndDisable();
         }
     }
 
