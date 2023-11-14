@@ -1,6 +1,8 @@
 package sheridan.gunscraft.animation.recoilAnimation;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import sheridan.gunscraft.ClientProxy;
 import sheridan.gunscraft.items.guns.IGenericGun;
@@ -52,14 +54,16 @@ public class RecoilAnimationHandler {
         return isMainHand ? stateMain.enable : stateOff.enable;
     }
 
-    public static void checkShouldClear(ItemStack stack, boolean isMainHand) {
-        if (stack.getItem() instanceof IGenericGun) {
-            RecoilAnimationState state = isMainHand ? stateMain : stateOff;
-            if (state.data != ClientProxy.transformDataMap.get(stack.getItem()).recoilAnimationData) {
+    public static void checkShouldClear(ItemStack stack, LivingEntity entityIn, boolean isMainHand) {
+        if (entityIn instanceof PlayerEntity && entityIn.getEntityId() == ClientProxy.clientPlayerId) {
+            if (stack.getItem() instanceof IGenericGun) {
+                RecoilAnimationState state = isMainHand ? stateMain : stateOff;
+                if (state.data != ClientProxy.transformDataMap.get(stack.getItem()).recoilAnimationData) {
+                    clear(isMainHand);
+                }
+            } else {
                 clear(isMainHand);
             }
-        } else {
-            clear(isMainHand);
         }
 
     }

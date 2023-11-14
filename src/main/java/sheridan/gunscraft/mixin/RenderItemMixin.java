@@ -47,7 +47,7 @@ public class RenderItemMixin {
     @Inject(at = @At("HEAD"), method = "renderItem(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/renderer/model/ItemCameraTransforms$TransformType;ZLcom/mojang/blaze3d/matrix/MatrixStack;Lnet/minecraft/client/renderer/IRenderTypeBuffer;Lnet/minecraft/world/World;II)V", cancellable = true)
     public void renderItemHeld(LivingEntity livingEntityIn, ItemStack itemStackIn, ItemCameraTransforms.TransformType transformTypeIn, boolean leftHand, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, World worldIn, int combinedLightIn, int combinedOverlayIn, CallbackInfo ci) {
         if (itemStackIn != null) {
-            RecoilAnimationHandler.checkShouldClear(itemStackIn, !leftHand);
+            RecoilAnimationHandler.checkShouldClear(itemStackIn, livingEntityIn, !leftHand);
             if (itemStackIn.getItem() instanceof IGenericGun) {
                 IGunModel model = ClientProxy.modelMap.get(itemStackIn.getItem());
                 if (model != null) {
