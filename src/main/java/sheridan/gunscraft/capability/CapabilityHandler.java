@@ -53,7 +53,6 @@ public class CapabilityHandler
     private final Map<Integer, CapabilityKey<?>> idToDataKey = new HashMap<>();
     private int nextKeyId = 0;
 
-    //如果调用了setter改变了数据，dirty为true，在server tick时进行同步，并将dirty重新改为false
     private boolean dirty = false;
 
     private CapabilityHandler() {}
