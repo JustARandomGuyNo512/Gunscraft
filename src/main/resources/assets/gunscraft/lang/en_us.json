@@ -1,0 +1,13 @@
+{
+  "item.gunscraft.pistol_9mm": "glock 19",
+  "item.gunscraft.akms": "akms",
+  "item.gunscraft.mp5": "mp5",
+  "item.gunscraft.mac10": "mac10",
+
+  "itemGroup.guns": "guns",
+
+  "key.gunscraft.reload": "Reload your gun",
+  "key.gunscraft.switch_fire_mode": "Switch gun firing mode",
+
+  "key.categories.gunscraft": "Gun's craft key bindings"
+}

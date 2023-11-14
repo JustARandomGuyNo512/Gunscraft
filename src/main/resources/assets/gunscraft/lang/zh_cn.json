@@ -1,0 +1,13 @@
+{
+  "item.gunscraft.pistol_9mm": "Glock 19 手枪",
+  "item.gunscraft.akms": "AKMS 突击步枪",
+  "item.gunscraft.mp5": "MP5 冲锋枪",
+  "item.gunscraft.mac10": "MAC10 冲锋枪",
+
+  "itemGroup.guns": "枪械工艺：枪械",
+
+  "key.gunscraft.reload": "重新装填",
+  "key.gunscraft.switch_fire_mode": "切换开火模式",
+
+  "key.categories.gunscraft": "枪械工艺：按键绑定"
+}
