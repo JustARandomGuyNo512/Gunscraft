@@ -21,6 +21,7 @@ import sheridan.gunscraft.sounds.SoundEvents;
 public class GenericGun extends BaseItem implements IGenericGun{
     public static final int SEMI = 0, BURST = 1, AUTO = 2, CHARGE = 3;
 
+
     public int baseMagSize;
     public ResourceLocation[] textures;
     public boolean canHoldInOneHand;
@@ -182,11 +183,7 @@ public class GenericGun extends BaseItem implements IGenericGun{
     @Override
     public void setFireMode(ItemStack stack, int mode) {
         CompoundNBT nbt = checkAndGet(stack);
-        for (int fireMode : this.fireModes) {
-            if (mode == fireMode) {
-                nbt.putInt("fire_mode", mode);
-            }
-        }
+        nbt.putInt("fire_mode", mode % this.fireModes.length);
     }
 
     @Override

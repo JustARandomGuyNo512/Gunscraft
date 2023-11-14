@@ -53,7 +53,7 @@ public class CapabilityHandler
     private final Map<Integer, CapabilityKey<?>> idToDataKey = new HashMap<>();
     private int nextKeyId = 0;
 
-    private boolean dirty = false;
+    private boolean dataChanged = false;
 
     private CapabilityHandler() {}
 
@@ -96,7 +96,7 @@ public class CapabilityHandler
             {
                 if(!player.world.isRemote)
                 {
-                    this.dirty = true;
+                    this.dataChanged = true;
                 }
             }
         }
@@ -211,23 +211,17 @@ public class CapabilityHandler
     @SubscribeEvent
     public void onServerTick(TickEvent.PlayerTickEvent event)
     {
-        if(event.phase == TickEvent.Phase.END)
-        {
-            if(this.dirty)
-            {
+        if(event.phase == TickEvent.Phase.END) {
+            if(this.dataChanged) {
                 PlayerEntity player = event.player;
-                if(!player.world.isRemote())
-                {
+                if(!player.world.isRemote()) {
                     DataHolder holder = this.getDataHolder(player);
-                    if(holder != null && holder.isDirty())
-                    {
+                    if(holder != null && holder.isDataChanged()) {
                         List<Pair<?>> entries = holder.gatherDirty();
-                        if(!entries.isEmpty())
-                        {
+                        if(!entries.isEmpty()) {
                             PacketHandler.CommonChannel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncPlayerDataPacket(player.getEntityId(), entries));
                             List<Pair<?>> pairs = entries.stream().filter(entry -> entry.getKey().shouldSyncToAllPlayers()).collect(Collectors.toList());
-                            if(!pairs.isEmpty())
-                            {
+                            if(!pairs.isEmpty()) {
                                 PacketHandler.CommonChannel.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new SyncPlayerDataPacket(player.getEntityId(), pairs));
                             }
                         }
@@ -241,11 +235,9 @@ public class CapabilityHandler
     @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent event)
     {
-        if(event.phase == TickEvent.Phase.END)
-        {
-            if(this.dirty)
-            {
-                this.dirty = false;
+        if(event.phase == TickEvent.Phase.END) {
+            if(this.dataChanged) {
+                this.dataChanged = false;
             }
         }
     }
@@ -253,7 +245,7 @@ public class CapabilityHandler
     public static class DataHolder
     {
         private Map<CapabilityKey<?>, Pair<?>> dataMap = new HashMap<>();
-        private boolean dirty = false;
+        private boolean dataChanged = false;
 
         @SuppressWarnings("unchecked")
         public <T> boolean set(PlayerEntity player, CapabilityKey<T> key, T value)
@@ -263,7 +255,7 @@ public class CapabilityHandler
             {
                 boolean dirty = !player.world.isRemote && entry.getKey().shouldSyncToClient();
                 entry.setValue(value, dirty);
-                this.dirty = dirty;
+                this.dataChanged = dirty;
                 return true;
             }
             return false;
@@ -276,20 +268,20 @@ public class CapabilityHandler
             return (T) this.dataMap.computeIfAbsent(key, Pair::new).getValue();
         }
 
-        public boolean isDirty()
+        public boolean isDataChanged()
         {
-            return this.dirty;
+            return this.dataChanged;
         }
 
         public void clean()
         {
-            this.dirty = false;
+            this.dataChanged = false;
             this.dataMap.forEach((key, entry) -> entry.clean());
         }
 
         public List<Pair<?>> gatherDirty()
         {
-            return this.dataMap.values().stream().filter(Pair::isDirty).filter(entry -> entry.getKey().shouldSyncToClient()).collect(Collectors.toList());
+            return this.dataMap.values().stream().filter(Pair::isDataChanged).filter(entry -> entry.getKey().shouldSyncToClient()).collect(Collectors.toList());
         }
 
         public List<Pair<?>> gatherAll()
@@ -305,7 +297,7 @@ public class CapabilityHandler
     {
         private CapabilityKey<T> key;
         private T value;
-        private boolean dirty;
+        private boolean dataChanged;
 
         private Pair(CapabilityKey<T> key)
         {
@@ -323,30 +315,27 @@ public class CapabilityHandler
             return this.value;
         }
 
-        public void setValue(T value, boolean dirty)
-        {
+        public void setValue(T value, boolean dirty) {
             this.value = value;
-            this.dirty = dirty;
+            this.dataChanged = dirty;
         }
 
-        public boolean isDirty()
+        public boolean isDataChanged()
         {
-            return this.dirty;
+            return this.dataChanged;
         }
 
         public void clean()
         {
-            this.dirty = false;
+            this.dataChanged = false;
         }
 
-        public void write(PacketBuffer buffer)
-        {
+        public void write(PacketBuffer buffer) {
             buffer.writeVarInt(this.key.getId());
             this.key.getSerializer().write(buffer, this.value);
         }
 
-        public static Pair<?> read(PacketBuffer buffer)
-        {
+        public static Pair<?> read(PacketBuffer buffer) {
             CapabilityKey<?> key = CapabilityHandler.instance().getKey(buffer.readVarInt());
             Validate.notNull(key, "Synced key does not exist for setId");
             Pair<?> entry = new Pair<>(key);
@@ -370,12 +359,10 @@ public class CapabilityHandler
         }
     }
 
-    public boolean updateMappings(LoginPacks.S2CSyncedPlayerData message)
-    {
+    public boolean updateMappings(LoginPacks.S2CSyncedPlayerData message) {
         this.idToDataKey.clear();
         Map<ResourceLocation, Integer> keyMappings = message.getKeyMap();
-        for(ResourceLocation key : keyMappings.keySet())
-        {
+        for(ResourceLocation key : keyMappings.keySet()) {
             CapabilityKey<?> syncedDataKey = this.registeredDataKeys.get(key);
             if(syncedDataKey == null) return false;
             int id = keyMappings.get(key);
@@ -385,18 +372,14 @@ public class CapabilityHandler
         return true;
     }
 
-    public static class Storage implements Capability.IStorage<DataHolder>
-    {
+    public static class Storage implements Capability.IStorage<DataHolder> {
         @Nullable
         @Override
-        public INBT writeNBT(Capability<DataHolder> capability, DataHolder instance, Direction side)
-        {
+        public INBT writeNBT(Capability<DataHolder> capability, DataHolder instance, Direction side) {
 
             ListNBT list = new ListNBT();
-            instance.dataMap.forEach((key, entry) ->
-            {
-                if(key.shouldSave())
-                {
+            instance.dataMap.forEach((key, entry) -> {
+                if(key.shouldSave()) {
                     CompoundNBT keyTag = new CompoundNBT();
                     keyTag.putString("Key", key.getKey().toString());
                     keyTag.put("Value", entry.writeValue());
@@ -407,17 +390,14 @@ public class CapabilityHandler
         }
 
         @Override
-        public void readNBT(Capability<DataHolder> capability, DataHolder instance, Direction side, INBT nbt)
-        {
+        public void readNBT(Capability<DataHolder> capability, DataHolder instance, Direction side, INBT nbt) {
             ListNBT list = (ListNBT) nbt;
-            list.forEach(entryTag ->
-            {
+            list.forEach(entryTag -> {
                 CompoundNBT keyTag = (CompoundNBT) entryTag;
                 ResourceLocation key = ResourceLocation.tryCreate(keyTag.getString("Key"));
                 INBT value = keyTag.get("Value");
                 CapabilityKey<?> syncedDataKey = CapabilityHandler.instance().registeredDataKeys.get(key);
-                if(syncedDataKey != null && syncedDataKey.shouldSave())
-                {
+                if(syncedDataKey != null && syncedDataKey.shouldSave()) {
                     Pair<?> entry = new Pair<>(syncedDataKey);
                     entry.readValue(value);
                     instance.dataMap.put(syncedDataKey, entry);
@@ -426,8 +406,7 @@ public class CapabilityHandler
         }
     }
 
-    public static class Provider implements ICapabilitySerializable<ListNBT>
-    {
+    public static class Provider implements ICapabilitySerializable<ListNBT> {
         final DataHolder INSTANCE = new DataHolder();
 
         @Override
@@ -437,15 +416,13 @@ public class CapabilityHandler
         }
 
         @Override
-        public void deserializeNBT(ListNBT compound)
-        {
+        public void deserializeNBT(ListNBT compound) {
             CAPABILITY.getStorage().readNBT(CAPABILITY, INSTANCE, null, compound);
         }
 
         @Nonnull
         @Override
-        public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side)
-        {
+        public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
             return CAPABILITY.orEmpty(cap, LazyOptional.of(() -> INSTANCE));
         }
     }

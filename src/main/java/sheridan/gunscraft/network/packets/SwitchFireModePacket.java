@@ -39,7 +39,7 @@ public class SwitchFireModePacket implements IPacket<SwitchFireModePacket>{
                 ItemStack heldStack;
                 heldStack = isMainHand ? ((ServerPlayNetHandler) handler).player.getHeldItemMainhand() : ((ServerPlayNetHandler) handler).player.getHeldItemOffhand();
                 IGenericGun gun = (IGenericGun) heldStack.getItem();
-
+                gun.setFireMode(heldStack, gun.getFireMode(heldStack) + 1);
             }
         });
     }
