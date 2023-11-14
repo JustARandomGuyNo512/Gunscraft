@@ -99,16 +99,17 @@ public class GenericGun extends BaseItem implements IGenericGun{
         int ammoLeft = getAmmoLeft(stack);
         boolean canPass = ammoLeft > 0;
         if (canPass) {
+            long now = System.currentTimeMillis();
             TransformData transformData = ClientProxy.transformDataMap.get(stack.getItem());
             if (mainHand) {
-                CapabilityHandler.instance().set((PlayerEntity) entity, ClientProxy.LAST_SHOOT_RIGHT, System.currentTimeMillis());
-                ClientProxy.FPRLastShoot = System.currentTimeMillis();
+                CapabilityHandler.instance().set((PlayerEntity) entity, ClientProxy.LAST_SHOOT_RIGHT, now);
+                ClientProxy.FPRLastShoot = now;
                 //GenericGunRenderer.recoilAnimationState.onShoot(System.currentTimeMillis(), transformData.getRecoilAnimationData());
             } else {
-                CapabilityHandler.instance().set((PlayerEntity) entity, ClientProxy.LAST_SHOOT_LEFT, System.currentTimeMillis());
-                ClientProxy.FPLLastShoot = System.currentTimeMillis();
+                CapabilityHandler.instance().set((PlayerEntity) entity, ClientProxy.LAST_SHOOT_LEFT, now);
+                ClientProxy.FPLLastShoot = now;
             }
-            RecoilAnimationHandler.onShoot(System.currentTimeMillis(), transformData.getRecoilAnimationData(), mainHand);
+            RecoilAnimationHandler.onShoot(now, transformData.getRecoilAnimationData(), mainHand);
             int fireMode = getFireMode(stack);
             if (fireMode == SEMI) {
                 if (mainHand) {
@@ -128,10 +129,11 @@ public class GenericGun extends BaseItem implements IGenericGun{
 
     @Override
     public void shoot(ItemStack stack, LivingEntity entity, boolean mainHand, float spread) {
+        long now = System.currentTimeMillis();
         if (mainHand) {
-            CapabilityHandler.instance().set((PlayerEntity) entity, ClientProxy.LAST_SHOOT_RIGHT, System.currentTimeMillis());
+            CapabilityHandler.instance().set((PlayerEntity) entity, ClientProxy.LAST_SHOOT_RIGHT, now);
         } else {
-            CapabilityHandler.instance().set((PlayerEntity) entity, ClientProxy.LAST_SHOOT_LEFT, System.currentTimeMillis());
+            CapabilityHandler.instance().set((PlayerEntity) entity, ClientProxy.LAST_SHOOT_LEFT, now);
         }
         this.setAmmoLeft(stack, this.getAmmoLeft(stack) - 1);
         if (!entity.world.isRemote) {
