@@ -1,6 +1,6 @@
 {
   "item.pistol_9mm.fire":                 { "subtitle": "item.pistol_9mm.fire",           "sounds": [{ "name": "gunscraft:pistol_9mm/pistol9mm_fire" }]},
-  "item.akms.fire":                 { "subtitle": "item.akms.fire",           "sounds": [{ "name": "gunscraft:akms/akms_fire" }]},
+  "item.akm.fire":                 { "subtitle": "item.akm.fire",           "sounds": [{ "name": "gunscraft:akm/akm_fire" }]},
   "item.mp5.fire":                 { "subtitle": "item.mp5.fire",           "sounds": [{ "name": "gunscraft:mp5/mp5_fire" }]},
   "item.mac10.fire":                 { "subtitle": "item.mac10.fire",           "sounds": [{ "name": "gunscraft:mac10/mac10_fire" }]}
 

@@ -11,7 +11,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import sheridan.gunscraft.animation.CommonAnimations;
 import sheridan.gunscraft.animation.recoilAnimation.RecoilAnimationData;
 import sheridan.gunscraft.capability.CapabilityHandler;
 import sheridan.gunscraft.capability.Serializers;
@@ -104,7 +103,7 @@ public class ClientProxy extends CommonProxy{
         );
         modelMap.put(ModItems.PISTOL_9_MM.get(), new ModelPistol_9mm());
 
-        transformDataMap.put(ModItems.AKMS.get(), new TransformData()
+        transformDataMap.put(ModItems.AKM.get(), new TransformData()
                 .setFPRightHand(new float[][]{{3.48f, -5.6f, -21.25f},{0, 0, 0},{1.8275f, 1.8275f, 1.8275f}})
                 .setFPLeftHand(new float[][]{{0, 0, 0},{0, 0, 0},{0, 0, 0}})
                 .setTPRightHand(new float[][]{{0f, -2.9f, -9f},{0, 0, 0},{0.85f, 0.85f, 0.85f}})
@@ -122,7 +121,7 @@ public class ClientProxy extends CommonProxy{
                         0.1f,0.0875f,0.1f,
                         0.145f, 0.22f, 0.001f, 0.6f))
         );
-        modelMap.put(ModItems.AKMS.get(), new ModelAKM());
+        modelMap.put(ModItems.AKM.get(), new ModelAKM());
 
         transformDataMap.put(ModItems.MP5.get(), new TransformData()
                 .setFPRightHand(new float[][]{{3.5f, -5.75f, -15f},{0, 0, 0},{1.892f, 1.892f, 1.892f}})

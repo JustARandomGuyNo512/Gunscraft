@@ -4,6 +4,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.ItemFrameEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.api.distmarker.Dist;
@@ -94,20 +97,30 @@ public class ControllerEvents {
                 }
             }
             if (KeyBinds.KEY_SWITCH_FIRE_MODE.isKeyDown() && event.getAction() == 1) {
+                boolean playSound = false;
                 if (player.getHeldItemMainhand().getItem() instanceof IGenericGun) {
                     ClientProxy.rightDown.set(false);
                     ClientProxy.shouldHandleMain.set(false);
                     PacketHandler.CommonChannel.sendToServer(new SwitchFireModePacket(true));
+                    playSound = true;
                 } else {
                     if (ClientProxy.holdingGunOff.get()) {
                         ClientProxy.leftDown.set(false);
                         ClientProxy.shouldHandleOff.set(false);
                         PacketHandler.CommonChannel.sendToServer(new SwitchFireModePacket(false));
+                        playSound = true;
+                    }
+                }
+                if (playSound) {
+                    if (player.world != null) {
+                       player.world.playSound(player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.PLAYERS, 0.8f, 1.37f, false);
                     }
                 }
             }
         }
     }
+
+
 
     private static void handleReload(boolean isMainHand, PlayerEntity player) {
         ItemStack stack = isMainHand ? player.getHeldItemMainhand() : player.getHeldItemOffhand();

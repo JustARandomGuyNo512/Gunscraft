@@ -16,8 +16,6 @@ import sheridan.gunscraft.items.guns.GenericGun;
 import sheridan.gunscraft.items.guns.IGenericGun;
 import sheridan.gunscraft.render.crosshairs.BasicCrossHairRenderer;
 
-import java.awt.geom.GeneralPath;
-
 
 @Mod.EventBusSubscriber
 public class RenderEvents {
@@ -62,24 +60,26 @@ public class RenderEvents {
             if (player != null) {
                 ItemStack stackMain = player.getHeldItemMainhand();
                 ItemStack stackOff = player.getHeldItemOffhand();
+                int color = 0xFFFAFA0F;
                 if (stackMain.getItem() instanceof IGenericGun) {
                     matrixStackIn.push();
                     matrixStackIn.translate(0.8f * (window.getScaledWidth()), 0.75f * (window.getScaledHeight()), 0.0D);
                     matrixStackIn.scale(0.7f, 0.7f, 1f);
                     IGenericGun gun = (IGenericGun) stackMain.getItem();
-                    renderer.drawString(matrixStackIn, "ammo: " + gun.getAmmoLeft(stackMain), 0f, 0f, 0xFFFAFA0F);
+                    renderer.drawString(matrixStackIn, "ammo: " + gun.getAmmoLeft(stackMain), 0f, 0f, color);
                     matrixStackIn.pop();
                     matrixStackIn.push();
                     matrixStackIn.translate(0.8f * (window.getScaledWidth()), 0.8f * (window.getScaledHeight()), 0.0D);
                     matrixStackIn.scale(0.7f, 0.7f, 1f);
-                    renderer.drawString(matrixStackIn, GenericGun.getFireModeStr(gun.getFireMode(stackMain)),0,0,0xFFFAFA0F);
+                    renderer.drawString(matrixStackIn, GenericGun.getFireModeStr(gun.getFireMode(stackMain)),0,0,color);
                     matrixStackIn.pop();
                 }
 
                 if (stackOff.getItem() instanceof IGenericGun) {
-                    int color = 0xffffff;
                     if (!ClientProxy.holdingGunOff.get()) {
                         color = 0xFF0000;
+                    } else {
+                        color = 0xffffff;
                     }
                     matrixStackIn.push();
                     matrixStackIn.translate(0.2f * (window.getScaledWidth()), 0.75f * (window.getScaledHeight()), 0.0D);

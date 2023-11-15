@@ -20,7 +20,7 @@ public class SoundEvents {
     public static Map<String, RegistryObject<SoundEvent>> sound = new HashMap<>();
 
     public static final RegistryObject<SoundEvent> PISTOL_9MM_FIRE = registerSoundEvent("item.pistol_9mm.fire");
-    public static final RegistryObject<SoundEvent> AKMS_FIRE = registerSoundEvent("item.akms.fire");
+    public static final RegistryObject<SoundEvent> AKM_FIRE = registerSoundEvent("item.akm.fire");
     public static final RegistryObject<SoundEvent> MP5_FIRE = registerSoundEvent("item.mp5.fire");
     public static final RegistryObject<SoundEvent> MAC10_FIRE = registerSoundEvent("item.mac10.fire");
 

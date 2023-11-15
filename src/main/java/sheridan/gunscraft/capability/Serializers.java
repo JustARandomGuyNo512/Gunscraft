@@ -20,10 +20,8 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
-public class Serializers
-{
-    public static final ISerializer<Boolean> BOOLEAN = new ISerializer<Boolean>()
-    {
+public class Serializers {
+    public static final ISerializer<Boolean> BOOLEAN = new ISerializer<Boolean>() {
         @Override
         public void write(PacketBuffer buf, Boolean value)
         {
@@ -49,8 +47,7 @@ public class Serializers
         }
     };
 
-    public static final ISerializer<Byte> BYTE = new ISerializer<Byte>()
-    {
+    public static final ISerializer<Byte> BYTE = new ISerializer<Byte>() {
         @Override
         public void write(PacketBuffer buf, Byte value)
         {
@@ -76,8 +73,7 @@ public class Serializers
         }
     };
 
-    public static final ISerializer<Short> SHORT = new ISerializer<Short>()
-    {
+    public static final ISerializer<Short> SHORT = new ISerializer<Short>() {
         @Override
         public void write(PacketBuffer buf, Short value)
         {
@@ -103,8 +99,7 @@ public class Serializers
         }
     };
 
-    public static final ISerializer<Integer> INTEGER = new ISerializer<Integer>()
-    {
+    public static final ISerializer<Integer> INTEGER = new ISerializer<Integer>() {
         @Override
         public void write(PacketBuffer buf, Integer value)
         {
@@ -130,8 +125,7 @@ public class Serializers
         }
     };
 
-    public static final ISerializer<Long> LONG = new ISerializer<Long>()
-    {
+    public static final ISerializer<Long> LONG = new ISerializer<Long>() {
         @Override
         public void write(PacketBuffer buf, Long value)
         {
@@ -157,8 +151,7 @@ public class Serializers
         }
     };
 
-    public static final ISerializer<Float> FLOAT = new ISerializer<Float>()
-    {
+    public static final ISerializer<Float> FLOAT = new ISerializer<Float>() {
         @Override
         public void write(PacketBuffer buf, Float value)
         {
@@ -184,8 +177,7 @@ public class Serializers
         }
     };
 
-    public static final ISerializer<Double> DOUBLE = new ISerializer<Double>()
-    {
+    public static final ISerializer<Double> DOUBLE = new ISerializer<Double>() {
         @Override
         public void write(PacketBuffer buf, Double value)
         {
@@ -211,8 +203,7 @@ public class Serializers
         }
     };
 
-    public static final ISerializer<Character> CHARACTER = new ISerializer<Character>()
-    {
+    public static final ISerializer<Character> CHARACTER = new ISerializer<Character>() {
         @Override
         public void write(PacketBuffer buf, Character value)
         {
@@ -238,8 +229,7 @@ public class Serializers
         }
     };
 
-    public static final ISerializer<String> STRING = new ISerializer<String>()
-    {
+    public static final ISerializer<String> STRING = new ISerializer<String>() {
         @Override
         public void write(PacketBuffer buf, String value)
         {
@@ -265,8 +255,7 @@ public class Serializers
         }
     };
 
-    public static final ISerializer<CompoundNBT> TAG_COMPOUND = new ISerializer<CompoundNBT>()
-    {
+    public static final ISerializer<CompoundNBT> TAG_COMPOUND = new ISerializer<CompoundNBT>() {
         @Override
         public void write(PacketBuffer buf, CompoundNBT value)
         {
@@ -292,8 +281,7 @@ public class Serializers
         }
     };
 
-    public static final ISerializer<BlockPos> BLOCK_POS = new ISerializer<BlockPos>()
-    {
+    public static final ISerializer<BlockPos> BLOCK_POS = new ISerializer<BlockPos>() {
         @Override
         public void write(PacketBuffer buf, BlockPos value)
         {
@@ -319,8 +307,7 @@ public class Serializers
         }
     };
 
-    public static final ISerializer<UUID> UUID = new ISerializer<UUID>()
-    {
+    public static final ISerializer<UUID> UUID = new ISerializer<UUID>() {
         @Override
         public void write(PacketBuffer buf, UUID value)
         {
@@ -334,8 +321,7 @@ public class Serializers
         }
 
         @Override
-        public INBT write(UUID value)
-        {
+        public INBT write(UUID value) {
             CompoundNBT compound = new CompoundNBT();
             compound.putLong("Most", value.getMostSignificantBits());
             compound.putLong("Least", value.getLeastSignificantBits());
@@ -343,15 +329,13 @@ public class Serializers
         }
 
         @Override
-        public UUID read(INBT nbt)
-        {
+        public UUID read(INBT nbt) {
             CompoundNBT compound = new CompoundNBT();
             return new UUID(compound.getLong("Most"), compound.getLong("Least"));
         }
     };
 
-    public static final ISerializer<ItemStack> ITEM_STACK = new ISerializer<ItemStack>()
-    {
+    public static final ISerializer<ItemStack> ITEM_STACK = new ISerializer<ItemStack>() {
         @Override
         public void write(PacketBuffer buf, ItemStack value)
         {
@@ -377,8 +361,7 @@ public class Serializers
         }
     };
 
-    public static final ISerializer<ResourceLocation> RESOURCE_LOCATION = new ISerializer<ResourceLocation>()
-    {
+    public static final ISerializer<ResourceLocation> RESOURCE_LOCATION = new ISerializer<ResourceLocation>() {
         @Override
         public void write(PacketBuffer buf, ResourceLocation value)
         {

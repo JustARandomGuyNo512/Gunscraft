@@ -41,10 +41,9 @@ import sheridan.gunscraft.network.LoginPacks;
 import sheridan.gunscraft.network.PacketHandler;
 import sheridan.gunscraft.network.packets.SyncPlayerDataPacket;
 
-public class CapabilityHandler
-{
-    @CapabilityInject(DataHolder.class)
-    public static final Capability<DataHolder> CAPABILITY = null;
+public class CapabilityHandler {
+    @CapabilityInject(PlayerDataManager.class)
+    public static final Capability<PlayerDataManager> CAPABILITY = null;
 
     public static CapabilityHandler INSTANCE;
     private static boolean init = false;
@@ -57,29 +56,23 @@ public class CapabilityHandler
 
     private CapabilityHandler() {}
 
-    public static CapabilityHandler instance()
-    {
-        if(INSTANCE == null)
-        {
+    public static CapabilityHandler instance() {
+        if(INSTANCE == null) {
             INSTANCE = new CapabilityHandler();
         }
         return INSTANCE;
     }
 
-    public static void init()
-    {
-        if(!init)
-        {
-            CapabilityManager.INSTANCE.register(DataHolder.class, new Storage(), DataHolder::new);
+    public static void init() {
+        if(!init) {
+            CapabilityManager.INSTANCE.register(PlayerDataManager.class, new Storage(), PlayerDataManager::new);
             MinecraftForge.EVENT_BUS.register(instance());
             init = true;
         }
     }
 
-    public void registerKey(CapabilityKey<?> key)
-    {
-        if(!this.registeredDataKeys.containsKey(key.getKey()))
-        {
+    public void registerKey(CapabilityKey<?> key) {
+        if(!this.registeredDataKeys.containsKey(key.getKey())) {
             int nextId = this.nextKeyId++;
             key.setId(nextId);
             this.registeredDataKeys.put(key.getKey(), key);
@@ -87,78 +80,62 @@ public class CapabilityHandler
         }
     }
 
-    public <T> void set(PlayerEntity player, CapabilityKey<T> key, T value)
-    {
-        if(this.registeredDataKeys.containsValue(key))
-        {
-            DataHolder holder = this.getDataHolder(player);
-            if(holder != null && holder.set(player, key, value))
-            {
-                if(!player.world.isRemote)
-                {
+    public <T> void set(PlayerEntity player, CapabilityKey<T> key, T value) {
+        if(this.registeredDataKeys.containsValue(key)) {
+            PlayerDataManager manager = this.getDataManager(player);
+            if(manager != null && manager.set(player, key, value)) {
+                if(!player.world.isRemote) {
                     this.dataChanged = true;
                 }
             }
         }
     }
 
-    public <T> T get(PlayerEntity player, CapabilityKey<T> key)
-    {
-        if(this.registeredDataKeys.containsValue(key))
-        {
-            DataHolder holder = this.getDataHolder(player);
-            return holder != null ? holder.get(key) : key.getDefaultValueSupplier().get();
+    public <T> T get(PlayerEntity player, CapabilityKey<T> key) {
+        if(this.registeredDataKeys.containsValue(key)) {
+            PlayerDataManager manager = this.getDataManager(player);
+            return manager != null ? manager.get(key) : key.getDefaultValueSupplier().get();
         }
         return null;
     }
 
     @OnlyIn(Dist.CLIENT)
-    public <T> void updateClientEntry(PlayerEntity player, Pair<T> entry)
-    {
+    public <T> void updateClientEntry(PlayerEntity player, Pair<T> entry) {
         CapabilityHandler.instance().set(player, entry.getKey(), entry.getValue());
     }
 
     @Nullable
-    public CapabilityKey<?> getKey(int id)
-    {
+    public CapabilityKey<?> getKey(int id) {
         return this.idToDataKey.get(id);
     }
 
-    public List<CapabilityKey<?>> getKeys()
-    {
+    public List<CapabilityKey<?>> getKeys() {
         return ImmutableList.copyOf(this.registeredDataKeys.values());
     }
 
     @Nullable
-    private DataHolder getDataHolder(PlayerEntity player)
-    {
+    private PlayerDataManager getDataManager(PlayerEntity player) {
         return player.getCapability(CAPABILITY, null).orElse(null);
     }
 
     //forge event 设置capability
     @SubscribeEvent
-    public void attachCapabilities(AttachCapabilitiesEvent<Entity> event)
-    {
-        if(event.getObject() instanceof PlayerEntity)
-        {
+    public void attachCapabilities(AttachCapabilitiesEvent<Entity> event) {
+        if(event.getObject() instanceof PlayerEntity) {
             event.addCapability(new ResourceLocation(Gunscraft.MOD_ID, "sync_player_data"), new Provider());
         }
     }
 
     //需要同步给所有玩家
     @SubscribeEvent
-    public void onStartTracking(PlayerEvent.StartTracking event)
-    {
-        if(event.getTarget() instanceof PlayerEntity && !event.getPlayer().world.isRemote)
-        {
+    public void onStartTracking(PlayerEvent.StartTracking event) {
+        if(event.getTarget() instanceof PlayerEntity && !event.getPlayer().world.isRemote) {
             PlayerEntity player = (PlayerEntity) event.getTarget();
-            DataHolder holder = this.getDataHolder(player);
-            if(holder != null)
-            {
-                List<Pair<?>> pairs = holder.gatherAll();
+            PlayerDataManager manager = this.getDataManager(player);
+            if(manager != null) {
+                List<Pair<?>> pairs = manager.gatherAll();
                 pairs.removeIf(entry -> !entry.getKey().shouldSyncToAllPlayers());
-                if(!pairs.isEmpty())
-                {
+                if(!pairs.isEmpty()) {
                     PacketHandler.CommonChannel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncPlayerDataPacket(player.getEntityId(), pairs));
                 }
             }
@@ -166,18 +143,14 @@ public class CapabilityHandler
     }
 
     @SubscribeEvent
-    public void onPlayerJoinWorld(EntityJoinWorldEvent event)
-    {
+    public void onPlayerJoinWorld(EntityJoinWorldEvent event) {
         Entity entity = event.getEntity();
-        if(entity instanceof PlayerEntity && !event.getWorld().isRemote)
-        {
+        if(entity instanceof PlayerEntity && !event.getWorld().isRemote) {
             PlayerEntity player = (PlayerEntity) entity;
-            DataHolder holder = this.getDataHolder(player);
-            if(holder != null)
-            {
-                List<Pair<?>> pairs = holder.gatherAll();
-                if(!pairs.isEmpty())
-                {
+            PlayerDataManager manager = this.getDataManager(player);
+            if(manager != null) {
+                List<Pair<?>> pairs = manager.gatherAll();
+                if(!pairs.isEmpty()) {
                     PacketHandler.CommonChannel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncPlayerDataPacket(player.getEntityId(), pairs));
                 }
             }
@@ -185,24 +158,19 @@ public class CapabilityHandler
     }
 
     @SubscribeEvent
-    public void onPlayerClone(PlayerEvent.Clone event)
-    {
+    public void onPlayerClone(PlayerEvent.Clone event) {
         PlayerEntity original = event.getOriginal();
-        if(!original.world.isRemote)
-        {
+        if(!original.world.isRemote) {
             PlayerEntity player = event.getPlayer();
-            DataHolder oldHolder = this.getDataHolder(original);
-            if(oldHolder != null)
-            {
-                DataHolder newHolder = this.getDataHolder(player);
-                if(newHolder != null)
-                {
-                    Map<CapabilityKey<?>, Pair<?>> dataMap = new HashMap<>(oldHolder.dataMap);
-                    if(event.isWasDeath())
-                    {
+            PlayerDataManager originalManager = this.getDataManager(original);
+            if(originalManager != null) {
+                PlayerDataManager newManager = this.getDataManager(player);
+                if(newManager != null) {
+                    Map<CapabilityKey<?>, Pair<?>> dataMap = new HashMap<>(originalManager.dataMap);
+                    if(event.isWasDeath()) {
                         dataMap.entrySet().removeIf(entry -> !entry.getKey().isShouldKeepAfterDeath());
                     }
-                    newHolder.dataMap = dataMap;
+                    newManager.dataMap = dataMap;
                 }
             }
         }
@@ -215,9 +183,9 @@ public class CapabilityHandler
             if(this.dataChanged) {
                 PlayerEntity player = event.player;
                 if(!player.world.isRemote()) {
-                    DataHolder holder = this.getDataHolder(player);
-                    if(holder != null && holder.isDataChanged()) {
-                        List<Pair<?>> entries = holder.gatherDirty();
+                    PlayerDataManager manager = this.getDataManager(player);
+                    if(manager != null && manager.isDataChanged()) {
+                        List<Pair<?>> entries = manager.gatherDirty();
                         if(!entries.isEmpty()) {
                             PacketHandler.CommonChannel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncPlayerDataPacket(player.getEntityId(), entries));
                             List<Pair<?>> pairs = entries.stream().filter(entry -> entry.getKey().shouldSyncToAllPlayers()).collect(Collectors.toList());
@@ -225,7 +193,7 @@ public class CapabilityHandler
                                 PacketHandler.CommonChannel.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new SyncPlayerDataPacket(player.getEntityId(), pairs));
                             }
                         }
-                        holder.clean();
+                        manager.clean();
                     }
                 }
             }
@@ -242,7 +210,7 @@ public class CapabilityHandler
         }
     }
 
-    public static class DataHolder
+    public static class PlayerDataManager
     {
         private Map<CapabilityKey<?>, Pair<?>> dataMap = new HashMap<>();
         private boolean dataChanged = false;
@@ -289,7 +257,7 @@ public class CapabilityHandler
             return this.dataMap.values().stream().filter(entry -> entry.getKey().shouldSyncToClient()).collect(Collectors.toList());
         }
 
-        public DataHolder() {
+        public PlayerDataManager() {
         }
     }
 
@@ -372,10 +340,10 @@ public class CapabilityHandler
         return true;
     }
 
-    public static class Storage implements Capability.IStorage<DataHolder> {
+    public static class Storage implements Capability.IStorage<PlayerDataManager> {
         @Nullable
         @Override
-        public INBT writeNBT(Capability<DataHolder> capability, DataHolder instance, Direction side) {
+        public INBT writeNBT(Capability<PlayerDataManager> capability, PlayerDataManager instance, Direction side) {
 
             ListNBT list = new ListNBT();
             instance.dataMap.forEach((key, entry) -> {
@@ -390,7 +358,7 @@ public class CapabilityHandler
         }
 
         @Override
-        public void readNBT(Capability<DataHolder> capability, DataHolder instance, Direction side, INBT nbt) {
+        public void readNBT(Capability<PlayerDataManager> capability, PlayerDataManager instance, Direction side, INBT nbt) {
             ListNBT list = (ListNBT) nbt;
             list.forEach(entryTag -> {
                 CompoundNBT keyTag = (CompoundNBT) entryTag;
@@ -407,7 +375,7 @@ public class CapabilityHandler
     }
 
     public static class Provider implements ICapabilitySerializable<ListNBT> {
-        final DataHolder INSTANCE = new DataHolder();
+        final PlayerDataManager INSTANCE = new PlayerDataManager();
 
         @Override
         public ListNBT serializeNBT()
