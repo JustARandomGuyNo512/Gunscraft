@@ -99,9 +99,11 @@ public class ControllerEvents {
                     ClientProxy.shouldHandleMain.set(false);
                     PacketHandler.CommonChannel.sendToServer(new SwitchFireModePacket(true));
                 } else {
-                    ClientProxy.leftDown.set(false);
-                    ClientProxy.shouldHandleOff.set(false);
-                    PacketHandler.CommonChannel.sendToServer(new SwitchFireModePacket(false));
+                    if (ClientProxy.holdingGunOff.get()) {
+                        ClientProxy.leftDown.set(false);
+                        ClientProxy.shouldHandleOff.set(false);
+                        PacketHandler.CommonChannel.sendToServer(new SwitchFireModePacket(false));
+                    }
                 }
             }
         }

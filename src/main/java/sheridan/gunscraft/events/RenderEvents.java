@@ -77,18 +77,22 @@ public class RenderEvents {
                 }
 
                 if (stackOff.getItem() instanceof IGenericGun) {
+                    int color = 0xffffff;
+                    if (!ClientProxy.holdingGunOff.get()) {
+                        color = 0xFF0000;
+                    }
                     matrixStackIn.push();
                     matrixStackIn.translate(0.2f * (window.getScaledWidth()), 0.75f * (window.getScaledHeight()), 0.0D);
                     matrixStackIn.scale(0.7f, 0.7f, 1);
                     IGenericGun gun = (IGenericGun) stackOff.getItem();
                     String s1 ="ammo: " + gun.getAmmoLeft(stackOff);
-                    renderer.drawString(matrixStackIn, s1, -renderer.getStringWidth(s1), 0, 0xffffff);
+                    renderer.drawString(matrixStackIn, s1, -renderer.getStringWidth(s1), 0, color);
                     matrixStackIn.pop();
                     matrixStackIn.push();
                     matrixStackIn.translate(0.2f * (window.getScaledWidth()), 0.8f * (window.getScaledHeight()), 0.0D);
                     matrixStackIn.scale(0.7f, 0.7f, 1);
                     String s2 = GenericGun.getFireModeStr(gun.getFireMode(stackOff));
-                    renderer.drawString(matrixStackIn, s2,-renderer.getStringWidth(s2),0,0xffffff);
+                    renderer.drawString(matrixStackIn, s2,-renderer.getStringWidth(s2),0,color);
                     matrixStackIn.pop();
                 }
             }
