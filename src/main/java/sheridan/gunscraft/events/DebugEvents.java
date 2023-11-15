@@ -34,29 +34,29 @@ public class DebugEvents {
 //        }
     }
 
-    @SubscribeEvent
-    @OnlyIn(Dist.CLIENT)
-    public static void debugInfo(RenderGameOverlayEvent event) {
-        if (!event.isCancelable() && event.getType() == RenderGameOverlayEvent.ElementType.EXPERIENCE) {
-            FontRenderer renderer = Minecraft.getInstance().fontRenderer;
-            MatrixStack stack = event.getMatrixStack();
-            Minecraft minecraft = Minecraft.getInstance();
-
-            PlayerEntity player = minecraft.player;
-            if (player != null) {
-                ItemStack itemStack = player.getHeldItemMainhand();
-                stack.push();
-                if (itemStack.getItem() instanceof IGenericGun) {
-                    IGenericGun gun = (IGenericGun) itemStack.getItem();
-                    try {
-                        renderer.drawString(stack, "ammo: " + gun.getAmmoLeft(itemStack), 100f, 100f, 0xffffff);
-                    } catch (Exception ignored) {}
-
-                }
-                stack.pop();
-            }
-        }
-    }
+//    @SubscribeEvent
+//    @OnlyIn(Dist.CLIENT)
+//    public static void debugInfo(RenderGameOverlayEvent event) {
+//        if (!event.isCancelable() && event.getType() == RenderGameOverlayEvent.ElementType.EXPERIENCE) {
+//            FontRenderer renderer = Minecraft.getInstance().fontRenderer;
+//            MatrixStack stack = event.getMatrixStack();
+//            Minecraft minecraft = Minecraft.getInstance();
+//
+//            PlayerEntity player = minecraft.player;
+//            if (player != null) {
+//                ItemStack itemStack = player.getHeldItemMainhand();
+//                stack.push();
+//                if (itemStack.getItem() instanceof IGenericGun) {
+//                    IGenericGun gun = (IGenericGun) itemStack.getItem();
+//                    try {
+//                        renderer.drawString(stack, "ammo: " + gun.getAmmoLeft(itemStack), 100f, 100f, 0xffffff);
+//                    } catch (Exception ignored) {}
+//
+//                }
+//                stack.pop();
+//            }
+//        }
+//    }
 
 
 

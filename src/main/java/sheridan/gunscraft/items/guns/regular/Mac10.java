@@ -8,8 +8,8 @@ public class Mac10 extends GenericGun {
     public Mac10() {
         super(new Properties().group(CreativeTabs.REGULAR_GUNS).maxStackSize(1),30, false,
                 new ResourceLocation[]{new ResourceLocation("gunscraft","textures/guns/mac10/mac10_basic.png")},
-                new int[] {AUTO}, 1.15f, 2.8f, 0.8f, 2.8f, 10f,
+                new int[] {SEMI, AUTO}, 1.15f, 2.8f, 0.8f, 2.8f, 10f,
                 6f, 25, 7, "item.mac10.fire", new float[] {1f, 1f, 1f, 1f},
-                true, false, (int) (2.8 * 20));
+                true, false, (int) (2.8 * 20), 1);
     }
 }

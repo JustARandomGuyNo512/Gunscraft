@@ -24,6 +24,7 @@ public interface IGenericGun {
     void setAmmoLeft(ItemStack stack, int count);
     int getFireMode(ItemStack stack);
     void setFireMode(ItemStack stack, int mode);
+    void switchFireMode(ItemStack stack);
     int getShootDelay();
     float getMinSpread(ItemStack stack);
     float getMaxSpread(ItemStack stack);
@@ -31,4 +32,5 @@ public interface IGenericGun {
     boolean isPistol();
     int getReloadLength(ItemStack stack);
     String getMuzzleFlashState(ItemStack stack);
+    int getBurstCount();
 }

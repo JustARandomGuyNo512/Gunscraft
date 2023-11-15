@@ -17,6 +17,7 @@ import sheridan.gunscraft.items.guns.IGenericGun;
 import sheridan.gunscraft.keybind.KeyBinds;
 import sheridan.gunscraft.network.PacketHandler;
 import sheridan.gunscraft.network.packets.ReloadGunPacket;
+import sheridan.gunscraft.network.packets.SwitchFireModePacket;
 
 @Mod.EventBusSubscriber
 public class ControllerEvents {
@@ -83,13 +84,24 @@ public class ControllerEvents {
     @SubscribeEvent
     public static void onButtonPress(InputEvent.KeyInputEvent event) {
         if(Minecraft.getInstance().player != null) {
+            PlayerEntity player = Minecraft.getInstance().player;
             if (KeyBinds.KEY_RELOAD.isKeyDown() && event.getAction() == 1) {
-                PlayerEntity player = Minecraft.getInstance().player;
                 if (ClientProxy.holdingGunMain.get()) {
                     handleReload(true, player);
                 }
                 if (ClientProxy.holdingGunOff.get()) {
                     handleReload(false, player);
+                }
+            }
+            if (KeyBinds.KEY_SWITCH_FIRE_MODE.isKeyDown() && event.getAction() == 1) {
+                if (player.getHeldItemMainhand().getItem() instanceof IGenericGun) {
+                    ClientProxy.rightDown.set(false);
+                    ClientProxy.shouldHandleMain.set(false);
+                    PacketHandler.CommonChannel.sendToServer(new SwitchFireModePacket(true));
+                } else {
+                    ClientProxy.leftDown.set(false);
+                    ClientProxy.shouldHandleOff.set(false);
+                    PacketHandler.CommonChannel.sendToServer(new SwitchFireModePacket(false));
                 }
             }
         }

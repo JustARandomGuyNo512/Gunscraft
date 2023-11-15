@@ -96,11 +96,11 @@ public class ClientProxy extends CommonProxy{
                 .setHandPoseRightSideLeftHand(new float[][]{{-0.115f, 0.69f, 0.8f},{-2.08f, 0.5735987755982f, 0.165f},{1, 1, 1}})
                 .setHandPoseLeftSide(new float[][]{{-0.35f, 0.37f, 1.09f},{-1.5707963267948966f, 0, 0},{1, 1, 1}})
                 .registerMuzzleFlash("normal", new TransformData.TransPair().setTrans(new MuzzleFlashTrans().setScale(new float[] {0.75f, 0.75f, 0.75f}).setTranslate(new float[]{0, -0.2f, -0.5f})).setName("pistol_simple"))
-                .setRecoilAnimationData(new RecoilAnimationData(10f,35f, 22f,
-                        0.112f,0.095f,0.1f,
-                        8.0f, 0.48f, 0.67f,
-                        0.11f,0.095f,0.1f,
-                        0.27f, 0.1f, 0.013f, 0.75f))
+                .setRecoilAnimationData(new RecoilAnimationData(12f,35f, 22f,
+                        0.12f,0.095f,0.11f,
+                        7.8f, 0.53f, 0.66f,
+                        0.115f,0.095f,0.11f,
+                        0.268f, 0.1f, 0.0142f, 0.75f))
         );
         modelMap.put(ModItems.PISTOL_9_MM.get(), new ModelPistol_9mm());
 

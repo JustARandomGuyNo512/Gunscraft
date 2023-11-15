@@ -5,8 +5,11 @@ import net.minecraft.network.INetHandler;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.ServerPlayNetHandler;
 import net.minecraftforge.fml.network.NetworkEvent;
+import sheridan.gunscraft.items.ModItems;
 import sheridan.gunscraft.items.guns.IGenericGun;
+import sheridan.gunscraft.items.guns.regular.Pistol_9mm;
 
+import java.util.Arrays;
 import java.util.function.Supplier;
 
 public class SwitchFireModePacket implements IPacket<SwitchFireModePacket>{
@@ -39,7 +42,7 @@ public class SwitchFireModePacket implements IPacket<SwitchFireModePacket>{
                 ItemStack heldStack;
                 heldStack = isMainHand ? ((ServerPlayNetHandler) handler).player.getHeldItemMainhand() : ((ServerPlayNetHandler) handler).player.getHeldItemOffhand();
                 IGenericGun gun = (IGenericGun) heldStack.getItem();
-                gun.setFireMode(heldStack, gun.getFireMode(heldStack) + 1);
+                gun.switchFireMode(heldStack);
             }
         });
     }

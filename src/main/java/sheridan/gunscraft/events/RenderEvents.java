@@ -1,14 +1,22 @@
 package sheridan.gunscraft.events;
 
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import sheridan.gunscraft.ClientProxy;
+import sheridan.gunscraft.items.guns.GenericGun;
+import sheridan.gunscraft.items.guns.IGenericGun;
 import sheridan.gunscraft.render.crosshairs.BasicCrossHairRenderer;
+
+import java.awt.geom.GeneralPath;
 
 
 @Mod.EventBusSubscriber
@@ -38,6 +46,51 @@ public class RenderEvents {
                 event.setCanceled(true);
                 MainWindow window = Minecraft.getInstance().getMainWindow();
                 renderer.render(event.getMatrixStack(), ClientProxy.bulletSpread, window, BasicCrossHairRenderer.WHITE);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void renderGunInfo(RenderGameOverlayEvent event) {
+        if (event.isCancelable() && event.getType() == RenderGameOverlayEvent.ElementType.EXPERIENCE) {
+            FontRenderer renderer = Minecraft.getInstance().fontRenderer;
+            MatrixStack matrixStackIn = event.getMatrixStack();
+            Minecraft minecraft = Minecraft.getInstance();
+            MainWindow window = Minecraft.getInstance().getMainWindow();
+            PlayerEntity player = minecraft.player;
+
+            if (player != null) {
+                ItemStack stackMain = player.getHeldItemMainhand();
+                ItemStack stackOff = player.getHeldItemOffhand();
+                if (stackMain.getItem() instanceof IGenericGun) {
+                    matrixStackIn.push();
+                    matrixStackIn.translate(0.8f * (window.getScaledWidth()), 0.75f * (window.getScaledHeight()), 0.0D);
+                    matrixStackIn.scale(0.7f, 0.7f, 1f);
+                    IGenericGun gun = (IGenericGun) stackMain.getItem();
+                    renderer.drawString(matrixStackIn, "ammo: " + gun.getAmmoLeft(stackMain), 0f, 0f, 0xFFFAFA0F);
+                    matrixStackIn.pop();
+                    matrixStackIn.push();
+                    matrixStackIn.translate(0.8f * (window.getScaledWidth()), 0.8f * (window.getScaledHeight()), 0.0D);
+                    matrixStackIn.scale(0.7f, 0.7f, 1f);
+                    renderer.drawString(matrixStackIn, GenericGun.getFireModeStr(gun.getFireMode(stackMain)),0,0,0xFFFAFA0F);
+                    matrixStackIn.pop();
+                }
+
+                if (stackOff.getItem() instanceof IGenericGun) {
+                    matrixStackIn.push();
+                    matrixStackIn.translate(0.2f * (window.getScaledWidth()), 0.75f * (window.getScaledHeight()), 0.0D);
+                    matrixStackIn.scale(0.7f, 0.7f, 1);
+                    IGenericGun gun = (IGenericGun) stackOff.getItem();
+                    String s1 ="ammo: " + gun.getAmmoLeft(stackOff);
+                    renderer.drawString(matrixStackIn, s1, -renderer.getStringWidth(s1), 0, 0xffffff);
+                    matrixStackIn.pop();
+                    matrixStackIn.push();
+                    matrixStackIn.translate(0.2f * (window.getScaledWidth()), 0.8f * (window.getScaledHeight()), 0.0D);
+                    matrixStackIn.scale(0.7f, 0.7f, 1);
+                    String s2 = GenericGun.getFireModeStr(gun.getFireMode(stackOff));
+                    renderer.drawString(matrixStackIn, s2,-renderer.getStringWidth(s2),0,0xffffff);
+                    matrixStackIn.pop();
+                }
             }
         }
     }

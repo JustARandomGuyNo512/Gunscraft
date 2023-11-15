@@ -18,9 +18,20 @@ import sheridan.gunscraft.render.GenericGunRenderer;
 import sheridan.gunscraft.render.TransformData;
 import sheridan.gunscraft.sounds.SoundEvents;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 public class GenericGun extends BaseItem implements IGenericGun{
     public static final int SEMI = 0, BURST = 1, AUTO = 2, CHARGE = 3;
+    private static Map<Integer, String> fireModeNameMap = new HashMap<>();
 
+    static {
+        fireModeNameMap.put(SEMI, "SEMI");
+        fireModeNameMap.put(BURST, "BURST");
+        fireModeNameMap.put(AUTO, "AUTO");
+        fireModeNameMap.put(CHARGE, "CHARGE");
+    }
 
     public int baseMagSize;
     public ResourceLocation[] textures;
@@ -39,12 +50,13 @@ public class GenericGun extends BaseItem implements IGenericGun{
     public boolean isFreeBlot;
     public boolean isPistol;
     public int reloadLength;
+    public int burstCount;
 
     public GenericGun(Properties properties, int baseMagSize,boolean canHoldInOneHand,
                       ResourceLocation[] textures, int[] fireModes,
                       float baseSpread, float maxSpread, float spreadPreShoot, float bulletSpeed,
                       float baseDamage, float minDamage, int bulletLifeLength, int shootDelay, String normalFireSound,
-                      float[] soundArgs, boolean isFreeBlot, boolean isPistol, int reloadLength) {
+                      float[] soundArgs, boolean isFreeBlot, boolean isPistol, int reloadLength, int burstCount) {
         super(properties);
         this.baseMagSize = baseMagSize;
         this.textures = textures;
@@ -63,6 +75,14 @@ public class GenericGun extends BaseItem implements IGenericGun{
         this.isFreeBlot = isFreeBlot;
         this.isPistol = isPistol;
         this.reloadLength = reloadLength;
+        this.burstCount = burstCount;
+    }
+
+    public static String getFireModeStr(int key) {
+        if (fireModeNameMap.containsKey(key)) {
+            return fireModeNameMap.get(key);
+        }
+        return "UNKNOWN";
     }
 
     @Override
@@ -118,6 +138,18 @@ public class GenericGun extends BaseItem implements IGenericGun{
                 } else {
                     ClientProxy.rightDown.set(false);
                     ClientProxy.offHandFireCount = 0;
+                }
+            } else if (fireMode == BURST) {
+                if (mainHand) {
+                    if (ClientProxy.mainHandFireCount + 1 >= burstCount) {
+                        ClientProxy.mainHandFireCount = 0;
+                        ClientProxy.leftDown.set(false);
+                    }
+                } else {
+                    if (ClientProxy.offHandFireCount + 1 >= burstCount) {
+                        ClientProxy.offHandFireCount = 0;
+                        ClientProxy.rightDown.set(false);
+                    }
                 }
             }
             float shootSpread = entity.isCrouching() ? this.spreadPreShoot * 0.7f : this.spreadPreShoot;
@@ -185,8 +217,27 @@ public class GenericGun extends BaseItem implements IGenericGun{
     @Override
     public void setFireMode(ItemStack stack, int mode) {
         CompoundNBT nbt = checkAndGet(stack);
-        nbt.putInt("fire_mode", mode % this.fireModes.length);
+        nbt.putInt("fire_mode", mode);
     }
+
+    @Override
+    public void switchFireMode(ItemStack stack) {
+        if (this.fireModes.length <= 1) {
+            return;
+        } else {
+            int prevMode = getFireMode(stack);
+            int index = 0;
+            for (int i = 0; i < fireModes.length; i++) {
+                if (prevMode == fireModes[i]) {
+                    index = i;
+                }
+            }
+            index ++;
+            index %= fireModes.length;
+            setFireMode(stack, fireModes[index]);
+        }
+    }
+
 
     @Override
     public int getShootDelay() {
@@ -225,6 +276,11 @@ public class GenericGun extends BaseItem implements IGenericGun{
     public String getMuzzleFlashState(ItemStack stack) {
         CompoundNBT nbt = checkAndGet(stack);
         return nbt.contains("muzzle_flash_state") ? nbt.getString("muzzle_flash_state") : null;
+    }
+
+    @Override
+    public int getBurstCount() {
+        return burstCount;
     }
 
     private CompoundNBT checkAndGet(ItemStack stack) {
