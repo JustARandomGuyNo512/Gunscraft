@@ -698,11 +698,11 @@ public class ModelAKM extends EntityModel<Entity> implements IGunModel {
 
         stock = new ModelRenderer(this);
         stock.setRotationPoint(0.0F, 24.0F, 0.0F);
-        stock.setTextureOffset(159, 425).addBox(-4.6F, 16.9F, 223.5209F, 9.0F, 12.0F, 75.0F, 0.0F, false, true, true, true, false, true, true);
-        stock.setTextureOffset(488, 441).addBox(-3.6F, 15.9F, 296.5209F, 7.0F, 28.0F, 4.0F, 0.0F, false, false, true, true, true, true, true);
-        stock.setTextureOffset(164, 466).addBox(-4.6F, 33.9F, 271.5209F, 9.0F, 5.0F, 25.0F, 0.0F, false, false, false, false, false, true, true);
-        stock.setTextureOffset(255, 443).addBox(-4.6F, 28.9F, 248.5209F, 9.0F, 5.0F, 50.0F, 0.0F, false, false, true, false, false, true, true);
-        stock.setTextureOffset(286, 378).addBox(-2.5928F, 13.4453F, 238.5209F, 5.0F, 3.0F, 60.0F, 0.0F, false, false, true, true, false, false, false);
+        stock.setTextureOffset(165, 431).addBox(-4.6F, 16.9F, 223.5209F, 9.0F, 12.0F, 68.0F, 0.0F, false, true, true, true, true, true, true);
+        stock.setTextureOffset(488, 441).addBox(-3.6F, 15.7F, 288.9209F, 7.0F, 28.0F, 4.0F, 0.0F, false, false, true, true, true, true, true);
+        stock.setTextureOffset(171, 473).addBox(-4.6F, 33.9F, 271.5209F, 9.0F, 5.0F, 18.0F, 0.0F, false, false, true, false, false, true, true);
+        stock.setTextureOffset(262, 450).addBox(-4.6F, 28.9F, 248.5209F, 9.0F, 5.0F, 43.0F, 0.0F, false, false, true, false, false, true, true);
+        stock.setTextureOffset(293, 385).addBox(-2.5928F, 13.4453F, 238.5209F, 5.0F, 3.0F, 53.0F, 0.0F, false, false, true, true, false, false, false);
         stock.setTextureOffset(0, 462).addBox(-2.5928F, 17.1453F, 210.2209F, 5.0F, 3.0F, 20.0F, 0.0F, false, false, false, true, false, false, false);
         stock.setTextureOffset(0, 416).addBox(-5.6F, 13.8968F, 209.6395F, 11.0F, 13.0F, 1.0F, 0.0F, false, false, true, true, true, true, true);
 
@@ -716,13 +716,13 @@ public class ModelAKM extends EntityModel<Entity> implements IGunModel {
         cube_r80.setRotationPoint(4.4F, 29.2445F, 223.5111F);
         stock.addChild(cube_r80);
         setRotationAngle(cube_r80, -0.2182F, 0.0F, 0.0F);
-        cube_r80.setTextureOffset(344, 401).addBox(-9.0F, -6.0456F, 0.0F, 9.0F, 6.0F, 75.0F, 0.0F, false, false, true, false, true, true, true);
+        cube_r80.setTextureOffset(350, 407).addBox(-9.0F, -6.0456F, 0.0F, 9.0F, 6.0F, 68.0F, 0.0F, false, true, true, false, true, true, true);
 
         cube_r81 = new ModelRenderer(this);
         cube_r81.setRotationPoint(-0.5247F, 15.8414F, 238.5209F);
         stock.addChild(cube_r81);
         setRotationAngle(cube_r81, 0.0F, 0.0F, 0.5236F);
-        cube_r81.setTextureOffset(385, 204).addBox(-3.0F, -1.0456F, 0.0F, 3.0F, 4.0F, 60.0F, 0.0F, false, true, true, false, false, false, true);
+        cube_r81.setTextureOffset(392, 211).addBox(-3.0F, -1.0456F, 0.0F, 3.0F, 4.0F, 53.0F, 0.0F, false, true, true, false, false, false, true);
 
         cube_r82 = new ModelRenderer(this);
         cube_r82.setRotationPoint(2.4072F, 13.4858F, 238.542F);
@@ -734,10 +734,10 @@ public class ModelAKM extends EntityModel<Entity> implements IGunModel {
         cube_r83.setRotationPoint(4.3678F, 16.9322F, 238.5209F);
         stock.addChild(cube_r83);
         setRotationAngle(cube_r83, 0.0F, 0.0F, 1.0472F);
-        cube_r83.setTextureOffset(75, 385).addBox(-4.0F, -0.0456F, 0.0F, 4.0F, 3.0F, 60.0F, 0.0F, false, true, true, true, false, false, false);
+        cube_r83.setTextureOffset(82, 392).addBox(-4.0F, -0.0456F, 0.0F, 4.0F, 3.0F, 53.0F, 0.0F, false, true, true, true, false, false, false);
 
         cube_r84 = new ModelRenderer(this);
-        cube_r84.setRotationPoint(4.4F, 34.4653F, 296.4812F);
+        cube_r84.setRotationPoint(4.4F, 34.4653F, 289.4812F);
         stock.addChild(cube_r84);
         setRotationAngle(cube_r84, -0.0873F, 0.0F, 0.0F);
         cube_r84.setTextureOffset(256, 480).addBox(-9.0F, -1.0456F, -2.0F, 9.0F, 6.0F, 4.0F, 0.0F, false, false, true, false, false, true, true);
