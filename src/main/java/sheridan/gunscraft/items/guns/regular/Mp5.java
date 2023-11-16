@@ -1,6 +1,5 @@
 package sheridan.gunscraft.items.guns.regular;
 
-import net.minecraft.item.ItemGroup;
 import net.minecraft.util.ResourceLocation;
 import sheridan.gunscraft.items.guns.GenericGun;
 import sheridan.gunscraft.tabs.CreativeTabs;

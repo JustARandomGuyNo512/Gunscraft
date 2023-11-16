@@ -155,11 +155,11 @@ public class ClientProxy extends CommonProxy{
                 .setHandPoseRightSideLeftHand(new float[][]{{-0.125f, 0.77f, 0.8f},{-2.08f, 0.5735987755982f, 0.165f},{1, 1, 1}})
                 .setHandPoseLeftSide(new float[][]{{-0, 0, 0},{-0, 0, 0},{0, 0, 0}})
                 .registerMuzzleFlash("normal", new TransformData.TransPair().setTrans(new MuzzleFlashTrans().setScale(new float[] {1f, 1f, 1f}).setTranslate(new float[]{0, -0.75f, -1f})).setName("pistol_simple"))
-                .setRecoilAnimationData(new RecoilAnimationData(8f,14f, 8.5f,
+                .setRecoilAnimationData(new RecoilAnimationData(10f,14f, 8.5f,
                         0.11f,0.0885f,0.1f,
-                        4.8f, 0.55f, 0.31f,
+                        4.5f, 0.52f, 0.31f,
                         0.11f,0.088f,0.1f,
-                        0.15f, 0.1f, 0.0087f, 0.52f))
+                        0.15f, 0.135f, 0.0087f, 0.52f))
         );
         modelMap.put(ModItems.MAC10.get(), new ModelMac10());
 
