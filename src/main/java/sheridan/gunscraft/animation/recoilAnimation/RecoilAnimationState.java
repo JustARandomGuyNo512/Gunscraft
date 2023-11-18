@@ -112,6 +112,10 @@ public class RecoilAnimationState {
         moveUpSpeed = 0;
         moveUp = 0;
         lastTickTime = 0;
+        randomRYSpeed = 0;
+        randomRY = 0;
+        randomRXSpeed = 0;
+        randomRX = 0;
     }
 
     public void clearAndDisable() {

@@ -23,6 +23,7 @@ public class SoundEvents {
     public static final RegistryObject<SoundEvent> AKM_FIRE = registerSoundEvent("item.akm.fire");
     public static final RegistryObject<SoundEvent> MP5_FIRE = registerSoundEvent("item.mp5.fire");
     public static final RegistryObject<SoundEvent> MAC10_FIRE = registerSoundEvent("item.mac10.fire");
+    public static final RegistryObject<SoundEvent> M4A1_FIRE = registerSoundEvent("item.m4a1.fire");
 
     public static RegistryObject<SoundEvent> registerSoundEvent(String name) {
         RegistryObject<SoundEvent> soundEvent = MOD_SOUNDS.register(name, () -> new SoundEvent(new ResourceLocation(Gunscraft.MOD_ID, name)));

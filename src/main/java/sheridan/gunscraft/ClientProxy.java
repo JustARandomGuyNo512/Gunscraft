@@ -18,10 +18,7 @@ import sheridan.gunscraft.capability.CapabilityKey;
 import sheridan.gunscraft.items.ModItems;
 import sheridan.gunscraft.items.guns.IGenericGun;
 import sheridan.gunscraft.model.IGunModel;
-import sheridan.gunscraft.model.guns.ModelAKM;
-import sheridan.gunscraft.model.guns.ModelMac10;
-import sheridan.gunscraft.model.guns.ModelMp5;
-import sheridan.gunscraft.model.guns.ModelPistol_9mm;
+import sheridan.gunscraft.model.guns.*;
 import sheridan.gunscraft.network.PacketHandler;
 import sheridan.gunscraft.network.packets.GunFirePacket;
 import sheridan.gunscraft.render.TransformData;
@@ -144,7 +141,7 @@ public class ClientProxy extends CommonProxy{
         modelMap.put(ModItems.MP5.get(), new ModelMp5());
 
         transformDataMap.put(ModItems.MAC10.get(), new TransformData()
-                .setFPRightHand(new float[][]{{2.1f, -5.7f, -11.8f},{0, 0, 0},{1.72f, 1.72f, 1.72f}})
+                .setFPRightHand(new float[][]{{2.1f, -5.75f, -11.8f},{0, 0, 0},{1.72f, 1.72f, 1.72f}})
                 .setFPLeftHand(new float[][]{{0, -0, -0},{0, 0, 0},{0, 0, 0}})
                 .setTPRightHand(new float[][]{{0f, -2.35f, -1.26f},{0, 0, 0},{0.8f, 0.8f, 0.8f}})
                 .setTPLeftHand(new float[][]{{0f, -0, -0},{0, 0, 0},{0, 0, 0}})
@@ -155,13 +152,34 @@ public class ClientProxy extends CommonProxy{
                 .setHandPoseRightSideLeftHand(new float[][]{{-0.125f, 0.77f, 0.8f},{-2.08f, 0.5735987755982f, 0.165f},{1, 1, 1}})
                 .setHandPoseLeftSide(new float[][]{{-0, 0, 0},{-0, 0, 0},{0, 0, 0}})
                 .registerMuzzleFlash("normal", new TransformData.TransPair().setTrans(new MuzzleFlashTrans().setScale(new float[] {1f, 1f, 1f}).setTranslate(new float[]{0, -0.75f, -1f})).setName("pistol_simple"))
-                .setRecoilAnimationData(new RecoilAnimationData(10f,14f, 8.5f,
+                .setRecoilAnimationData(new RecoilAnimationData(10f,13.5f, 9f,
                         0.11f,0.0885f,0.1f,
                         4.5f, 0.52f, 0.31f,
                         0.11f,0.088f,0.1f,
                         0.15f, 0.135f, 0.0087f, 0.52f))
         );
         modelMap.put(ModItems.MAC10.get(), new ModelMac10());
+
+
+        transformDataMap.put(ModItems.M4A1.get(), new TransformData()
+                .setFPRightHand(new float[][]{{3.48f, -6.18f, -17.0f},{0, 0, 0},{1.8275f, 1.8275f, 1.8275f}})
+                .setFPLeftHand(new float[][]{{0, 0, 0},{0, 0, 0},{0, 0, 0}})
+                .setTPRightHand(new float[][]{{0f, -3.2f, -6f},{0, 0, 0},{0.85f, 0.85f, 0.85f}})
+                .setTPLeftHand(new float[][]{{0f, -0, -0},{0, 0, 0},{0, 0, 0}})
+                .setFrameTrans(new float[][]{{15f, -5f, -0.25f},{0, -90, 0},{1.7f, 1.7f, 1.7f}})
+                .setGroundTrans(new float[][]{{0, -3, -6f},{0, 0, 0},{0.85f, 0.85f, 0.85f}})
+                .setGUITrans(new float[][]{{6, -3, -0f},{0, -80, 0},{0.9f, 0.9f, 0.9f}})
+                .setHandPoseRightSideRightHand(new float[][]{{0.325f, 0.6f, 2.5f},{-1.5707963267948966f, -0.049f, 0},{1.0f, 1.0f, 1.0f}})
+                .setHandPoseRightSideLeftHand(new float[][]{{-0.155f, 0.58f, 1.15f},{-1.6580627893947f, 0.26179938779917f,  0.30543261909903f},{1.0f, 1.0f, 1.0f}})
+                .setHandPoseLeftSide(new float[][]{{-0, 0, 0},{-0, 0, 0},{0, 0, 0}})
+                .registerMuzzleFlash("normal", new TransformData.TransPair().setTrans(new MuzzleFlashTrans().setTranslate(new float[]{0, 0, -3.25f})).setName("pistol_simple"))
+                .setRecoilAnimationData(new RecoilAnimationData(16.2f,11.3f, 10.4f,
+                        0.1f,0.0887f,0.1f,
+                        1.12f, 0.46f, 0.2f,
+                        0.1f,0.0876f,0.1f,
+                        0.15f, 0.25f, 0.0015f, 0.21f))
+        );
+        modelMap.put(ModItems.M4A1.get(), new ModelM4a1());
 
 
         timer = new Timer();
