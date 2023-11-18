@@ -16,6 +16,7 @@ public class RecoilAnimationState {
     public boolean isMainHand;
     public boolean enable = false;
     private long lastTickTime = 0;
+    private long startTime = 0;
 
     private float rotateUpSpeed = 0;
     private float rotateUp = 0;
@@ -40,7 +41,7 @@ public class RecoilAnimationState {
             enable = false;
         }
         long dis = System.currentTimeMillis() - lastTickTime;
-        if (dis > 100) {
+        if (dis > 100 ) {
             clearAndDisable();
             return;
         }
@@ -73,6 +74,11 @@ public class RecoilAnimationState {
 
         lastTickTime = System.currentTimeMillis();
 
+        if (lastTickTime - startTime > data.length) {
+            clear();
+            return;
+        }
+
         matrixStack.translate(0, -moveUp * BASE_FACTOR, moveBack * BASE_FACTOR + data.trimZLevel * rotateUp);
         matrixStack.rotate(new Quaternion(Vector3f.XP, - rotateUp * BASE_FACTOR, true));
 
@@ -81,22 +87,19 @@ public class RecoilAnimationState {
     }
 
     public int randomIndex() {
-        return random.nextInt() % 100 >= 50 ? -1 : 1;
+        return Math.random() <= 0.5 ? 1 : -1;
     }
 
     public void onShoot(long lastFireTime, RecoilAnimationData data) {
         if (data != null) {
+            startTime = lastFireTime;
             lastTickTime = lastFireTime;
             enable = true;
             rotateUpSpeed += data.rotateUp;
             moveBackSpeed += data.moveBack;
             moveUpSpeed += data.moveUp;
-            //if (random(5)) {
             randomRXSpeed += data.random * randomIndex();
-            //}
-            //if (random(5)) {
             randomRYSpeed += data.random * randomIndex();
-            //}
             this.data = data;
         } else {
             clear();

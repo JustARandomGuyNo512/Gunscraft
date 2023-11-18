@@ -16,7 +16,7 @@ plugins {
 apply plugin: 'org.spongepowered.mixin'
 
 group = 'sheridan'
-version = '1.1-SNAPSHOT'
+version = '1.2-SNAPSHOT'
 
 java {
     archivesBaseName = 'gunscraft'

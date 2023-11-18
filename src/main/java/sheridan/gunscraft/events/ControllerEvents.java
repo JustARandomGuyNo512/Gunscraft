@@ -15,6 +15,7 @@ import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import sheridan.gunscraft.ClientProxy;
+import sheridan.gunscraft.Config;
 import sheridan.gunscraft.Gunscraft;
 import sheridan.gunscraft.items.guns.IGenericGun;
 import sheridan.gunscraft.keybind.KeyBinds;
@@ -35,38 +36,58 @@ public class ControllerEvents {
                     ItemStack stackMain = player.getHeldItemMainhand();
                     ItemStack stackOff = player.getHeldItemOffhand();
 
-                    if (stackMain.getItem() instanceof IGenericGun) {
-                        if (event.getButton() == 0) {
-                            if (event.getAction() == 1) {
-                                ClientProxy.leftDown.set(!(ClientTickEvents.reloadingHandler.getReloadTimer() > 0));
-                            } else if (event.getAction() == 0) {
-                                ClientProxy.leftDown.set(false);
-                                ClientProxy.mainHandFireCount = 0;
-                            }
-                            event.setCanceled(true);
-                        } else if (event.getButton() == 1) {
-                            if (!shouldNotCancelRightClick()) {
-                                if (event.getAction() == 1) {
-                                    ClientProxy.rightDown.set(true);
-                                } else if (event.getAction() == 0) {
-                                    ClientProxy.rightDown.set(false);
-                                }
-                                event.setCanceled(true);
-                            } else {
-                                ClientProxy.equipDuration = 5;
-                            }
+                    boolean holdGunMain = stackMain.getItem() instanceof IGenericGun;
+                    IGenericGun gunMain = holdGunMain ? (IGenericGun) stackMain.getItem() : null;
+                    boolean holdGunOff = stackOff.getItem() instanceof IGenericGun;
+                    if (holdGunMain) {
+                        if (!gunMain.canHoldInOneHand()) {
+                            holdGunOff = false;
                         }
                     }
+                    IGenericGun gunOff = holdGunOff ? (IGenericGun) stackOff.getItem() : null;
 
-                    if (stackOff.getItem() instanceof IGenericGun) {
-                        if (event.getButton() == 1) {
-                            if (event.getAction() == 1) {
-                                ClientProxy.rightDown.set(!(ClientTickEvents.reloadingHandler.getReloadTimer() > 0));
-                            } else if (event.getAction() == 0) {
-                                ClientProxy.rightDown.set(false);
-                                ClientProxy.offHandFireCount = 0;
+                    if (event.getButton() == 0) {
+                        if (event.getAction() == 1) {
+                            if (holdGunMain) {
+                                ClientProxy.mainHandStatus.buttonDown.set(!(ClientTickEvents.reloadingHandler.getReloadTimer() > 0));
                             }
+                        } else if (event.getAction() == 0) {
+                            ClientProxy.mainHandStatus.buttonDown.set(false);
+                            ClientProxy.mainHandStatus.fireCount = 0;
+                        }
+                        if (holdGunMain) {
                             event.setCanceled(true);
+                        }
+                    }
+                    if (event.getButton() == 1) {
+                        if (!shouldNotCancelRightClick()) {
+                            if (event.getAction() == 1) {
+                               if (holdGunOff) {
+                                   ClientProxy.offHandStatus.buttonDown.set(!(ClientTickEvents.reloadingHandler.getReloadTimer() > 0));
+                               } else {
+                                   if (holdGunMain) {
+                                       // System.out.println("main hand start aiming");
+                                       ClientProxy.mainHandStatus.aiming = true;
+                                       event.setCanceled(true);
+                                   }
+                               }
+                            } else if (event.getAction() == 0) {
+                                if (holdGunOff) {
+                                    ClientProxy.offHandStatus.buttonDown.set(false);
+                                    ClientProxy.offHandStatus.fireCount = 0;
+                                } else {
+                                    if (holdGunMain) {
+                                        // System.out.println("main hand stop aiming");
+                                        ClientProxy.mainHandStatus.aiming = false;
+                                        event.setCanceled(true);
+                                    }
+                                }
+                            }
+                            if (holdGunOff) {
+                                event.setCanceled(true);
+                            }
+                        } else {
+                            ClientProxy.equipDuration = 5;
                         }
                     }
 
@@ -89,24 +110,24 @@ public class ControllerEvents {
         if(Minecraft.getInstance().player != null) {
             PlayerEntity player = Minecraft.getInstance().player;
             if (KeyBinds.KEY_RELOAD.isKeyDown() && event.getAction() == 1) {
-                if (ClientProxy.holdingGunMain.get()) {
+                if (ClientProxy.mainHandStatus.holdingGun.get()) {
                     handleReload(true, player);
                 }
-                if (ClientProxy.holdingGunOff.get()) {
+                if (ClientProxy.offHandStatus.holdingGun.get()) {
                     handleReload(false, player);
                 }
             }
             if (KeyBinds.KEY_SWITCH_FIRE_MODE.isKeyDown() && event.getAction() == 1) {
                 boolean playSound = false;
                 if (player.getHeldItemMainhand().getItem() instanceof IGenericGun) {
-                    ClientProxy.rightDown.set(false);
-                    ClientProxy.shouldHandleMain.set(false);
+                    ClientProxy.offHandStatus.buttonDown.set(false);
+                    ClientProxy.mainHandStatus.shouldHandle.set(false);
                     PacketHandler.CommonChannel.sendToServer(new SwitchFireModePacket(true));
                     playSound = true;
                 } else {
-                    if (ClientProxy.holdingGunOff.get()) {
-                        ClientProxy.leftDown.set(false);
-                        ClientProxy.shouldHandleOff.set(false);
+                    if (ClientProxy.offHandStatus.holdingGun.get()) {
+                        ClientProxy.mainHandStatus.buttonDown.set(false);
+                        ClientProxy.offHandStatus.shouldHandle.set(false);
                         PacketHandler.CommonChannel.sendToServer(new SwitchFireModePacket(false));
                         playSound = true;
                     }
@@ -117,6 +138,54 @@ public class ControllerEvents {
                     }
                 }
             }
+
+            if (Config.isInDebug) {
+                handleDebugKeys(event);
+            }
+
+        }
+    }
+
+    private static void handleDebugKeys(InputEvent.KeyInputEvent event) {
+        if (KeyBinds.KEY_DEBUG_X_ADD.isKeyDown()) {
+            ClientProxy.debugX += ClientProxy.debugAccuracy;
+            System.out.println(ClientProxy.debugX);
+        }
+        if (KeyBinds.KEY_DEBUG_X_DEC.isKeyDown()) {
+            ClientProxy.debugX -= ClientProxy.debugAccuracy;
+            System.out.println(ClientProxy.debugX);
+        }
+        if (KeyBinds.KEY_DEBUG_Y_ADD.isKeyDown()) {
+            ClientProxy.debugY += ClientProxy.debugAccuracy;
+            System.out.println(ClientProxy.debugY);
+        }
+        if (KeyBinds.KEY_DEBUG_Y_DEC.isKeyDown()) {
+            ClientProxy.debugY -= ClientProxy.debugAccuracy;
+            System.out.println(ClientProxy.debugY);
+        }
+
+        if (KeyBinds.KEY_DEBUG_Z_ADD.isKeyDown()) {
+            ClientProxy.debugZ += ClientProxy.debugAccuracy;
+            System.out.println(ClientProxy.debugZ);
+        }
+        if (KeyBinds.KEY_DEBUG_Z_DEC.isKeyDown()) {
+            ClientProxy.debugZ -= ClientProxy.debugAccuracy;
+            System.out.println(ClientProxy.debugZ);
+        }
+
+        if (KeyBinds.KEY_DEBUG_HIGH_ACCURACY.isKeyDown() && event.getAction() == 1) {
+            float acc = ClientProxy.debugAccuracy;
+            ClientProxy.debugAccuracy = acc == 0.01f ? 0.001f : 0.01f;
+        }
+
+        if (KeyBinds.KEY_DEBUG_TRANS_CLEAR.isKeyDown() && event.getAction() == 1) {
+            ClientProxy.debugY = 0;
+            ClientProxy.debugX = 0;
+            ClientProxy.debugZ = 0;
+        }
+
+        if (KeyBinds.KEY_DEBUG_PRINT_TRANS.isKeyDown() && event.getAction() == 1) {
+            System.out.println(ClientProxy.debugX + " " + ClientProxy.debugY + " " + ClientProxy.debugZ + " " + ClientProxy.debugAccuracy);
         }
     }
 
@@ -129,11 +198,11 @@ public class ControllerEvents {
             if (gun.getAmmoLeft(stack) < gun.getMagSize(stack)) {
                 if (gun.preReload(stack, player,isMainHand)) {
                     if (isMainHand) {
-                        ClientProxy.shouldHandleMain.set(false);
-                        ClientProxy.leftDown.set(false);
+                        ClientProxy.mainHandStatus.shouldHandle.set(false);
+                        ClientProxy.mainHandStatus.buttonDown.set(false);
                     } else {
-                        ClientProxy.shouldHandleOff.set(false);
-                        ClientProxy.rightDown.set(false);
+                        ClientProxy.offHandStatus.shouldHandle.set(false);
+                        ClientProxy.offHandStatus.buttonDown.set(false);
                     }
                 }
             }

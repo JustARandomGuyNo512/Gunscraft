@@ -10,7 +10,7 @@ public class Mp5 extends GenericGun {
                 new ResourceLocation[]{new ResourceLocation("gunscraft","textures/guns/mp5/mp5_basic.png")},
                 new int[] {SEMI, BURST, AUTO}, 0.6f, 1.8f, 0.7f, 3.75f, 8f,
                 5f, 30, 8, "item.mp5.fire", new float[] {0.6f, 1f, 1f, 1f},
-                false, false, (int) (3.2f * 20), 3);
+                false, false, (int) (3.2f * 20), 3,0.12f);
 
     }
 }

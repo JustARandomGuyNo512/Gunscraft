@@ -51,12 +51,14 @@ public class GenericGun extends BaseItem implements IGenericGun{
     public boolean isPistol;
     public int reloadLength;
     public int burstCount;
+    public float aimingSpeed;
 
     public GenericGun(Properties properties, int baseMagSize,boolean canHoldInOneHand,
                       ResourceLocation[] textures, int[] fireModes,
                       float baseSpread, float maxSpread, float spreadPreShoot, float bulletSpeed,
                       float baseDamage, float minDamage, int bulletLifeLength, int shootDelay, String normalFireSound,
-                      float[] soundArgs, boolean isFreeBlot, boolean isPistol, int reloadLength, int burstCount) {
+                      float[] soundArgs, boolean isFreeBlot, boolean isPistol, int reloadLength, int burstCount,
+                      float aimingSpeed) {
         super(properties);
         this.baseMagSize = baseMagSize;
         this.textures = textures;
@@ -76,6 +78,7 @@ public class GenericGun extends BaseItem implements IGenericGun{
         this.isPistol = isPistol;
         this.reloadLength = reloadLength;
         this.burstCount = burstCount;
+        this.aimingSpeed = aimingSpeed;
     }
 
     public static String getFireModeStr(int key) {
@@ -123,32 +126,32 @@ public class GenericGun extends BaseItem implements IGenericGun{
             TransformData transformData = ClientProxy.transformDataMap.get(stack.getItem());
             if (mainHand) {
                 CapabilityHandler.instance().set((PlayerEntity) entity, ClientProxy.LAST_SHOOT_RIGHT, now);
-                ClientProxy.FPRLastShoot = now;
+                ClientProxy.mainHandStatus.lastShoot = now;
                 //GenericGunRenderer.recoilAnimationState.onShoot(System.currentTimeMillis(), transformData.getRecoilAnimationData());
             } else {
                 CapabilityHandler.instance().set((PlayerEntity) entity, ClientProxy.LAST_SHOOT_LEFT, now);
-                ClientProxy.FPLLastShoot = now;
+                ClientProxy.offHandStatus.lastShoot = now;
             }
             RecoilAnimationHandler.onShoot(now, transformData.getRecoilAnimationData(), mainHand);
             int fireMode = getFireMode(stack);
             if (fireMode == SEMI) {
                 if (mainHand) {
-                    ClientProxy.leftDown.set(false);
-                    ClientProxy.mainHandFireCount = 0;
+                    ClientProxy.mainHandStatus.buttonDown.set(false);
+                    ClientProxy.mainHandStatus.fireCount = 0;
                 } else {
-                    ClientProxy.rightDown.set(false);
-                    ClientProxy.offHandFireCount = 0;
+                    ClientProxy.offHandStatus.buttonDown.set(false);
+                    ClientProxy.offHandStatus.fireCount = 0;
                 }
             } else if (fireMode == BURST) {
                 if (mainHand) {
-                    if (ClientProxy.mainHandFireCount + 1 >= burstCount) {
-                        ClientProxy.mainHandFireCount = 0;
-                        ClientProxy.leftDown.set(false);
+                    if (ClientProxy.mainHandStatus.fireCount + 1 >= burstCount) {
+                        ClientProxy.mainHandStatus.fireCount = 0;
+                        ClientProxy.mainHandStatus.buttonDown.set(false);
                     }
                 } else {
-                    if (ClientProxy.offHandFireCount + 1 >= burstCount) {
-                        ClientProxy.offHandFireCount = 0;
-                        ClientProxy.rightDown.set(false);
+                    if (ClientProxy.offHandStatus.fireCount + 1 >= burstCount) {
+                        ClientProxy.offHandStatus.fireCount = 0;
+                        ClientProxy.offHandStatus.buttonDown.set(false);
                     }
                 }
             }
@@ -283,6 +286,12 @@ public class GenericGun extends BaseItem implements IGenericGun{
         return burstCount;
     }
 
+    @Override
+    public float getAimingSpeed(ItemStack stack) {
+        CompoundNBT nbt = checkAndGet(stack);
+        return nbt.contains("aiming_speed") ? nbt.getFloat("aiming_speed") : 0;
+    }
+
     private CompoundNBT checkAndGet(ItemStack stack) {
         CompoundNBT nbt = stack.getTag();
         if (nbt == null) {
@@ -305,6 +314,7 @@ public class GenericGun extends BaseItem implements IGenericGun{
         nbt.putFloat("max_spread", this.maxSpread);
         nbt.putInt("base_reload_length", this.reloadLength);
         nbt.putString("muzzle_flash_state", "normal");
+        nbt.putFloat("aiming_speed", this.aimingSpeed);
         stack.setTag(nbt);
     }
 }

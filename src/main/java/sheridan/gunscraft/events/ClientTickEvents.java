@@ -14,6 +14,9 @@ public class ClientTickEvents {
     @OnlyIn(Dist.CLIENT)
     public static ReloadingHandler reloadingHandler = new ReloadingHandler();
 
+    private static long lastTick = 0;
+    public static float clientDelta = 0.05f;
+
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public static void clientTick(TickEvent.ClientTickEvent event) {
@@ -28,8 +31,22 @@ public class ClientTickEvents {
         } else {
             ClientProxy.addSpread(-0.1f);
         }
+        if (ClientProxy.equipDuration > 0 || Minecraft.getInstance().isGamePaused()) {
+            ClientProxy.mainHandStatus.aiming = false;
+        }
         if (reloadingHandler != null) {
             reloadingHandler.tick();
+        }
+        ClientProxy.mainHandStatus.handleAiming();
+        if (event.phase == TickEvent.Phase.END) {
+            if (lastTick == 0) {
+                lastTick = System.currentTimeMillis();
+            } else {
+                long now = System.currentTimeMillis();
+                long dis = now - lastTick;
+                lastTick = now;
+                clientDelta = (float) dis * 0.001f;
+            }
         }
     }
 

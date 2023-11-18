@@ -27,8 +27,7 @@ import sheridan.gunscraft.render.fx.muzzleFlash.MuzzleFlashTrans;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
+
 
 public class ClientProxy extends CommonProxy{
 
@@ -39,23 +38,12 @@ public class ClientProxy extends CommonProxy{
     public static Timer timer;
     public static int clientPlayerId;
 
-    public static AtomicBoolean leftDown = new AtomicBoolean(false);
-    public static AtomicBoolean rightDown = new AtomicBoolean(false);
-    public static AtomicBoolean holdingGunMain = new AtomicBoolean(false);
-    public static AtomicBoolean holdingGunOff = new AtomicBoolean(false);
-    public static AtomicInteger mainHandShootDelay = new AtomicInteger(1);
-    public static AtomicInteger offHandShootDelay = new AtomicInteger(1);
-    public static AtomicBoolean shouldHandleMain = new AtomicBoolean(true);
-    public static AtomicBoolean shouldHandleOff = new AtomicBoolean(true);
-    public static int mainHandFireCount = 0;
-    public static int offHandFireCount = 0;
+    public static ClientStatus mainHandStatus = new ClientStatus(true);
+    public static ClientStatus offHandStatus = new ClientStatus(false);
 
     public static volatile float bulletSpread = 0f;
     public static volatile float minBulletSpread = 0f;
     public static volatile float maxBulletSpread = 0f;
-
-    public static volatile long FPRLastShoot;
-    public static volatile long FPLLastShoot;
     public static volatile int armPose;
 
 
@@ -63,6 +51,11 @@ public class ClientProxy extends CommonProxy{
     public static final CapabilityKey<Long> LAST_SHOOT_RIGHT;
     public static final CapabilityKey<Long> LAST_SHOOT_LEFT;
 
+
+    public static float debugX = 0;
+    public static float debugY = 0;
+    public static float debugZ = 0;
+    public static float debugAccuracy = (float) 0.01;
 
     public static void addSpread(float val) {
         synchronized (Object.class) {
@@ -96,7 +89,8 @@ public class ClientProxy extends CommonProxy{
                         0.12f,0.095f,0.11f,
                         7.8f, 0.53f, 0.66f,
                         0.115f,0.095f,0.11f,
-                        0.268f, 0.1f, 0.0142f, 0.75f))
+                        0.268f, 0.1f, 0.0142f, 0.75f, 750))
+                .setAimingTrans(new float[] {4.0259995f, -3.178999f, 7.327073f})
         );
         modelMap.put(ModItems.PISTOL_9_MM.get(), new ModelPistol_9mm());
 
@@ -116,7 +110,8 @@ public class ClientProxy extends CommonProxy{
                         0.1f,0.0886f,0.1f,
                         1.48f, 0.61f, 0.3f,
                         0.1f,0.0875f,0.1f,
-                        0.145f, 0.22f, 0.001f, 0.6f))
+                        0.145f, 0.22f, 0.001f, 0.6f, 650))
+                .setAimingTrans(new float[] {2.7699978f, -2.5789995f, 5.250027f})
         );
         modelMap.put(ModItems.AKM.get(), new ModelAKM());
 
@@ -136,7 +131,8 @@ public class ClientProxy extends CommonProxy{
                         0.1f,0.087f,0.1f,
                         1.2f, 0.41f, 0.18f,
                         0.1f,0.0867f,0.1f,
-                        0.145f, 0.15f, 0.001f, 0.32f))
+                        0.145f, 0.15f, 0.001f, 0.32f, 500))
+                .setAimingTrans(new  float[] {2.7139997f, -2.6389995f, 6.007043f})
         );
         modelMap.put(ModItems.MP5.get(), new ModelMp5());
 
@@ -156,28 +152,30 @@ public class ClientProxy extends CommonProxy{
                         0.11f,0.0885f,0.1f,
                         4.5f, 0.52f, 0.31f,
                         0.11f,0.088f,0.1f,
-                        0.15f, 0.135f, 0.0087f, 0.52f))
+                        0.15f, 0.135f, 0.0087f, 0.52f, 500))
+                .setAimingTrans(new float[] {4.1340017f, -2.3559993f, 8.87914f})
         );
         modelMap.put(ModItems.MAC10.get(), new ModelMac10());
 
 
         transformDataMap.put(ModItems.M4A1.get(), new TransformData()
-                .setFPRightHand(new float[][]{{3.48f, -6.18f, -17.0f},{0, 0, 0},{1.8275f, 1.8275f, 1.8275f}})
+                .setFPRightHand(new float[][]{{4.14f, -6.31f, -16.25f},{0, 0, 0},{1.8275f, 1.8275f, 1.8275f}})
                 .setFPLeftHand(new float[][]{{0, 0, 0},{0, 0, 0},{0, 0, 0}})
                 .setTPRightHand(new float[][]{{0f, -3.2f, -6f},{0, 0, 0},{0.85f, 0.85f, 0.85f}})
                 .setTPLeftHand(new float[][]{{0f, -0, -0},{0, 0, 0},{0, 0, 0}})
-                .setFrameTrans(new float[][]{{15f, -5f, -0.25f},{0, -90, 0},{1.7f, 1.7f, 1.7f}})
+                .setFrameTrans(new float[][]{{12f, -5f, -0.25f},{0, -90, 0},{1.7f, 1.7f, 1.7f}})
                 .setGroundTrans(new float[][]{{0, -3, -6f},{0, 0, 0},{0.85f, 0.85f, 0.85f}})
                 .setGUITrans(new float[][]{{6, -3, -0f},{0, -80, 0},{0.9f, 0.9f, 0.9f}})
                 .setHandPoseRightSideRightHand(new float[][]{{0.325f, 0.6f, 2.5f},{-1.5707963267948966f, -0.049f, 0},{1.0f, 1.0f, 1.0f}})
-                .setHandPoseRightSideLeftHand(new float[][]{{-0.155f, 0.58f, 1.15f},{-1.6580627893947f, 0.26179938779917f,  0.30543261909903f},{1.0f, 1.0f, 1.0f}})
+                .setHandPoseRightSideLeftHand(new float[][]{{-0.16f, 0.575f, 1.30f},{-1.6580627893947f, 0.26179938779917f,  0.30543261909903f},{1.0f, 1.0f, 1.0f}})
                 .setHandPoseLeftSide(new float[][]{{-0, 0, 0},{-0, 0, 0},{0, 0, 0}})
                 .registerMuzzleFlash("normal", new TransformData.TransPair().setTrans(new MuzzleFlashTrans().setTranslate(new float[]{0, 0, -3.25f})).setName("pistol_simple"))
-                .setRecoilAnimationData(new RecoilAnimationData(16.2f,11.3f, 10.4f,
+                .setRecoilAnimationData(new RecoilAnimationData(16.2f,11.3f, 10.5f,
                         0.1f,0.0887f,0.1f,
-                        1.12f, 0.46f, 0.2f,
+                        1.05f, 0.475f, 0.17f,
                         0.1f,0.0876f,0.1f,
-                        0.15f, 0.25f, 0.0015f, 0.21f))
+                        0.15f, 0.25f, 0.0015f, 0.22f, 500))
+                .setAimingTrans(new float[] {2.0849983f, -1.749f, 6.0030614f})
         );
         modelMap.put(ModItems.M4A1.get(), new ModelM4a1());
 
@@ -238,12 +236,12 @@ public class ClientProxy extends CommonProxy{
 
     @OnlyIn(Dist.CLIENT)
     public static void tryFireMain() {
-        tryFire(true, System.currentTimeMillis() - FPRLastShoot);
+        tryFire(true, System.currentTimeMillis() - mainHandStatus.lastShoot);
     }
 
     @OnlyIn(Dist.CLIENT)
     public static void tryFireOff() {
-        tryFire(false, System.currentTimeMillis() - FPLLastShoot);
+        tryFire(false, System.currentTimeMillis() - offHandStatus.lastShoot);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -255,9 +253,9 @@ public class ClientProxy extends CommonProxy{
             if (stack.getItem() instanceof IGenericGun) {
                 IGenericGun gun = (IGenericGun) stack.getItem();
                 if (gun.preShoot(stack, player, mainHand)) {
-                    int fireCount = mainHand ? mainHandFireCount : offHandFireCount;
+                    int fireCount = mainHand ? mainHandStatus.fireCount : offHandStatus.fireCount;
                     float spread = ClientProxy.bulletSpread;
-                    int fireDelay = mainHand ? mainHandShootDelay.get() : offHandShootDelay.get();
+                    int fireDelay = mainHand ? mainHandStatus.shootDelay.get() : offHandStatus.shootDelay.get();
                     int fireFactor = fireDelay * 10 * (gun.isPistol() ? 4 : 8);
                     if (fireCount == 0 && !gun.isFreeBlot() && dis > fireFactor) {
                         spread *= 0.25f;
@@ -265,9 +263,9 @@ public class ClientProxy extends CommonProxy{
                     gun.shoot(stack, player, true, spread);
                     PacketHandler.CommonChannel.sendToServer(new GunFirePacket(mainHand, spread));
                     if (mainHand) {
-                        mainHandFireCount ++;
+                        mainHandStatus.fireCount ++;
                     } else {
-                        offHandFireCount ++;
+                        offHandStatus.fireCount ++;
                     }
                 }
             }

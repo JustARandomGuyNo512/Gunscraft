@@ -21,6 +21,7 @@ import sheridan.gunscraft.render.crosshairs.BasicCrossHairRenderer;
 public class RenderEvents {
 
     public static float delta = 0;
+    public static float particularTick = 0;
     private static long lastTickTime = -1;
     private static final BasicCrossHairRenderer renderer = new BasicCrossHairRenderer();
 
@@ -31,6 +32,7 @@ public class RenderEvents {
                 lastTickTime = System.currentTimeMillis();
                 return;
             }
+            particularTick = event.renderTickTime;
             int dis = (int) (System.currentTimeMillis() - lastTickTime);
             lastTickTime = System.currentTimeMillis();
             delta = (float) dis * 0.001f;
@@ -40,8 +42,11 @@ public class RenderEvents {
     @SubscribeEvent
     public static void renderCrossHair(RenderGameOverlayEvent event) {
         if (event.isCancelable() && event.getType() == RenderGameOverlayEvent.ElementType.CROSSHAIRS) {
-            if (ClientProxy.holdingGunMain.get() || ClientProxy.holdingGunOff.get()) {
+            if (ClientProxy.mainHandStatus.holdingGun.get() || ClientProxy.offHandStatus.holdingGun.get()) {
                 event.setCanceled(true);
+                if (ClientProxy.mainHandStatus.aiming) {
+                    return;
+                }
                 MainWindow window = Minecraft.getInstance().getMainWindow();
                 renderer.render(event.getMatrixStack(), ClientProxy.bulletSpread, window, BasicCrossHairRenderer.WHITE);
             }
@@ -76,7 +81,7 @@ public class RenderEvents {
                 }
 
                 if (stackOff.getItem() instanceof IGenericGun) {
-                    if (!ClientProxy.holdingGunOff.get()) {
+                    if (!ClientProxy.offHandStatus.holdingGun.get()) {
                         color = 0xFF0000;
                     } else {
                         color = 0xffffff;

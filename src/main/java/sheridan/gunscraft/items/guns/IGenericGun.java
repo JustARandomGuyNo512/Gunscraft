@@ -33,4 +33,5 @@ public interface IGenericGun {
     int getReloadLength(ItemStack stack);
     String getMuzzleFlashState(ItemStack stack);
     int getBurstCount();
+    float getAimingSpeed(ItemStack stack);
 }

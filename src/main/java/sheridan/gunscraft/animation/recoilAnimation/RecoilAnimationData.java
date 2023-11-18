@@ -17,13 +17,14 @@ public class RecoilAnimationData {
     public float random;
     public float trimZLevel;
     public float timeSpeed;
+    public long length;
 
 
     public RecoilAnimationData(float maxMoveBack, float maxRotateUp, float maxMoveUp,
                                float rotateAttenuation, float moveBackAttenuation, float moveUpAttenuation,
                                float rotateUp, float moveBack, float moveUp,
                                float rotateDesc, float moveBackDesc, float moveUpDesc,
-                               float timeSpeed, float rotateZLevel, float trimZLevel, float random) {
+                               float timeSpeed, float rotateZLevel, float trimZLevel, float random, long length) {
         this.maxMoveBack  = maxMoveBack;
         this.maxRotateUp = maxRotateUp;
         this.maxMoveUp = maxMoveUp;
@@ -40,6 +41,7 @@ public class RecoilAnimationData {
         this.rotateZLevel = rotateZLevel;
         this.random = random;
         this.trimZLevel = trimZLevel;
+        this.length = length;
     }
 
 }

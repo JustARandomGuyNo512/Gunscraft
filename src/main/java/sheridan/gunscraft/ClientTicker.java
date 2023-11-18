@@ -30,11 +30,13 @@ public class ClientTicker extends TimerTask {
                 return;
             }
 
-            if (ClientProxy.leftDown.get() && ClientProxy.holdingGunMain.get() && ClientProxy.shouldHandleMain.get() && mainHandPostDelay <= 0) {
+            if (ClientProxy.mainHandStatus.buttonDown.get() && ClientProxy.mainHandStatus.holdingGun.get() &&
+                    ClientProxy.mainHandStatus.shouldHandle.get() && mainHandPostDelay <= 0) {
                 postShootTask(minecraft, player, true);
             }
 
-            if (ClientProxy.rightDown.get() && ClientProxy.holdingGunOff.get() && ClientProxy.shouldHandleOff.get() && offHandPostDelay <= 0) {
+            if (ClientProxy.offHandStatus.buttonDown.get() && ClientProxy.offHandStatus.holdingGun.get() &&
+                    ClientProxy.offHandStatus.shouldHandle.get() && offHandPostDelay <= 0) {
                 postShootTask(minecraft, player, false);
             }
             handleCoolDown();
@@ -47,10 +49,10 @@ public class ClientTicker extends TimerTask {
             if (stack.getItem() instanceof IGenericGun) {
                 if (mainHand) {
                     minecraft.enqueue(ClientProxy::tryFireMain);
-                    mainHandPostDelay = ClientProxy.mainHandShootDelay.get();
+                    mainHandPostDelay = ClientProxy.mainHandStatus.shootDelay.get();
                 } else {
                     minecraft.enqueue(ClientProxy::tryFireOff);
-                    offHandPostDelay = ClientProxy.offHandShootDelay.get();
+                    offHandPostDelay = ClientProxy.offHandStatus.shootDelay.get();
                 }
             }
         }

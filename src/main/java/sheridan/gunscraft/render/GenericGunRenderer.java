@@ -13,18 +13,20 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.opengl.GL11;
 import sheridan.gunscraft.ClientProxy;
 import sheridan.gunscraft.Gunscraft;
-import sheridan.gunscraft.animation.IAnimation;
 import sheridan.gunscraft.animation.recoilAnimation.RecoilAnimationData;
 import sheridan.gunscraft.animation.recoilAnimation.RecoilAnimationHandler;
 import sheridan.gunscraft.animation.recoilAnimation.RecoilAnimationState;
 import sheridan.gunscraft.capability.CapabilityHandler;
+import sheridan.gunscraft.events.ClientTickEvents;
 import sheridan.gunscraft.events.PlayerEvents;
+import sheridan.gunscraft.events.RenderEvents;
 import sheridan.gunscraft.items.guns.IGenericGun;
 import sheridan.gunscraft.model.IGunModel;
 import sheridan.gunscraft.render.fx.muzzleFlash.CommonMuzzleFlash;
@@ -52,7 +54,7 @@ public class GenericGunRenderer implements IGunRender{
         if (model != null) {
             if (transformData != null) {
                 matrixStackIn.push();
-                transformData.applyTransform(transformTypeIn, matrixStackIn);
+                transformData.applyTransform(transformTypeIn, matrixStackIn, false, 0);
                 int fireMode = gun.getFireMode(itemStackIn);
                 model.render(matrixStackIn, bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(gun.getTexture(gun.getCurrentTextureIndex(itemStackIn)))),
                         transformTypeIn, combinedLightIn, combinedOverlayIn, 1, 1, 1, 1, 1,0, false, fireMode);
@@ -61,6 +63,9 @@ public class GenericGunRenderer implements IGunRender{
         }
     }
 
+    private float tempAimingPartial = 0;
+    private float prevAimingProgress = 0;
+    private float tempAimingProgress = 0;
     public void renderWithLivingEntity(LivingEntity entityIn, MatrixStack stackIn,
         ItemStack itemStackIn, ItemCameraTransforms.TransformType type, IRenderTypeBuffer bufferIn, IGenericGun gun,
         int combinedLightIn, int combinedOverlayIn, boolean leftHand, IGunModel model, TransformData transformData) {
@@ -74,14 +79,35 @@ public class GenericGunRenderer implements IGunRender{
         if (model != null) {
             if (transformData != null) {
                 stackIn.push();
-                transformData.applyTransform(type, stackIn);
+                boolean isFirstPerson = type.isFirstPerson();
+                boolean transAiming = entityIn instanceof PlayerEntity && !leftHand &&
+                        (ClientProxy.mainHandStatus.aiming || ClientProxy.mainHandStatus.aimingProgress != 0) && isFirstPerson;
+                float aimingProgress = ClientProxy.mainHandStatus.aimingProgress;
+                if (transAiming) {
+                    if (tempAimingProgress != aimingProgress) {
+                        tempAimingPartial = 0;
+                        prevAimingProgress = tempAimingProgress;
+                        tempAimingProgress = aimingProgress;
+                    } else {
+                        aimingProgress = MathHelper.lerp(tempAimingPartial / ClientTickEvents.clientDelta, prevAimingProgress, aimingProgress);
+                        aimingProgress = aimingProgress > 1 ? 1 : aimingProgress;
+                        // System.out.println(tempAimingPartial / 0.05f + " " + prevAimingProgress + " " + aimingProgress);
+                        tempAimingPartial += RenderEvents.delta;
+                    }
+                } else {
+                    tempAimingPartial = 0;
+                    prevAimingProgress = 0;
+                    tempAimingProgress = 0;
+                }
+
+                transformData.applyTransform(type, stackIn, transAiming, aimingProgress);
                 RecoilAnimationData recoilAnimationData = transformData.getRecoilAnimationData();
                 int fireMode = gun.getFireMode(itemStackIn);
 
-                if (type.isFirstPerson()) {
+                if (isFirstPerson) {
                     applyFOV();
-                    long lastShootTime = leftHand ? ClientProxy.FPLLastShoot : ClientProxy.FPRLastShoot;
-                    stackIn.push();
+                    long lastShootTime = leftHand ? ClientProxy.offHandStatus.lastShoot : ClientProxy.mainHandStatus.lastShoot;
+
                     if (entityIn instanceof PlayerEntity) {
                         if (recoilAnimationData != null) {
                             RecoilAnimationHandler.update(recoilAnimationData, stackIn, !leftHand);
@@ -92,13 +118,13 @@ public class GenericGunRenderer implements IGunRender{
 
                     model.render(stackIn, bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(gun.getTexture(gun.getCurrentTextureIndex(itemStackIn)))),
                             type, combinedLightIn, combinedOverlayIn, 1, 1, 1, 1, 1, lastShootTime, !leftHand, fireMode);
-                    stackIn.pop();
+
                     renderMuzzleFlash(gun, itemStackIn, transformData, lastShootTime, bufferIn, stackIn);
 
                 } else {
                     long lastShoot;
                     if (entityIn.getEntityId() == ClientProxy.clientPlayerId) {
-                        lastShoot = leftHand ? ClientProxy.FPLLastShoot : ClientProxy.FPRLastShoot;
+                        lastShoot = leftHand ? ClientProxy.offHandStatus.lastShoot : ClientProxy.mainHandStatus.lastShoot;
                         if (RecoilAnimationHandler.getIsEnable(true) || RecoilAnimationHandler.getIsEnable(false)) {
                             RecoilAnimationHandler.clearAll();
                         }

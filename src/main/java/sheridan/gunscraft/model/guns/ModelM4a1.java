@@ -8,6 +8,8 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.entity.Entity;
+import sheridan.gunscraft.animation.CommonAnimations;
+import sheridan.gunscraft.animation.IAnimation;
 import sheridan.gunscraft.model.IGunModel;
 import sheridan.gunscraft.model.ModelRenderer;
 
@@ -141,10 +143,14 @@ public class ModelM4a1 extends EntityModel<Entity> implements IGunModel {
     private final ModelRenderer blotRelease;
     private final ModelRenderer cube_r117;
     private final ModelRenderer cube_r118;
-    private final ModelRenderer bb_main;
+    private final ModelRenderer blot;
     private final ModelRenderer blot_r1;
 
+    public static IAnimation slideRecoil;
+
     public ModelM4a1() {
+        slideRecoil = CommonAnimations.createSingleAxisBlotBack(0.22f, 3.0f);
+
         textureWidth = 620;
         textureHeight = 620;
 
@@ -969,13 +975,13 @@ public class ModelM4a1 extends EntityModel<Entity> implements IGunModel {
         setRotationAngle(cube_r118, 0.0F, 0.0F, 0.0873F);
         cube_r118.setTextureOffset(36, 0).addBox(-1.0F, -4.048F, -1.0F, 1.0F, 4.0F, 3.0F, 0.0F, false, true, true, true, true, true, false);
 
-        bb_main = new ModelRenderer(this);
-        bb_main.setRotationPoint(0.0F, 24.0F, 0.0F);
+        blot = new ModelRenderer(this);
+        blot.setRotationPoint(0.0F, 24.0F, 0.0F);
 
 
         blot_r1 = new ModelRenderer(this);
         blot_r1.setRotationPoint(-2.1553F, 20.3126F, 84.0F);
-        bb_main.addChild(blot_r1);
+        blot.addChild(blot_r1);
         setRotationAngle(blot_r1, 0.0F, 0.0F, 0.7854F);
         blot_r1.setTextureOffset(211, 137).addBox(-3.0F, -6.048F, 0.0F, 6.0F, 6.0F, 28.0F, 0.0F, false, false, false, false, true, false, true);
 
@@ -1010,6 +1016,10 @@ public class ModelM4a1 extends EntityModel<Entity> implements IGunModel {
         grip.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         safety.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         blotRelease.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        bb_main.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        //bb_main.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        matrixStack.push();
+        slideRecoil.play(lastFireTime, matrixStack, transformType);
+        blot.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        matrixStack.pop();
     }
 }

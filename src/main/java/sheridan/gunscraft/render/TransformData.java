@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
+import sheridan.gunscraft.ClientProxy;
 import sheridan.gunscraft.animation.IAnimation;
 import sheridan.gunscraft.animation.recoilAnimation.RecoilAnimationData;
 import sheridan.gunscraft.render.fx.muzzleFlash.MuzzleFlashTrans;
@@ -23,6 +24,7 @@ public class TransformData {
     public float[][] FrameTrans;
     public float[][] GroundTrans;
     public float[][][] FPHandPoseTrans;
+    public float[] aimingTrans;
     public MuzzleFlashFransEntry muzzleFlashTransEntry = new MuzzleFlashFransEntry();
     public RecoilAnimationData recoilAnimationData;
 
@@ -37,6 +39,11 @@ public class TransformData {
 
     public TransformData registerMuzzleFlash(String name, TransPair pair) {
         this.muzzleFlashTransEntry.register(name, pair);
+        return this;
+    }
+
+    public TransformData setAimingTrans(float[] trans) {
+        this.aimingTrans = trans;
         return this;
     }
 
@@ -161,12 +168,19 @@ public class TransformData {
         model.showModel = true;
     }
 
-    public void applyTransform(ItemCameraTransforms.TransformType type, MatrixStack stackIn) {
+    public void applyTransform(ItemCameraTransforms.TransformType type, MatrixStack stackIn, boolean transAiming, float aimingProgress) {
         stackIn.scale(BASE_SIZE,BASE_SIZE,BASE_SIZE);
         stackIn.rotate(Vector3f.ZP.rotationDegrees(180f));
         switch (type) {
             case FIRST_PERSON_RIGHT_HAND:
-                stackIn.translate(FPTrans[0][0][0], FPTrans[0][0][1], FPTrans[0][0][2]);
+                if (transAiming) {
+                    aimingProgress = aimingProgress > 1 ? 1 : aimingProgress;
+                    stackIn.translate(FPTrans[0][0][0] + aimingTrans[0] * aimingProgress,
+                            FPTrans[0][0][1] + aimingTrans[1] * aimingProgress,
+                            FPTrans[0][0][2] + aimingTrans[2] * aimingProgress);
+                } else {
+                    stackIn.translate(FPTrans[0][0][0] + ClientProxy.debugX, FPTrans[0][0][1] + ClientProxy.debugY, FPTrans[0][0][2] + ClientProxy.debugZ);
+                }
                 stackIn.rotate(new Quaternion(FPTrans[0][1][0], FPTrans[0][1][1], FPTrans[0][1][2], true));
                 stackIn.scale(FPTrans[0][2][0], FPTrans[0][2][1], FPTrans[0][2][2]);
                 break;

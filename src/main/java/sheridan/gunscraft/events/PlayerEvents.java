@@ -79,13 +79,13 @@ public class PlayerEvents {
             maxSpread *= CROUCHING_SPREAD_FACTOR;
         }
         if (entity.moveForward != 0 || entity.moveStrafing != 0 || entity.moveVertical != 0) {
-            minSpread *= 1.2f;
-            maxSpread *= 1.2f;
+            minSpread *= 1.4f;
+            maxSpread *= 1.4f;
         }
         float fallFactor = entity.fallDistance < 10 ? entity.fallDistance * 0.15f : 1.5f;
         if (entity.jumpMovementFactor > 0.02f) {
-            minSpread *= 1.25f;
-            maxSpread *= 1.25f;
+            minSpread *= 1.5f;
+            maxSpread *= 1.5f;
         }
         minSpread += fallFactor;
         maxSpread += fallFactor;
@@ -96,12 +96,14 @@ public class PlayerEvents {
     public static void updateClientHoldingGun(ItemStack stackMain, ItemStack stackOff) {
         boolean isGunMain = stackMain.getItem() instanceof IGenericGun;
         boolean isGunOff = stackOff.getItem() instanceof IGenericGun;
-        ClientProxy.holdingGunMain.set(isGunMain);
+        ClientProxy.mainHandStatus.holdingGun.set(isGunMain);
         if (isGunMain) {
             IGenericGun gunMain = (IGenericGun) stackMain.getItem();
-            ClientProxy.shouldHandleMain.set(gunMain.getAmmoLeft(stackMain) - 1 >= 0);
+            ClientProxy.mainHandStatus.shouldHandle.set(gunMain.getAmmoLeft(stackMain) - 1 >= 0);
+            ClientProxy.mainHandStatus.aimingSpeed = gunMain.getAimingSpeed(stackMain);
         } else {
-            ClientProxy.shouldHandleMain.set(false);
+            ClientProxy.mainHandStatus.shouldHandle.set(false);
+            ClientProxy.mainHandStatus.aiming = false;
         }
         if (isGunOff) {
             IGenericGun gunOff = (IGenericGun) stackOff.getItem();
@@ -117,24 +119,24 @@ public class PlayerEvents {
         }
         if (isGunOff) {
             IGenericGun gunOff = (IGenericGun) stackOff.getItem();
-            ClientProxy.shouldHandleOff.set(gunOff.getAmmoLeft(stackOff) -1 >= 0);
+            ClientProxy.offHandStatus.shouldHandle.set(gunOff.getAmmoLeft(stackOff) -1 >= 0);
         } else {
-            ClientProxy.shouldHandleOff.set(false);
+            ClientProxy.offHandStatus.shouldHandle.set(false);
         }
-        ClientProxy.holdingGunOff.set(isGunOff);
+        ClientProxy.offHandStatus.holdingGun.set(isGunOff);
     }
 
     private static void updateClientFireDelay(ItemStack stackMain, ItemStack stackOff) {
         if (stackMain.getItem() instanceof IGenericGun) {
             IGenericGun gunMain = (IGenericGun) stackMain.getItem();
             int fireDelayMain = gunMain.getShootDelay();
-            ClientProxy.mainHandShootDelay.set(fireDelayMain);
+            ClientProxy.mainHandStatus.shootDelay.set(fireDelayMain);
         }
 
         if (stackOff.getItem() instanceof IGenericGun) {
             IGenericGun gunOff = (IGenericGun) stackOff.getItem();
             int fireDelayOff = gunOff.getShootDelay();
-            ClientProxy.offHandShootDelay.set(fireDelayOff);
+            ClientProxy.offHandStatus.shootDelay.set(fireDelayOff);
         }
     }
 
