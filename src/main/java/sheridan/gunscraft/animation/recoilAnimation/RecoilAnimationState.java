@@ -12,7 +12,6 @@ public class RecoilAnimationState {
     public static final float Z_SPEED_FACTOR = 1.85f;
     public static final float RANDOM_FACTOR = 0.2f;
     public RecoilAnimationData data;
-    public Random random = new Random();
     public boolean isMainHand;
     public boolean enable = false;
     private long lastTickTime = 0;
