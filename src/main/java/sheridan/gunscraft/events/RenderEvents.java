@@ -100,6 +100,7 @@ public class RenderEvents {
                     renderer.drawString(matrixStackIn, s2,-renderer.getStringWidth(s2),0,color);
                     matrixStackIn.pop();
                 }
+
             }
         }
     }

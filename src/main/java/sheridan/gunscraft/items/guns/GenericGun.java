@@ -104,8 +104,10 @@ public class GenericGun extends BaseItem implements IGenericGun{
         }
         int reloadTick = ClientTickEvents.reloadingHandler.getReloadTimer();
         if (reloadTick > 0) {
+            //System.out.println("aaa " + reloadTick + " " + Thread.currentThread().getName());
             return true;
         }
+        //System.out.println("bbb" + " " + Thread.currentThread().getName());
         if (mainHandStack == newStack) {
             return ClientProxy.equipDuration > 0;
         }

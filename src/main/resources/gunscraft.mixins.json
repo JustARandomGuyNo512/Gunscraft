@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "gunscraft.refmap.json",
   "mixins": [
+    "FirstPersonRendererMixin"
   ],
   "client": [
     "BipedModelMixin",

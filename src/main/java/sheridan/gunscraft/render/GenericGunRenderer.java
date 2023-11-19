@@ -91,7 +91,6 @@ public class GenericGunRenderer implements IGunRender{
                     } else {
                         aimingProgress = MathHelper.lerp(tempAimingPartial / ClientTickEvents.clientDelta, prevAimingProgress, aimingProgress);
                         aimingProgress = aimingProgress > 1 ? 1 : aimingProgress;
-                        // System.out.println(tempAimingPartial / 0.05f + " " + prevAimingProgress + " " + aimingProgress);
                         tempAimingPartial += RenderEvents.delta;
                     }
                 } else {

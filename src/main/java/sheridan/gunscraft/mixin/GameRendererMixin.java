@@ -29,9 +29,9 @@ public class GameRendererMixin {
             if (ClientProxy.offHandStatus.holdingGun.get() || ClientProxy.mainHandStatus.holdingGun.get()) {
                 ci.cancel();
                 if (player.jumpMovementFactor > 0.02f) {
-                    applyBobbing(matrixStackIn, player, partialTicks, 0.9f);
+                    applyBobbing(matrixStackIn, player, partialTicks, 1f);
                 } else {
-                    applyBobbing(matrixStackIn, player, partialTicks, 0.525f);
+                    applyBobbing(matrixStackIn, player, partialTicks, 0.5f);
                 }
             }
         }

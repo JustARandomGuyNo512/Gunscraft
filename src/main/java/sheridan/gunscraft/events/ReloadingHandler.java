@@ -5,11 +5,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import sheridan.gunscraft.ClientProxy;
 import sheridan.gunscraft.items.guns.IGenericGun;
 import sheridan.gunscraft.network.PacketHandler;
 import sheridan.gunscraft.network.packets.ReloadGunPacket;
 
-@OnlyIn(Dist.CLIENT)
 public class ReloadingHandler {
     private ItemStack lastTickMainStack;
     private ItemStack lastTickOffStack;
@@ -46,7 +46,7 @@ public class ReloadingHandler {
             return;
         }
          PlayerEntity player = Minecraft.getInstance().player;
-         if (player != null) {
+         if (player != null && player.getEntityId() == ClientProxy.clientPlayerId) {
              // System.out.println(reloadTimerMain + reloadTimerOff);
              ItemStack stackMain = player.getHeldItemMainhand();
              ItemStack stackOff = player.getHeldItemOffhand();
