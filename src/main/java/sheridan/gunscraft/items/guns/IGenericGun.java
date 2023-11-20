@@ -8,16 +8,10 @@ import net.minecraft.util.ResourceLocation;
 public interface IGenericGun {
     ResourceLocation getTexture(int index);
     int getCurrentTextureIndex(ItemStack stack);
-
     boolean preShoot(ItemStack stack, LivingEntity entity, boolean mainHand);
-
     void shoot(ItemStack stack, LivingEntity entity, boolean mainHand, float spread);
-
     boolean preReload(ItemStack stack, LivingEntity entity, boolean mainHand);
-
-
     void reload(ItemStack stack, LivingEntity entity, boolean mainHand);
-
     boolean canHoldInOneHand();
     int getMagSize(ItemStack stack);
     int getAmmoLeft(ItemStack stack);
@@ -34,4 +28,7 @@ public interface IGenericGun {
     String getMuzzleFlashState(ItemStack stack);
     int getBurstCount();
     float getAimingSpeed(ItemStack stack);
+    float getRecoilUp(ItemStack stack);
+    float getRecoilRandom(ItemStack stack);
+    float getRecoilDec(ItemStack stack);
 }

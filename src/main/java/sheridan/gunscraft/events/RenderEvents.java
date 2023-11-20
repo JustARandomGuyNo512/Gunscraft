@@ -12,6 +12,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import sheridan.gunscraft.ClientProxy;
+import sheridan.gunscraft.animation.recoilAnimation.RecoilCameraHandler;
 import sheridan.gunscraft.items.guns.GenericGun;
 import sheridan.gunscraft.items.guns.IGenericGun;
 import sheridan.gunscraft.render.crosshairs.BasicCrossHairRenderer;
@@ -24,6 +25,7 @@ public class RenderEvents {
     public static float particularTick = 0;
     private static long lastTickTime = -1;
     private static final BasicCrossHairRenderer renderer = new BasicCrossHairRenderer();
+    public static RecoilCameraHandler cameraHandler = new RecoilCameraHandler();
 
     @SubscribeEvent
     public static void onRenderTick(TickEvent.RenderTickEvent event) {
@@ -36,6 +38,9 @@ public class RenderEvents {
             int dis = (int) (System.currentTimeMillis() - lastTickTime);
             lastTickTime = System.currentTimeMillis();
             delta = (float) dis * 0.001f;
+            if (!cameraHandler.inModify.get()) {
+                cameraHandler.handle(delta);
+            }
         }
     }
 

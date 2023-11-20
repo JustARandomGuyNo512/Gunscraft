@@ -47,7 +47,7 @@ public abstract class FirstPersonRendererMixin {
     @Accessor("itemStackOffHand")
     abstract void setItemStackOffHand(ItemStack itemStackOffHand);
 
-    //basically a copy of "tick" method, for handling gun's equip duration
+    //Basically a copy of "tick" method, for handling gun's equip duration
     @Inject(at = @At("HEAD"), method = "tick", cancellable = true)
     private void gunEquipProgressHandler(CallbackInfo ci) {
         ClientPlayerEntity clientplayerentity = Minecraft.getInstance().player;

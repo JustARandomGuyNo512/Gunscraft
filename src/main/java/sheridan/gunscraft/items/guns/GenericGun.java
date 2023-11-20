@@ -9,10 +9,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import sheridan.gunscraft.ClientProxy;
 import sheridan.gunscraft.animation.recoilAnimation.RecoilAnimationHandler;
+import sheridan.gunscraft.animation.recoilAnimation.RecoilCameraHandler;
 import sheridan.gunscraft.capability.CapabilityHandler;
 import sheridan.gunscraft.entities.EntityRegister;
 import sheridan.gunscraft.entities.projectile.GenericProjectile;
 import sheridan.gunscraft.events.ClientTickEvents;
+import sheridan.gunscraft.events.RenderEvents;
 import sheridan.gunscraft.items.BaseItem;
 import sheridan.gunscraft.render.GenericGunRenderer;
 import sheridan.gunscraft.render.TransformData;
@@ -52,13 +54,16 @@ public class GenericGun extends BaseItem implements IGenericGun{
     public int reloadLength;
     public int burstCount;
     public float aimingSpeed;
+    public float recoilUp;
+    public float recoilRandom;
+    public float recoilDec;
 
     public GenericGun(Properties properties, int baseMagSize,boolean canHoldInOneHand,
                       ResourceLocation[] textures, int[] fireModes,
                       float baseSpread, float maxSpread, float spreadPreShoot, float bulletSpeed,
                       float baseDamage, float minDamage, int bulletLifeLength, int shootDelay, String normalFireSound,
                       float[] soundArgs, boolean isFreeBlot, boolean isPistol, int reloadLength, int burstCount,
-                      float aimingSpeed) {
+                      float aimingSpeed, float recoilUp, float recoilRandom, float recoilDec) {
         super(properties);
         this.baseMagSize = baseMagSize;
         this.textures = textures;
@@ -79,6 +84,9 @@ public class GenericGun extends BaseItem implements IGenericGun{
         this.reloadLength = reloadLength;
         this.burstCount = burstCount;
         this.aimingSpeed = aimingSpeed;
+        this.recoilUp = recoilUp;
+        this.recoilRandom = recoilRandom;
+        this.recoilDec = recoilDec;
     }
 
     public static String getFireModeStr(int key) {
@@ -104,10 +112,8 @@ public class GenericGun extends BaseItem implements IGenericGun{
         }
         int reloadTick = ClientTickEvents.reloadingHandler.getReloadTimer();
         if (reloadTick > 0) {
-            //System.out.println("aaa " + reloadTick + " " + Thread.currentThread().getName());
             return true;
         }
-        //System.out.println("bbb" + " " + Thread.currentThread().getName());
         if (mainHandStack == newStack) {
             return ClientProxy.equipDuration > 0;
         }
@@ -119,6 +125,11 @@ public class GenericGun extends BaseItem implements IGenericGun{
         return 0;
     }
 
+    protected int randomIndex() {
+        return Math.random() <= 0.5 ? 1 : -1;
+    }
+
+    //do logic in client side
     @Override
     public boolean preShoot(ItemStack stack, LivingEntity entity, boolean mainHand) {
         int ammoLeft = getAmmoLeft(stack);
@@ -134,7 +145,11 @@ public class GenericGun extends BaseItem implements IGenericGun{
                 CapabilityHandler.instance().set((PlayerEntity) entity, ClientProxy.LAST_SHOOT_LEFT, now);
                 ClientProxy.offHandStatus.lastShoot = now;
             }
-            RecoilAnimationHandler.onShoot(now, transformData.getRecoilAnimationData(), mainHand);
+            int direction = randomIndex();
+            RecoilAnimationHandler.onShoot(now, transformData.getRecoilAnimationData(), mainHand, direction);
+            RenderEvents.cameraHandler.inModify.set(true);
+            RenderEvents.cameraHandler.onShoot(getRecoilUp(stack), getRecoilRandom(stack), direction);
+            RenderEvents.cameraHandler.inModify.set(false);
             int fireMode = getFireMode(stack);
             if (fireMode == SEMI) {
                 if (mainHand) {
@@ -294,6 +309,24 @@ public class GenericGun extends BaseItem implements IGenericGun{
         return nbt.contains("aiming_speed") ? nbt.getFloat("aiming_speed") : 0;
     }
 
+    @Override
+    public float getRecoilUp(ItemStack stack) {
+        CompoundNBT nbt = checkAndGet(stack);
+        return nbt.contains("recoil_up") ? nbt.getFloat("recoil_up") : 0f;
+    }
+
+    @Override
+    public float getRecoilRandom(ItemStack stack) {
+        CompoundNBT nbt = checkAndGet(stack);
+        return nbt.contains("recoil_random") ? nbt.getFloat("recoil_random") : 0f;
+    }
+
+    @Override
+    public float getRecoilDec(ItemStack stack) {
+        CompoundNBT nbt = checkAndGet(stack);
+        return nbt.contains("recoil_dec") ? nbt.getFloat("recoil_dec") : 0f;
+    }
+
     private CompoundNBT checkAndGet(ItemStack stack) {
         CompoundNBT nbt = stack.getTag();
         if (nbt == null) {
@@ -317,6 +350,9 @@ public class GenericGun extends BaseItem implements IGenericGun{
         nbt.putInt("base_reload_length", this.reloadLength);
         nbt.putString("muzzle_flash_state", "normal");
         nbt.putFloat("aiming_speed", this.aimingSpeed);
+        nbt.putFloat("recoil_up", this.recoilUp);
+        nbt.putFloat("recoil_random", this.recoilRandom);
+        nbt.putFloat("recoil_dec", this.recoilDec);
         stack.setTag(nbt);
     }
 }

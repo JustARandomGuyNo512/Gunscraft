@@ -13,6 +13,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.FMLConnectionData;
 import sheridan.gunscraft.ClientProxy;
 import sheridan.gunscraft.animation.recoilAnimation.RecoilAnimationHandler;
+import sheridan.gunscraft.animation.recoilAnimation.RecoilCameraHandler;
 import sheridan.gunscraft.items.guns.IGenericGun;
 import sheridan.gunscraft.render.GenericGunRenderer;
 
@@ -97,33 +98,53 @@ public class PlayerEvents {
         boolean isGunMain = stackMain.getItem() instanceof IGenericGun;
         boolean isGunOff = stackOff.getItem() instanceof IGenericGun;
         ClientProxy.mainHandStatus.holdingGun.set(isGunMain);
+        IGenericGun gunMain = null;
+        IGenericGun gunOff = null;
         if (isGunMain) {
-            IGenericGun gunMain = (IGenericGun) stackMain.getItem();
+            gunMain = (IGenericGun) stackMain.getItem();
             ClientProxy.mainHandStatus.shouldHandle.set(gunMain.getAmmoLeft(stackMain) - 1 >= 0);
             ClientProxy.mainHandStatus.aimingSpeed = gunMain.getAimingSpeed(stackMain);
+            ClientProxy.mainHandStatus.isPistol = gunMain.isPistol();
         } else {
             ClientProxy.mainHandStatus.shouldHandle.set(false);
             ClientProxy.mainHandStatus.aiming = false;
+            //RenderEvents.cameraHandler.clear();
         }
         if (isGunOff) {
-            IGenericGun gunOff = (IGenericGun) stackOff.getItem();
+            gunOff = (IGenericGun) stackOff.getItem();
             if (!gunOff.canHoldInOneHand()) {
                 isGunOff = false;
             }
         }
         if (isGunOff && isGunMain) {
-            IGenericGun gunMain = (IGenericGun) stackMain.getItem();
+            gunMain = (IGenericGun) stackMain.getItem();
             if (!gunMain.canHoldInOneHand()) {
                 isGunOff = false;
             }
         }
         if (isGunOff) {
-            IGenericGun gunOff = (IGenericGun) stackOff.getItem();
+            gunOff = (IGenericGun) stackOff.getItem();
             ClientProxy.offHandStatus.shouldHandle.set(gunOff.getAmmoLeft(stackOff) -1 >= 0);
+            ClientProxy.offHandStatus.isPistol = gunOff.isPistol();
         } else {
             ClientProxy.offHandStatus.shouldHandle.set(false);
+
         }
         ClientProxy.offHandStatus.holdingGun.set(isGunOff);
+        updateRecoil(gunMain, stackMain, stackOff, isGunMain, isGunOff);
+    }
+
+    private static void updateRecoil(IGenericGun gun, ItemStack stack, ItemStack stackOff, boolean holdingGunMain, boolean holdingGunOff) {
+        RecoilCameraHandler handler = RenderEvents.cameraHandler;
+        if (holdingGunMain || holdingGunOff) {
+           if (holdingGunMain) {
+               handler.speedDec = gun.getRecoilDec(stack);
+           } else {
+               handler.speedDec = gun.getRecoilDec(stackOff);
+           }
+            return;
+        }
+        handler.clear();
     }
 
     private static void updateClientFireDelay(ItemStack stackMain, ItemStack stackOff) {

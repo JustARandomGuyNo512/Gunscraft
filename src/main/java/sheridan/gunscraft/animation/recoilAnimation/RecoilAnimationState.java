@@ -31,6 +31,8 @@ public class RecoilAnimationState {
     private float randomRXSpeed = 0;
     private float randomRYSpeed = 0;
 
+    public IRecoilAnimationProxy proxy;
+
     public void update(RecoilAnimationData data, MatrixStack matrixStack) {
         if (!enable || lastTickTime == 0 || data == null) {
             return;
@@ -44,8 +46,11 @@ public class RecoilAnimationState {
             clearAndDisable();
             return;
         }
-        float timeDis = dis * data.timeSpeed;
 
+        float timeDis = dis * data.timeSpeed;
+        if (proxy != null) {
+            proxy.beforeUpdate(timeDis);
+        }
         float r1 = rotateUp / data.maxRotateUp;
         rotateUpSpeed -=  (r1) * data.rotateDesc * timeDis;
         rotateUpSpeed *= (1 - data.rotateAttenuation * timeDis);
@@ -85,21 +90,64 @@ public class RecoilAnimationState {
         matrixStack.rotate(new Quaternion(randomRX, randomRY, 0, true));
     }
 
-    public int randomIndex() {
-        return Math.random() <= 0.5 ? 1 : -1;
+
+    public float getMoveUpSpeed() {
+        return moveUpSpeed;
     }
 
-    public void onShoot(long lastFireTime, RecoilAnimationData data) {
+    public void setMoveUpSpeed(float moveUpSpeed) {
+        this.moveUpSpeed = moveUpSpeed;
+    }
+
+    public float getMoveBackSpeed() {
+        return moveBackSpeed;
+    }
+
+    public void setMoveBackSpeed(float moveBackSpeed) {
+        this.moveBackSpeed = moveBackSpeed;
+    }
+
+    public float getRotateUpSpeed() {
+        return rotateUpSpeed;
+    }
+
+    public void setRotateUpSpeed(float rotateUpSpeed) {
+        this.rotateUpSpeed = rotateUpSpeed;
+    }
+
+    public float getRandomRXSpeed() {
+        return randomRXSpeed;
+    }
+
+    public void setRandomRXSpeed(float randomRXSpeed) {
+        this.randomRXSpeed = randomRXSpeed;
+    }
+
+    public float getRandomRYSpeed() {
+        return randomRYSpeed;
+    }
+
+    public void setRandomRYSpeed(float randomRYSpeed) {
+        this.randomRYSpeed = randomRYSpeed;
+    }
+
+    public void onShoot(long lastFireTime, RecoilAnimationData data, int direction) {
         if (data != null) {
+            if (this.proxy != null) {
+                proxy.beforeShoot(lastFireTime, data, this);
+            }
             startTime = lastFireTime;
             lastTickTime = lastFireTime;
             enable = true;
             rotateUpSpeed += data.rotateUp;
             moveBackSpeed += data.moveBack;
             moveUpSpeed += data.moveUp;
-            randomRXSpeed += data.random * randomIndex();
-            randomRYSpeed += data.random * randomIndex();
+            randomRXSpeed += data.random * direction;
+            randomRYSpeed += data.random * direction;
             this.data = data;
+            if (this.proxy != null) {
+                proxy.afterShoot(lastFireTime, data, this);
+            }
         } else {
             clear();
             enable = false;

@@ -15,20 +15,21 @@ public class ClientStatus {
     public int fireCount = 0;
     public volatile long lastShoot;
     public boolean hand;
+    public boolean isPistol;
 
     public ClientStatus(boolean hand) {
         this.hand = hand;
     }
 
-    public void handleAiming() {
+    public void handleAiming(float timeDis) {
         if (hand) {
             if (aiming) {
-                aimingProgress += aimingSpeed;
+                aimingProgress += aimingSpeed * timeDis;
                 if (aimingProgress > 1) {
                     aimingProgress = 1;
                 }
             } else {
-                aimingProgress -= 0.2f;
+                aimingProgress -= aimingSpeed * 2f * timeDis;
                 if (aimingProgress < 0) {
                     aimingProgress = 0;
                 }

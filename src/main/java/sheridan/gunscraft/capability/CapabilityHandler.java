@@ -5,13 +5,14 @@
 
 package sheridan.gunscraft.capability;
 
-import com.google.common.collect.ImmutableList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;

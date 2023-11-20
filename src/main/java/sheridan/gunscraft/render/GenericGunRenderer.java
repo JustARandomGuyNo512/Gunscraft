@@ -38,15 +38,13 @@ public class GenericGunRenderer implements IGunRender{
     private static final Matrix4f DEFAULT_FIRST_PERSON_FOV_MATRIX;
     public static final float DEFAULT_FIRST_PERSON_FOV = 56.75f;
 
-    public static RecoilAnimationState recoilAnimationState;
-    //public static RecoilAnimationData recoilAnimationData;
-
     static {
         DEFAULT_FIRST_PERSON_FOV_MATRIX = new Matrix4f();
         DEFAULT_FIRST_PERSON_FOV_MATRIX.setIdentity();
         Minecraft minecraft = Minecraft.getInstance();
-        DEFAULT_FIRST_PERSON_FOV_MATRIX.mul(Matrix4f.perspective(DEFAULT_FIRST_PERSON_FOV, (float) minecraft.getMainWindow().getFramebufferWidth() / (float) minecraft.getMainWindow().getFramebufferHeight(), 0.05F, (float) minecraft.gameSettings.renderDistanceChunks * 64F));
-
+        DEFAULT_FIRST_PERSON_FOV_MATRIX.mul(Matrix4f.perspective(DEFAULT_FIRST_PERSON_FOV,
+                (float) minecraft.getMainWindow().getFramebufferWidth() / (float) minecraft.getMainWindow().getFramebufferHeight(),
+                0.05F, (float) minecraft.gameSettings.renderDistanceChunks * 64F));
     }
 
     public void justRenderModel(ItemStack itemStackIn, ItemCameraTransforms.TransformType transformTypeIn,
@@ -63,9 +61,7 @@ public class GenericGunRenderer implements IGunRender{
         }
     }
 
-    private float tempAimingPartial = 0;
-    private float prevAimingProgress = 0;
-    private float tempAimingProgress = 0;
+
     public void renderWithLivingEntity(LivingEntity entityIn, MatrixStack stackIn,
         ItemStack itemStackIn, ItemCameraTransforms.TransformType type, IRenderTypeBuffer bufferIn, IGenericGun gun,
         int combinedLightIn, int combinedOverlayIn, boolean leftHand, IGunModel model, TransformData transformData) {
@@ -79,26 +75,11 @@ public class GenericGunRenderer implements IGunRender{
         if (model != null) {
             if (transformData != null) {
                 stackIn.push();
+                ClientProxy.mainHandStatus.handleAiming(RenderEvents.delta);
                 boolean isFirstPerson = type.isFirstPerson();
                 boolean transAiming = entityIn instanceof PlayerEntity && !leftHand &&
                         (ClientProxy.mainHandStatus.aiming || ClientProxy.mainHandStatus.aimingProgress != 0) && isFirstPerson;
                 float aimingProgress = ClientProxy.mainHandStatus.aimingProgress;
-                if (transAiming) {
-                    if (tempAimingProgress != aimingProgress) {
-                        tempAimingPartial = 0;
-                        prevAimingProgress = tempAimingProgress;
-                        tempAimingProgress = aimingProgress;
-                    } else {
-                        aimingProgress = MathHelper.lerp(tempAimingPartial / ClientTickEvents.clientDelta, prevAimingProgress, aimingProgress);
-                        aimingProgress = aimingProgress > 1 ? 1 : aimingProgress;
-                        tempAimingPartial += RenderEvents.delta;
-                    }
-                } else {
-                    tempAimingPartial = 0;
-                    prevAimingProgress = 0;
-                    tempAimingProgress = 0;
-                }
-
                 transformData.applyTransform(type, stackIn, transAiming, aimingProgress);
                 RecoilAnimationData recoilAnimationData = transformData.getRecoilAnimationData();
                 int fireMode = gun.getFireMode(itemStackIn);

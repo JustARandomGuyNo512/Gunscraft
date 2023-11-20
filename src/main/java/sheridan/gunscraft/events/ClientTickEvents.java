@@ -37,7 +37,6 @@ public class ClientTickEvents {
         if (reloadingHandler != null) {
             reloadingHandler.tick();
         }
-        ClientProxy.mainHandStatus.handleAiming();
         if (event.phase == TickEvent.Phase.END) {
             if (lastTick == 0) {
                 lastTick = System.currentTimeMillis();

@@ -17,21 +17,45 @@ public class RecoilAnimationHandler {
 
         stateOff = new RecoilAnimationState();
         stateOff.isMainHand = true;
+
+        stateMain.proxy = new IRecoilAnimationProxy() {
+            @Override
+            public void afterShoot(long lastFireTime, RecoilAnimationData data, RecoilAnimationState state) {
+                if (ClientProxy.mainHandStatus.aiming) {
+                    if (ClientProxy.mainHandStatus.isPistol) {
+                        float back = state.getMoveBackSpeed() * 0.7f;
+                        state.setMoveBackSpeed(Math.min(0.5f, back));
+                        return;
+                    }
+                    float rotateUp = state.getRotateUpSpeed() * 0.3f;
+                    float rx = state.getRandomRXSpeed() * 0.25f;
+                    float ry = state.getRandomRYSpeed() * 0.25f;
+                    float back = state.getMoveBackSpeed() * 0.55f;
+                    float moveUp = state.getMoveUpSpeed() * 0.15f;
+                    state.setRotateUpSpeed(Math.min(0.2f, rotateUp));
+                    state.setRandomRXSpeed(Math.min(rx, 0.15f));
+                    state.setRandomRYSpeed(Math.min(ry, 0.15f));
+                    state.setMoveBackSpeed(Math.min(0.375f, back));
+                    state.setMoveUpSpeed(Math.min(0.0275f, moveUp));
+                }
+            }
+        };
     }
 
     public static void update(RecoilAnimationData data, MatrixStack matrixStack, boolean isMainHand) {
         if (isMainHand) {
             stateMain.update(data, matrixStack);
+
         } else {
             stateOff.update(data, matrixStack);
         }
     }
 
-    public static void onShoot(long lastFireTime, RecoilAnimationData data, boolean isMainHand) {
+    public static void onShoot(long lastFireTime, RecoilAnimationData data, boolean isMainHand, int direction) {
         if (isMainHand) {
-            stateMain.onShoot(lastFireTime, data);
+            stateMain.onShoot(lastFireTime, data, direction);
         } else {
-            stateOff.onShoot(lastFireTime, data);
+            stateOff.onShoot(lastFireTime, data, direction);
         }
     }
 

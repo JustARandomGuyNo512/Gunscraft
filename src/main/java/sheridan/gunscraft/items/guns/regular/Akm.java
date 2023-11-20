@@ -11,7 +11,7 @@ public class Akm extends GenericGun {
                 new ResourceLocation[]{new ResourceLocation("gunscraft","textures/guns/akm/akm_basic.png")},
                 new int[] {SEMI, AUTO}, 0.95f, 2.5f, 1.5f, 7.2f, 14f,
                 8f, 30, 12, "item.akm.fire", new float[] {0.6f, 1f, 1f, 1f},
-                false,false,4 * 20, 1, 0.1f);
+                false,false,4 * 20, 1, 3.2f,4.5f,2f, 1f);
 
     }
 
