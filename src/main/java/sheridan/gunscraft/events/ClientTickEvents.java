@@ -26,10 +26,10 @@ public class ClientTickEvents {
         }
         if (ClientProxy.bulletSpread > ClientProxy.maxBulletSpread) {
             ClientProxy.bulletSpread = ClientProxy.maxBulletSpread;
-        } else if (ClientProxy.bulletSpread < ClientProxy.minBulletSpread + 0.1f) {
+        }
+        ClientProxy.addSpread(-0.1f);
+        if (ClientProxy.bulletSpread < ClientProxy.minBulletSpread) {
             ClientProxy.bulletSpread = ClientProxy.minBulletSpread;
-        } else {
-            ClientProxy.addSpread(-0.1f);
         }
         if (ClientProxy.equipDuration > 0 || Minecraft.getInstance().isGamePaused()) {
             ClientProxy.mainHandStatus.aiming = false;

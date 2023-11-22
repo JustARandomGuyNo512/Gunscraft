@@ -42,7 +42,7 @@ public class MuzzleFlash {
         return this;
     }
 
-    public void play(long startTime, IRenderTypeBuffer buffer, MatrixStack stack, MuzzleFlashTrans trans) {
+    public void play(long startTime, IRenderTypeBuffer buffer, MatrixStack stack, MuzzleFlashTrans trans, boolean firstPerson) {
         if (!textures.isEmpty()) {
             Random random = new Random();
             int texNum = textures.size();
@@ -58,7 +58,7 @@ public class MuzzleFlash {
                     int seed = Math.max(0, random.nextInt()) % 4;
                     applyRotate(stack, seed);
                 }
-                muzzleFlashTexture.draw(progress, size, buffer, stack);
+                muzzleFlashTexture.draw(progress, size, buffer, stack, firstPerson);
             }
         }
     }

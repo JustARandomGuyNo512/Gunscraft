@@ -9,18 +9,16 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import sheridan.gunscraft.ClientProxy;
 import sheridan.gunscraft.animation.recoilAnimation.RecoilAnimationHandler;
-import sheridan.gunscraft.animation.recoilAnimation.RecoilCameraHandler;
 import sheridan.gunscraft.capability.CapabilityHandler;
 import sheridan.gunscraft.entities.EntityRegister;
 import sheridan.gunscraft.entities.projectile.GenericProjectile;
 import sheridan.gunscraft.events.ClientTickEvents;
 import sheridan.gunscraft.events.RenderEvents;
 import sheridan.gunscraft.items.BaseItem;
-import sheridan.gunscraft.render.GenericGunRenderer;
+import sheridan.gunscraft.items.attachments.util.Slot;
 import sheridan.gunscraft.render.TransformData;
 import sheridan.gunscraft.sounds.SoundEvents;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,7 +46,7 @@ public class GenericGun extends BaseItem implements IGenericGun{
     public int bulletLifeLength;
     public int shootDelay;
     public String normalFireSound;
-    public float[] soundArgs;
+    private float[] soundArgs;
     public boolean isFreeBlot;
     public boolean isPistol;
     public int reloadLength;
@@ -57,6 +55,7 @@ public class GenericGun extends BaseItem implements IGenericGun{
     public float recoilUp;
     public float recoilRandom;
     public float recoilDec;
+    public Map<String, Slot> slotMap;
 
     public GenericGun(Properties properties, int baseMagSize,boolean canHoldInOneHand,
                       ResourceLocation[] textures, int[] fireModes,
@@ -326,6 +325,12 @@ public class GenericGun extends BaseItem implements IGenericGun{
         CompoundNBT nbt = checkAndGet(stack);
         return nbt.contains("recoil_dec") ? nbt.getFloat("recoil_dec") : 0f;
     }
+
+    @Override
+    public Slot getSlot(String name) {
+        return slotMap.getOrDefault(name, null);
+    }
+
 
     private CompoundNBT checkAndGet(ItemStack stack) {
         CompoundNBT nbt = stack.getTag();

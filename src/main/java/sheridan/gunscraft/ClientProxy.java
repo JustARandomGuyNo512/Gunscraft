@@ -84,13 +84,13 @@ public class ClientProxy extends CommonProxy{
                 .setHandPoseRightSideRightHand(new float[][]{{0.325f, 0.37f, 1.09f},{-1.5707963267948966f, -0.049f, 0},{1, 1, 1}})
                 .setHandPoseRightSideLeftHand(new float[][]{{-0.115f, 0.69f, 0.8f},{-2.08f, 0.5735987755982f, 0.165f},{1, 1, 1}})
                 .setHandPoseLeftSide(new float[][]{{-0.35f, 0.37f, 1.09f},{-1.5707963267948966f, 0, 0},{1, 1, 1}})
-                .registerMuzzleFlash("normal", new TransformData.TransPair().setTrans(new MuzzleFlashTrans().setScale(new float[] {0.75f, 0.75f, 0.75f}).setTranslate(new float[]{0, -0.2f, -0.5f})).setName("pistol_simple"))
+                .registerMuzzleFlash("normal", new TransformData.TransPair().setTrans(new MuzzleFlashTrans().setScale(new float[] {0.75f, 0.75f, 0.75f}).setTranslate(new float[]{0, -0.1f, -0.5f})).setName("pistol_simple"))
                 .setRecoilAnimationData(new RecoilAnimationData(12f,35f, 22f,
                         0.12f,0.095f,0.11f,
                         7.8f, 0.53f, 0.66f,
                         0.115f,0.095f,0.11f,
                         0.268f, 0.1f, 0.0142f, 0.75f, 750))
-                .setAimingTrans(new float[] {4.0259995f, -3.178999f, 7.327073f})
+                .setAimingTrans(new float[] {4.0259995f, -3.108999f, 5.937073f})
         );
         modelMap.put(ModItems.PISTOL_9_MM.get(), new ModelPistol_9mm());
 
@@ -103,7 +103,7 @@ public class ClientProxy extends CommonProxy{
                 .setGroundTrans(new float[][]{{0, -3, -6f},{0, 0, 0},{0.85f, 0.85f, 0.85f}})
                 .setGUITrans(new float[][]{{6, -3, -0f},{0, -80, 0},{0.9f, 0.9f, 0.9f}})
                 .setHandPoseRightSideRightHand(new float[][]{{0.325f, 0.6f, 2.5f},{-1.5707963267948966f, -0.049f, 0},{1.0f, 1.0f, 1.0f}})
-                .setHandPoseRightSideLeftHand(new float[][]{{-0.162f, 0.49f, 1.7f},{-1.6580627893947f, 0.26179938779917f,  0.30543261909903f},{1.0f, 1.0f, 1.0f}})
+                .setHandPoseRightSideLeftHand(new float[][]{{-0.16f, 0.5f, 1.6f},{-1.6580627893947f, 0.26179938779917f,  0.30543261909903f},{1.0f, 1.0f, 1.0f}})
                 .setHandPoseLeftSide(new float[][]{{-0, 0, 0},{-0, 0, 0},{0, 0, 0}})
                 .registerMuzzleFlash("normal", new TransformData.TransPair().setTrans(new MuzzleFlashTrans().setTranslate(new float[]{0, 0, -1})).setName("pistol_simple"))
                 .setRecoilAnimationData(new RecoilAnimationData(20f,14.85f, 11.85f,
@@ -111,7 +111,7 @@ public class ClientProxy extends CommonProxy{
                         1.48f, 0.61f, 0.3f,
                         0.1f,0.0875f,0.1f,
                         0.145f, 0.22f, 0.001f, 0.6f, 650))
-                .setAimingTrans(new float[] {2.7699978f, -2.5789995f, 5.250027f})
+                .setAimingTrans(new float[] {2.7699978f, -2.5789995f, 5.410027f})
         );
         modelMap.put(ModItems.AKM.get(), new ModelAKM());
 
@@ -129,10 +129,10 @@ public class ClientProxy extends CommonProxy{
                 .registerMuzzleFlash("normal", new TransformData.TransPair().setTrans(new MuzzleFlashTrans().setTranslate(new float[]{0, 0, -1})).setName("pistol_simple"))
                 .setRecoilAnimationData(new RecoilAnimationData(12f,12f, 10f,
                         0.1f,0.087f,0.1f,
-                        1.2f, 0.41f, 0.18f,
+                        1.2f, 0.42f, 0.18f,
                         0.1f,0.0867f,0.1f,
                         0.145f, 0.15f, 0.001f, 0.32f, 500))
-                .setAimingTrans(new  float[] {2.7139997f, -2.6389995f, 6.007043f})
+                .setAimingTrans(new  float[] {2.7109997f, -2.6679995f, 6.377043f})
         );
         modelMap.put(ModItems.MP5.get(), new ModelMp5());
 
@@ -147,13 +147,13 @@ public class ClientProxy extends CommonProxy{
                 .setHandPoseRightSideRightHand(new float[][]{{0.325f, 0.49f, 1.2f},{-1.5707963267948966f, -0.049f, 0},{1, 1, 1}})
                 .setHandPoseRightSideLeftHand(new float[][]{{-0.125f, 0.77f, 0.8f},{-2.08f, 0.5735987755982f, 0.165f},{1, 1, 1}})
                 .setHandPoseLeftSide(new float[][]{{-0, 0, 0},{-0, 0, 0},{0, 0, 0}})
-                .registerMuzzleFlash("normal", new TransformData.TransPair().setTrans(new MuzzleFlashTrans().setScale(new float[] {1f, 1f, 1f}).setTranslate(new float[]{0, -0.75f, -1f})).setName("pistol_simple"))
+                .registerMuzzleFlash("normal", new TransformData.TransPair().setTrans(new MuzzleFlashTrans().setScale(new float[] {1f, 1f, 1f}).setTranslate(new float[]{0, -0.45f, -1f})).setName("pistol_simple"))
                 .setRecoilAnimationData(new RecoilAnimationData(10f,13.5f, 9f,
                         0.11f,0.0885f,0.1f,
                         4.5f, 0.52f, 0.31f,
                         0.11f,0.088f,0.1f,
                         0.15f, 0.135f, 0.0087f, 0.52f, 500))
-                .setAimingTrans(new float[] {4.1340017f, -2.3559993f, 8.87914f})
+                .setAimingTrans(new float[] {4.1240017f, -2.3559993f, 9.68f})
         );
         modelMap.put(ModItems.MAC10.get(), new ModelMac10());
 
@@ -167,21 +167,21 @@ public class ClientProxy extends CommonProxy{
                 .setGroundTrans(new float[][]{{0, -3, -6f},{0, 0, 0},{0.85f, 0.85f, 0.85f}})
                 .setGUITrans(new float[][]{{6, -3, -0f},{0, -80, 0},{0.9f, 0.9f, 0.9f}})
                 .setHandPoseRightSideRightHand(new float[][]{{0.325f, 0.6f, 2.5f},{-1.5707963267948966f, -0.049f, 0},{1.0f, 1.0f, 1.0f}})
-                .setHandPoseRightSideLeftHand(new float[][]{{-0.16f, 0.575f, 1.30f},{-1.6580627893947f, 0.26179938779917f,  0.30543261909903f},{1.0f, 1.0f, 1.0f}})
+                .setHandPoseRightSideLeftHand(new float[][]{{-0.158f, 0.55f, 1.30f},{-1.6580627893947f, 0.26179938779917f,  0.30543261909903f},{1.0f, 1.0f, 1.0f}})
                 .setHandPoseLeftSide(new float[][]{{-0, 0, 0},{-0, 0, 0},{0, 0, 0}})
-                .registerMuzzleFlash("normal", new TransformData.TransPair().setTrans(new MuzzleFlashTrans().setTranslate(new float[]{0, 0, -3.25f})).setName("pistol_simple"))
+                .registerMuzzleFlash("normal", new TransformData.TransPair().setTrans(new MuzzleFlashTrans().setTranslate(new float[]{0, 0.2f, -3.25f})).setName("pistol_simple"))
                 .setRecoilAnimationData(new RecoilAnimationData(16.2f,11.3f, 10.5f,
                         0.1f,0.0887f,0.1f,
                         1.05f, 0.475f, 0.17f,
                         0.1f,0.0876f,0.1f,
                         0.15f, 0.25f, 0.0015f, 0.22f, 500))
-                .setAimingTrans(new float[] {2.0849983f, -1.749f, 6.0030614f})
+                .setAimingTrans(new float[] {2.0849983f, -1.749f, 6.2430614f})
         );
         modelMap.put(ModItems.M4A1.get(), new ModelM4a1());
 
 
         timer = new Timer();
-        timer.schedule(new ClientTicker(), 0, 10L);
+        timer.schedule(new ClientWeaponTicker(), 0, 10L);
 
         CapabilityHandler.instance().registerKey(AIMING);
         CapabilityHandler.instance().registerKey(LAST_SHOOT_RIGHT);

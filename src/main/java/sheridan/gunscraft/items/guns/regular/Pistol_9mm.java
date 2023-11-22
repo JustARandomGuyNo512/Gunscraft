@@ -14,7 +14,7 @@ public class Pistol_9mm extends GenericGun {
                     new ResourceLocation("gunscraft","textures/guns/pistol_9mm/pistol_9mm_black.png")},
                 new int[] {SEMI}, 0.5f, 1.5f, 1f, 3.5f, 7f,
                 4f, 30, 18, "item.pistol_9mm.fire", new float[] {0.6f, 1f, 1f, 1f},
-                false, true, (int) (2.2 * 20), 1, 5.8f, 2f, 0.5f, 1.7f);
+                false, true, (int) (2.2 * 20), 1, 5.8f, 2f, 0.5f, 3.5f);
 
     }
 }

@@ -13,6 +13,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -37,7 +38,11 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 import org.apache.commons.lang3.Validate;
+import sheridan.gunscraft.ClientProxy;
 import sheridan.gunscraft.Gunscraft;
+import sheridan.gunscraft.animation.recoilAnimation.RecoilAnimationHandler;
+import sheridan.gunscraft.animation.recoilAnimation.RecoilCameraHandler;
+import sheridan.gunscraft.events.RenderEvents;
 import sheridan.gunscraft.network.LoginPacks;
 import sheridan.gunscraft.network.PacketHandler;
 import sheridan.gunscraft.network.packets.SyncPlayerDataPacket;
@@ -174,6 +179,12 @@ public class CapabilityHandler {
                     newManager.dataMap = dataMap;
                 }
             }
+        }
+        if (original.getEntityId() == ClientProxy.clientPlayerId && original == Minecraft.getInstance().player) {
+            ClientProxy.mainHandStatus.buttonDown.set(false);
+            ClientProxy.offHandStatus.buttonDown.set(false);
+            RenderEvents.cameraHandler.clear();
+            RecoilAnimationHandler.clearAll();
         }
     }
 

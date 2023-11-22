@@ -135,6 +135,7 @@ public class TransformData {
         armModel.rotateAngleX = -90;
         stackIn.scale(BASE_ARM_SIZE, BASE_ARM_SIZE, BASE_ARM_SIZE);
         float armWidth = isSlim ? -0.02f : 0f;
+        float armLength = isSlim ? 0.05f : 0f;
         switch (type) {
             case RIGHT_SIDE_RIGHT_HAND:
                 stackIn.translate(FPHandPoseTrans[0][0][0] + armWidth, FPHandPoseTrans[0][0][1], FPHandPoseTrans[0][0][2]);
@@ -144,7 +145,7 @@ public class TransformData {
                 stackIn.scale(FPHandPoseTrans[0][2][0], FPHandPoseTrans[0][2][1] , FPHandPoseTrans[0][2][2] * 1.5f);
                 break;
             case RIGHT_SIDE_LEFT_HAND:
-                stackIn.translate(FPHandPoseTrans[1][0][0] + armWidth, FPHandPoseTrans[1][0][1], FPHandPoseTrans[1][0][2]);
+                stackIn.translate(FPHandPoseTrans[1][0][0], FPHandPoseTrans[1][0][1], FPHandPoseTrans[1][0][2] + armLength);
                 armModel.rotateAngleX = FPHandPoseTrans[1][1][0];
                 armModel.rotateAngleY = FPHandPoseTrans[1][1][1];
                 armModel.rotateAngleZ = FPHandPoseTrans[1][1][2];
@@ -175,9 +176,9 @@ public class TransformData {
             case FIRST_PERSON_RIGHT_HAND:
                 if (transAiming) {
                     aimingProgress = aimingProgress > 1 ? 1 : aimingProgress;
-                    stackIn.translate(FPTrans[0][0][0] + aimingTrans[0] * aimingProgress,
-                            FPTrans[0][0][1] + aimingTrans[1] * aimingProgress,
-                            FPTrans[0][0][2] + aimingTrans[2] * aimingProgress);
+                    stackIn.translate(FPTrans[0][0][0] + aimingTrans[0] * aimingProgress + ClientProxy.debugX,
+                            FPTrans[0][0][1] + aimingTrans[1] * aimingProgress + ClientProxy.debugY,
+                            FPTrans[0][0][2] + aimingTrans[2] * aimingProgress  + ClientProxy.debugZ);
                 } else {
                     stackIn.translate(FPTrans[0][0][0] + ClientProxy.debugX, FPTrans[0][0][1] + ClientProxy.debugY, FPTrans[0][0][2] + ClientProxy.debugZ);
                 }

@@ -20,7 +20,6 @@ import static net.minecraft.client.renderer.RenderState.*;
 
 public class MuzzleFlashTexture {
     public ResourceLocation texture;
-    public RenderType renderType;
     public int frameCount;
     private float quadSize;
 
@@ -28,39 +27,38 @@ public class MuzzleFlashTexture {
         this.texture = texture;
         this.frameCount = frameCount;
         this.quadSize = 1f / frameCount;
-        renderType = FxRenderType.create(texture);
     }
 
 
-    public void draw(float progress, float size, IRenderTypeBuffer buffer, MatrixStack matrixStack) {
+    public void draw(float progress, float size, IRenderTypeBuffer buffer, MatrixStack matrixStack, boolean firstPerson) {
         int index = (int) (progress * frameCount);
-        IVertexBuilder builder = buffer.getBuffer(FxRenderType.create(texture));
+        IVertexBuilder builder = buffer.getBuffer(FxRenderType.get(texture, firstPerson));
 
         matrixStack.push();
         matrixStack.rotate(new Quaternion(Vector3f.XP, -90, true));
         matrixStack.translate(- size / 2 , 0 , size / 2 );
-        drawQuad(2, index, size,  matrixStack, builder);
+        drawQuad(2, index, size,  matrixStack, builder, firstPerson);
         matrixStack.pop();
 
         matrixStack.push();
         matrixStack.rotate(new Quaternion(-90, - 90 , 0, true));
         matrixStack.translate(0,0, 0 );
-        drawQuad(1, index,size, matrixStack, builder);
+        drawQuad(1, index,size, matrixStack, builder, firstPerson);
         matrixStack.pop();
 
 
         matrixStack.push();
         matrixStack.rotate(new Quaternion(Vector3f.XP, 180, true));
         matrixStack.translate(- size / 2 , - size , 0);
-        drawQuad(0, index,size, matrixStack, builder);
+        drawQuad(0, index,size, matrixStack, builder, firstPerson);
         matrixStack.pop();
 
     }
 
-    private void drawQuad(int axis, int index, float size, MatrixStack stack, IVertexBuilder builder) {
+    private void drawQuad(int axis, int index, float size, MatrixStack stack, IVertexBuilder builder, boolean firstPerson) {
         float[] uv = getUV(index, axis);
         if (uv != null) {
-            drawQuad(builder, stack.getLast().getMatrix(), uv[0], uv[1],uv[2], uv[3], size);
+            drawQuad(builder, stack.getLast().getMatrix(), uv[0], uv[1],uv[2], uv[3], size, firstPerson);
         }
     }
 
@@ -76,10 +74,11 @@ public class MuzzleFlashTexture {
         return null;
     }
 
-    private void drawQuad(IVertexBuilder builder, Matrix4f matrix, float u1, float v1, float u2, float v2, float size) {
-        builder.pos(matrix, 0.0F, 0.0F, 0.0F).color(1.0F, 1.0F, 1.0F, 1F).tex(u2, v2).lightmap(15728880).endVertex();
-        builder.pos(matrix, size, 0.0F, 0.0F).color(1.0F, 1.0F, 1.0F, 1F).tex(u1, v2).lightmap(15728880).endVertex();
-        builder.pos(matrix, size, size, 0.0F).color(1.0F, 1.0F, 1.0F, 1F).tex(u1, v1).lightmap(15728880).endVertex();
-        builder.pos(matrix, 0.0F, size, 0.0F).color(1.0F, 1.0F, 1.0F, 1F).tex(u2, v1).lightmap(15728880).endVertex();
+    private void drawQuad(IVertexBuilder builder, Matrix4f matrix, float u1, float v1, float u2, float v2, float size, boolean firstPerson) {
+        float alpha = firstPerson ? 0.7f : 1f;
+        builder.pos(matrix, 0.0F, 0.0F, 0.0F).color(1.0F, 1.0F, 1.0F, alpha).tex(u2, v2).lightmap(15728880).endVertex();
+        builder.pos(matrix, size, 0.0F, 0.0F).color(1.0F, 1.0F, 1.0F, alpha).tex(u1, v2).lightmap(15728880).endVertex();
+        builder.pos(matrix, size, size, 0.0F).color(1.0F, 1.0F, 1.0F, alpha).tex(u1, v1).lightmap(15728880).endVertex();
+        builder.pos(matrix, 0.0F, size, 0.0F).color(1.0F, 1.0F, 1.0F, alpha).tex(u2, v1).lightmap(15728880).endVertex();
     }
 }

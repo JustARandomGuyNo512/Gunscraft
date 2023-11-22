@@ -18,18 +18,28 @@ public class FxRenderType extends RenderType {
     private static Map<String, RenderType> temp = new HashMap<>();
 
 
-    public static RenderType create(ResourceLocation texture) {
-        if (temp.containsKey(texture.toString())) {
-            return temp.get(texture.toString());
+
+    public static RenderType get(ResourceLocation texture, boolean firstPerson) {
+        String baseKey = texture.toString();
+        String key = firstPerson ? baseKey + "_FP" : baseKey;
+        if (temp.containsKey(baseKey)) {
+            return temp.get(key);
         } else {
-            RenderType type = RenderType.makeType(Gunscraft.MOD_ID + ":" + "muzzle_flash", DefaultVertexFormats.POSITION_COLOR_TEX_LIGHTMAP,
+            RenderType baseType = RenderType.makeType(Gunscraft.MOD_ID + ":" + "muzzle_flash", DefaultVertexFormats.POSITION_COLOR_TEX_LIGHTMAP,
                     7, 256, true, false,
                     State.getBuilder().texture(new TextureState(texture, false, false))
                             .transparency(RenderState.TRANSLUCENT_TRANSPARENCY).alpha(new AlphaState(0.9f)).cull(CULL_DISABLED).build(true));
 
-            temp.put(texture.toString(), type);
-            return type;
+            temp.put(baseKey, baseType);
+
+            RenderType FPType = RenderType.makeType(Gunscraft.MOD_ID + ":" + "muzzle_flash", DefaultVertexFormats.POSITION_COLOR_TEX_LIGHTMAP,
+                    7, 256, true, false,
+                    State.getBuilder().texture(new TextureState(texture, false, false))
+                            .transparency(RenderState.TRANSLUCENT_TRANSPARENCY).alpha(DEFAULT_ALPHA).cull(CULL_DISABLED).build(true));
+
+            temp.put(baseKey + "_FP", FPType);
         }
+        return temp.get(key);
     }
 
 

@@ -27,15 +27,15 @@ public class RecoilAnimationHandler {
                         state.setMoveBackSpeed(Math.min(0.5f, back));
                         return;
                     }
-                    float rotateUp = state.getRotateUpSpeed() * 0.3f;
+                    float rotateUp = state.getRotateUpSpeed() * 0.25f;
                     float rx = state.getRandomRXSpeed() * 0.25f;
                     float ry = state.getRandomRYSpeed() * 0.25f;
-                    float back = state.getMoveBackSpeed() * 0.55f;
+                    float back = state.getMoveBackSpeed() * 0.65f;
                     float moveUp = state.getMoveUpSpeed() * 0.15f;
-                    state.setRotateUpSpeed(Math.min(0.2f, rotateUp));
+                    state.setRotateUpSpeed(Math.min(0.18f, rotateUp));
                     state.setRandomRXSpeed(Math.min(rx, 0.15f));
                     state.setRandomRYSpeed(Math.min(ry, 0.15f));
-                    state.setMoveBackSpeed(Math.min(0.375f, back));
+                    state.setMoveBackSpeed(Math.min(0.38f, back));
                     state.setMoveUpSpeed(Math.min(0.0275f, moveUp));
                 }
             }

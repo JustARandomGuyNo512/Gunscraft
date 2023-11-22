@@ -3,12 +3,11 @@ package sheridan.gunscraft;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
 import sheridan.gunscraft.items.guns.IGenericGun;
 
 import java.util.TimerTask;
 
-public class ClientTicker extends TimerTask {
+public class ClientWeaponTicker extends TimerTask {
     public int mainHandPostDelay;
     public int offHandPostDelay;
 

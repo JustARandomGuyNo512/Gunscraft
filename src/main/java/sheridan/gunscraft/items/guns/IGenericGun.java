@@ -1,9 +1,9 @@
 package sheridan.gunscraft.items.guns;
 
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import sheridan.gunscraft.items.attachments.util.Slot;
 
 public interface IGenericGun {
     ResourceLocation getTexture(int index);
@@ -31,4 +31,5 @@ public interface IGenericGun {
     float getRecoilUp(ItemStack stack);
     float getRecoilRandom(ItemStack stack);
     float getRecoilDec(ItemStack stack);
+    Slot getSlot(String name);
 }

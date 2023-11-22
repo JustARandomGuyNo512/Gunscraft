@@ -131,16 +131,16 @@ public class PlayerEvents {
 
         }
         ClientProxy.offHandStatus.holdingGun.set(isGunOff);
-        updateRecoil(gunMain, stackMain, stackOff, isGunMain, isGunOff);
+        updateRecoil(gunMain, gunOff, stackMain, stackOff, isGunMain, isGunOff);
     }
 
-    private static void updateRecoil(IGenericGun gun, ItemStack stack, ItemStack stackOff, boolean holdingGunMain, boolean holdingGunOff) {
+    private static void updateRecoil(IGenericGun gun, IGenericGun gunOff, ItemStack stack, ItemStack stackOff, boolean holdingGunMain, boolean holdingGunOff) {
         RecoilCameraHandler handler = RenderEvents.cameraHandler;
         if (holdingGunMain || holdingGunOff) {
            if (holdingGunMain) {
                handler.speedDec = gun.getRecoilDec(stack);
            } else {
-               handler.speedDec = gun.getRecoilDec(stackOff);
+               handler.speedDec = gunOff.getRecoilDec(stackOff);
            }
             return;
         }

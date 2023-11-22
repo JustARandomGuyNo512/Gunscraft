@@ -133,18 +133,19 @@ public class RecoilAnimationState {
 
     public void onShoot(long lastFireTime, RecoilAnimationData data, int direction) {
         if (data != null) {
+
             if (this.proxy != null) {
                 proxy.beforeShoot(lastFireTime, data, this);
             }
-            startTime = lastFireTime;
-            lastTickTime = lastFireTime;
-            enable = true;
-            rotateUpSpeed += data.rotateUp;
-            moveBackSpeed += data.moveBack;
-            moveUpSpeed += data.moveUp;
-            randomRXSpeed += data.random * direction;
-            randomRYSpeed += data.random * direction;
-            this.data = data;
+                startTime = lastFireTime;
+                lastTickTime = lastFireTime;
+                enable = true;
+                rotateUpSpeed += data.rotateUp;
+                moveBackSpeed += data.moveBack;
+                moveUpSpeed += data.moveUp;
+                randomRXSpeed += data.random * direction;
+                randomRYSpeed += data.random * direction;
+                this.data = data;
             if (this.proxy != null) {
                 proxy.afterShoot(lastFireTime, data, this);
             }

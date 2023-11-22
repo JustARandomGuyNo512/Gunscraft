@@ -99,7 +99,7 @@ public class GenericGunRenderer implements IGunRender{
                     model.render(stackIn, bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(gun.getTexture(gun.getCurrentTextureIndex(itemStackIn)))),
                             type, combinedLightIn, combinedOverlayIn, 1, 1, 1, 1, 1, lastShootTime, !leftHand, fireMode);
 
-                    renderMuzzleFlash(gun, itemStackIn, transformData, lastShootTime, bufferIn, stackIn);
+                    renderMuzzleFlash(gun, itemStackIn, transformData, lastShootTime, bufferIn, stackIn, true);
 
                 } else {
                     long lastShoot;
@@ -118,14 +118,14 @@ public class GenericGunRenderer implements IGunRender{
                     model.render(stackIn, bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(gun.getTexture(gun.getCurrentTextureIndex(itemStackIn)))),
                             type, combinedLightIn, combinedOverlayIn, 1, 1, 1, 1, 1, lastShoot, !leftHand, fireMode);
                     stackIn.pop();
-                    renderMuzzleFlash(gun, itemStackIn, transformData, lastShoot, bufferIn, stackIn);
+                    renderMuzzleFlash(gun, itemStackIn, transformData, lastShoot, bufferIn, stackIn, false);
                 }
                 stackIn.pop();
             }
         }
     }
 
-    private static void renderMuzzleFlash(IGenericGun gun, ItemStack itemStack, TransformData transformData, long startTime, IRenderTypeBuffer buffer, MatrixStack stack) {
+    private static void renderMuzzleFlash(IGenericGun gun, ItemStack itemStack, TransformData transformData, long startTime, IRenderTypeBuffer buffer, MatrixStack stack, boolean firsPerson) {
         String state = gun.getMuzzleFlashState(itemStack);
         if (state != null) {
             String flashName = transformData.getMuzzleFlashName(state);
@@ -133,7 +133,7 @@ public class GenericGunRenderer implements IGunRender{
             if (flashName != null && trans != null) {
                 MuzzleFlash flash = CommonMuzzleFlash.flashMap.get(flashName);
                 if (flash != null) {
-                    flash.play(startTime, buffer, stack, trans);
+                    flash.play(startTime, buffer, stack, trans, firsPerson);
                 }
             }
         }
