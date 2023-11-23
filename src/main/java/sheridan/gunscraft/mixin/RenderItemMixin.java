@@ -15,24 +15,24 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import sheridan.gunscraft.ClientProxy;
-import sheridan.gunscraft.Gunscraft;
 import sheridan.gunscraft.animation.recoilAnimation.RecoilAnimationHandler;
 import sheridan.gunscraft.items.guns.IGenericGun;
 import sheridan.gunscraft.model.IGunModel;
 import sheridan.gunscraft.render.GenericGunRenderer;
+import sheridan.gunscraft.render.IGunRender;
 import sheridan.gunscraft.render.TransformData;
 
 
 @Mixin(ItemRenderer.class)
 public class RenderItemMixin {
 
-    private GenericGunRenderer renderer = new GenericGunRenderer();
+    private IGunRender renderer = ClientProxy.renderer;
 
     // all model, ground, gui, other
     @Inject(at = @At("HEAD"), method = "renderItem(Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/renderer/model/ItemCameraTransforms$TransformType;ZLcom/mojang/blaze3d/matrix/MatrixStack;Lnet/minecraft/client/renderer/IRenderTypeBuffer;IILnet/minecraft/client/renderer/model/IBakedModel;)V", cancellable = true)
     public void renderItem(ItemStack itemStackIn, ItemCameraTransforms.TransformType transformTypeIn, boolean leftHand, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn, IBakedModel modelIn, CallbackInfo ci) {
         if (itemStackIn != null && itemStackIn.getItem() instanceof IGenericGun) {
-            IGunModel model = ClientProxy.modelMap.get(itemStackIn.getItem());
+            IGunModel model = ClientProxy.gunModelMap.get(itemStackIn.getItem());
             if (model != null) {
                 TransformData data = ClientProxy.transformDataMap.get(itemStackIn.getItem());
                 if (data != null) {
@@ -49,7 +49,7 @@ public class RenderItemMixin {
         if (itemStackIn != null) {
             RecoilAnimationHandler.checkShouldClear(itemStackIn, livingEntityIn, !leftHand);
             if (itemStackIn.getItem() instanceof IGenericGun) {
-                IGunModel model = ClientProxy.modelMap.get(itemStackIn.getItem());
+                IGunModel model = ClientProxy.gunModelMap.get(itemStackIn.getItem());
                 if (model != null) {
                     TransformData data = ClientProxy.transformDataMap.get(itemStackIn.getItem());
                     if (data != null) {
@@ -60,4 +60,5 @@ public class RenderItemMixin {
             }
         }
     }
+
 }

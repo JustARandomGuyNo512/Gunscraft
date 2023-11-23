@@ -1,9 +1,11 @@
 package sheridan.gunscraft;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -15,15 +17,22 @@ import sheridan.gunscraft.animation.recoilAnimation.RecoilAnimationData;
 import sheridan.gunscraft.capability.CapabilityHandler;
 import sheridan.gunscraft.capability.Serializers;
 import sheridan.gunscraft.capability.CapabilityKey;
+import sheridan.gunscraft.container.ModContainers;
 import sheridan.gunscraft.items.ModItems;
 import sheridan.gunscraft.items.guns.IGenericGun;
+import sheridan.gunscraft.model.IAttachmentModel;
 import sheridan.gunscraft.model.IGunModel;
+import sheridan.gunscraft.model.attachments.mags.ModelARExpansionMag;
 import sheridan.gunscraft.model.guns.*;
+import sheridan.gunscraft.model.guns.akm.ModelAKM;
 import sheridan.gunscraft.model.guns.m4a1.ModelM4a1;
 import sheridan.gunscraft.network.PacketHandler;
 import sheridan.gunscraft.network.packets.GunFirePacket;
+import sheridan.gunscraft.render.GenericGunRenderer;
+import sheridan.gunscraft.render.IGunRender;
 import sheridan.gunscraft.render.TransformData;
 import sheridan.gunscraft.render.fx.muzzleFlash.MuzzleFlashTrans;
+import sheridan.gunscraft.screen.AttachmentScreen;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,20 +42,23 @@ import java.util.Timer;
 public class ClientProxy extends CommonProxy{
 
     public static HashMap<Item, TransformData> transformDataMap = new HashMap<>();
-    public static HashMap<Item, IGunModel> modelMap = new HashMap<>();
+    public static HashMap<Item, IGunModel> gunModelMap = new HashMap<>();
+    public static HashMap<Item, IAttachmentModel> attachmentModelMap = new HashMap<>();
+    public static final IGunRender renderer = new GenericGunRenderer();
     public static int equipDuration = 0;
     @OnlyIn(Dist.CLIENT)
     public static Timer timer;
     public static int clientPlayerId;
 
-    public static ClientStatus mainHandStatus = new ClientStatus(true);
-    public static ClientStatus offHandStatus = new ClientStatus(false);
+    public static ClientWeaponStatus mainHandStatus = new ClientWeaponStatus(true);
+    public static ClientWeaponStatus offHandStatus = new ClientWeaponStatus(false);
 
     public static volatile float bulletSpread = 0f;
     public static volatile float minBulletSpread = 0f;
     public static volatile float maxBulletSpread = 0f;
     public static volatile int armPose;
 
+    public static boolean attachmentsGuiShowing = false;
 
     public static final CapabilityKey<Boolean> AIMING;
     public static final CapabilityKey<Long> LAST_SHOOT_RIGHT;
@@ -93,7 +105,7 @@ public class ClientProxy extends CommonProxy{
                         0.268f, 0.1f, 0.0142f, 0.75f, 750))
                 .setAimingTrans(new float[] {4.0259995f, -3.108999f, 5.937073f})
         );
-        modelMap.put(ModItems.PISTOL_9_MM.get(), new ModelPistol_9mm());
+        gunModelMap.put(ModItems.PISTOL_9_MM.get(), new ModelPistol_9mm());
 
         transformDataMap.put(ModItems.AKM.get(), new TransformData()
                 .setFPRightHand(new float[][]{{3.48f, -5.6f, -21.25f},{0, 0, 0},{1.8275f, 1.8275f, 1.8275f}})
@@ -114,7 +126,7 @@ public class ClientProxy extends CommonProxy{
                         0.145f, 0.22f, 0.001f, 0.6f, 650))
                 .setAimingTrans(new float[] {2.7699978f, -2.5789995f, 5.410027f})
         );
-        modelMap.put(ModItems.AKM.get(), new ModelAKM());
+        gunModelMap.put(ModItems.AKM.get(), new ModelAKM());
 
         transformDataMap.put(ModItems.MP5.get(), new TransformData()
                 .setFPRightHand(new float[][]{{3.5f, -5.75f, -15f},{0, 0, 0},{1.892f, 1.892f, 1.892f}})
@@ -135,7 +147,7 @@ public class ClientProxy extends CommonProxy{
                         0.145f, 0.15f, 0.001f, 0.32f, 500))
                 .setAimingTrans(new  float[] {2.7109997f, -2.6679995f, 6.377043f})
         );
-        modelMap.put(ModItems.MP5.get(), new ModelMp5());
+        gunModelMap.put(ModItems.MP5.get(), new ModelMp5());
 
         transformDataMap.put(ModItems.MAC10.get(), new TransformData()
                 .setFPRightHand(new float[][]{{2.1f, -5.75f, -11.8f},{0, 0, 0},{1.72f, 1.72f, 1.72f}})
@@ -156,7 +168,7 @@ public class ClientProxy extends CommonProxy{
                         0.15f, 0.135f, 0.0087f, 0.52f, 500))
                 .setAimingTrans(new float[] {4.1240017f, -2.3559993f, 9.68f})
         );
-        modelMap.put(ModItems.MAC10.get(), new ModelMac10());
+        gunModelMap.put(ModItems.MAC10.get(), new ModelMac10());
 
 
         transformDataMap.put(ModItems.M4A1.get(), new TransformData()
@@ -178,7 +190,10 @@ public class ClientProxy extends CommonProxy{
                         0.15f, 0.25f, 0.0015f, 0.22f, 500))
                 .setAimingTrans(new float[] {2.0849983f, -1.749f, 6.2430614f})
         );
-        modelMap.put(ModItems.M4A1.get(), new ModelM4a1());
+        gunModelMap.put(ModItems.M4A1.get(), new ModelM4a1());
+
+
+        attachmentModelMap.put(ModItems.AR_EXPANSION_MAG.get(), new ModelARExpansionMag());
 
 
         timer = new Timer();
@@ -187,6 +202,8 @@ public class ClientProxy extends CommonProxy{
         CapabilityHandler.instance().registerKey(AIMING);
         CapabilityHandler.instance().registerKey(LAST_SHOOT_RIGHT);
         CapabilityHandler.instance().registerKey(LAST_SHOOT_LEFT);
+
+        ScreenManager.registerFactory(ModContainers.ATTACHMENTS.get(), AttachmentScreen::new);
     }
 
     @Override
@@ -207,7 +224,7 @@ public class ClientProxy extends CommonProxy{
     @Override
     @OnlyIn(Dist.CLIENT)
     public boolean shouldRenderCustom(ItemStack stack, IGenericGun gun, LivingEntity entity, boolean isMainHand) {
-        if (!modelMap.containsKey(stack.getItem())) {
+        if (!gunModelMap.containsKey(stack.getItem())) {
             return false;
         }
         if (isMainHand) {
@@ -227,7 +244,7 @@ public class ClientProxy extends CommonProxy{
                 }
             }
         }
-        return modelMap.containsKey(stack.getItem());
+        return gunModelMap.containsKey(stack.getItem());
     }
 
     @Override

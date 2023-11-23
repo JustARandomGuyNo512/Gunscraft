@@ -17,6 +17,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import sheridan.gunscraft.capability.CapabilityHandler;
+import sheridan.gunscraft.container.ModContainers;
 import sheridan.gunscraft.entities.EntityRegister;
 import sheridan.gunscraft.events.*;
 import sheridan.gunscraft.items.ModItems;
@@ -53,6 +54,7 @@ public class Gunscraft {
         MinecraftForge.EVENT_BUS.register(ControllerEvents.class);
         MinecraftForge.EVENT_BUS.register(ClientTickEvents.class);
         ModItems.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModContainers.CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
         EntityRegister.ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
         SoundEvents.register(FMLJavaModLoadingContext.get().getModEventBus());
     }

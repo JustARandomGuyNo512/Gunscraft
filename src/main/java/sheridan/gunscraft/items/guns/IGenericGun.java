@@ -3,7 +3,7 @@ package sheridan.gunscraft.items.guns;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import sheridan.gunscraft.items.attachments.util.Slot;
+import sheridan.gunscraft.items.attachments.util.GunAttachmentSlot;
 
 public interface IGenericGun {
     ResourceLocation getTexture(int index);
@@ -14,6 +14,7 @@ public interface IGenericGun {
     void reload(ItemStack stack, LivingEntity entity, boolean mainHand);
     boolean canHoldInOneHand();
     int getMagSize(ItemStack stack);
+    void setMagSize(ItemStack stack, int magSize);
     int getAmmoLeft(ItemStack stack);
     void setAmmoLeft(ItemStack stack, int count);
     int getFireMode(ItemStack stack);
@@ -31,5 +32,5 @@ public interface IGenericGun {
     float getRecoilUp(ItemStack stack);
     float getRecoilRandom(ItemStack stack);
     float getRecoilDec(ItemStack stack);
-    Slot getSlot(String name);
+    GunAttachmentSlot getSlot(String name);
 }

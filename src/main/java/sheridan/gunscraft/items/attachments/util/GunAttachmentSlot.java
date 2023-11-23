@@ -5,7 +5,7 @@ import net.minecraft.util.math.vector.Quaternion;
 
 import java.util.Set;
 
-public class Slot {
+public class GunAttachmentSlot {
     public String name;
     public Set<Integer> acceptAttachments;
     public float[][] trans;
@@ -14,12 +14,12 @@ public class Slot {
         return acceptAttachments.contains(id);
     }
 
-    public Slot(String name, Set<Integer> acceptAttachments) {
+    public GunAttachmentSlot(String name, Set<Integer> acceptAttachments) {
         this.name = name;
         this.acceptAttachments = acceptAttachments;
     }
 
-    public Slot setTrans(float[][] trans) {
+    public GunAttachmentSlot setTrans(float[][] trans) {
         this.trans = trans;
         return this;
     }

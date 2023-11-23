@@ -54,6 +54,7 @@ public class PacketHandler
         registerPacket(PlaySoundPacket.class, new PlaySoundPacket());
         registerPacket(ReloadGunPacket.class, new ReloadGunPacket());
         registerPacket(SwitchFireModePacket.class, new SwitchFireModePacket());
+        registerPacket(AttachmentGuiPacket.class, new AttachmentGuiPacket());
     }
 
     private static <T> void registerPacket(Class<T> clazz, IPacket<T> message)

@@ -7,13 +7,11 @@ import sheridan.gunscraft.items.guns.IGenericGun;
 import sheridan.gunscraft.model.IAttachmentModel;
 
 public class GenericScope extends GenericAttachment{
-    public ResourceLocation scopeTexture;
     public float rate = 1.0f;
 
-    public GenericScope(Properties properties, int id, String type, String name, IAttachmentModel model, ResourceLocation scopeTexture,
+    public GenericScope(Properties properties, int id, String type, String name, ResourceLocation scopeTexture,
                         float rate) {
-        super(properties, id, type, name, model);
-        this.scopeTexture = scopeTexture;
+        super(properties, id, type, name, scopeTexture);
         this.rate = rate;
     }
 

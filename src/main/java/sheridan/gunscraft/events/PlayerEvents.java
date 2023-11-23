@@ -15,7 +15,7 @@ import sheridan.gunscraft.ClientProxy;
 import sheridan.gunscraft.animation.recoilAnimation.RecoilAnimationHandler;
 import sheridan.gunscraft.animation.recoilAnimation.RecoilCameraHandler;
 import sheridan.gunscraft.items.guns.IGenericGun;
-import sheridan.gunscraft.render.GenericGunRenderer;
+
 
 @Mod.EventBusSubscriber
 public class PlayerEvents {

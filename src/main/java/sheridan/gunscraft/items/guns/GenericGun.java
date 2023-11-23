@@ -15,7 +15,7 @@ import sheridan.gunscraft.entities.projectile.GenericProjectile;
 import sheridan.gunscraft.events.ClientTickEvents;
 import sheridan.gunscraft.events.RenderEvents;
 import sheridan.gunscraft.items.BaseItem;
-import sheridan.gunscraft.items.attachments.util.Slot;
+import sheridan.gunscraft.items.attachments.util.GunAttachmentSlot;
 import sheridan.gunscraft.render.TransformData;
 import sheridan.gunscraft.sounds.SoundEvents;
 
@@ -55,7 +55,7 @@ public class GenericGun extends BaseItem implements IGenericGun{
     public float recoilUp;
     public float recoilRandom;
     public float recoilDec;
-    public Map<String, Slot> slotMap;
+    public Map<String, GunAttachmentSlot> slotMap;
     public int bulletPreShoot;
 
     public GenericGun(Properties properties, int baseMagSize,boolean canHoldInOneHand,
@@ -134,6 +134,7 @@ public class GenericGun extends BaseItem implements IGenericGun{
     public boolean preShoot(ItemStack stack, LivingEntity entity, boolean mainHand) {
         int ammoLeft = getAmmoLeft(stack);
         boolean canPass = ammoLeft > 0;
+        PlayerEntity player = Minecraft.getInstance().player;
         if (canPass) {
             long now = System.currentTimeMillis();
             TransformData transformData = ClientProxy.transformDataMap.get(stack.getItem());
@@ -148,7 +149,13 @@ public class GenericGun extends BaseItem implements IGenericGun{
             int direction = randomIndex();
             RecoilAnimationHandler.onShoot(now, transformData.getRecoilAnimationData(), mainHand, direction);
             RenderEvents.cameraHandler.inModify.set(true);
-            RenderEvents.cameraHandler.onShoot(getRecoilUp(stack), getRecoilRandom(stack), direction);
+            float recoilUp = getRecoilUp(stack);
+            float recoilRandom = getRecoilRandom(stack);
+            if (player != null && player.isCrouching()) {
+                recoilUp *= 0.75f;
+                recoilRandom *= 0.75f;
+            }
+            RenderEvents.cameraHandler.onShoot(recoilUp, recoilRandom, direction);
             RenderEvents.cameraHandler.inModify.set(false);
             int fireMode = getFireMode(stack);
             if (fireMode == SEMI) {
@@ -173,6 +180,9 @@ public class GenericGun extends BaseItem implements IGenericGun{
                 }
             }
             float shootSpread = entity.isCrouching() ? this.spreadPreShoot * 0.7f : this.spreadPreShoot;
+            if (ClientProxy.mainHandStatus.aiming) {
+                shootSpread *= 0.7f;
+            }
             ClientProxy.addSpread(shootSpread);
             SoundEvents.playSound(normalFireSound, entity, soundArgs[0], soundArgs[1]);
         }
@@ -215,6 +225,12 @@ public class GenericGun extends BaseItem implements IGenericGun{
     public int getMagSize(ItemStack stack) {
         CompoundNBT nbt = checkAndGet(stack);
         return nbt.contains("mag_size") ? nbt.getInt("mag_size") : 0;
+    }
+
+    @Override
+    public void setMagSize(ItemStack stack, int magSize) {
+        CompoundNBT nbt = checkAndGet(stack);
+        nbt.putInt("mag_size", magSize);
     }
 
     @Override
@@ -328,7 +344,7 @@ public class GenericGun extends BaseItem implements IGenericGun{
     }
 
     @Override
-    public Slot getSlot(String name) {
+    public GunAttachmentSlot getSlot(String name) {
         return slotMap == null ? null : slotMap.getOrDefault(name, null);
     }
 

@@ -23,7 +23,7 @@ public class GameRendererMixin {
         }
         if (ClientProxy.mainHandStatus.aiming) {
             ci.cancel();
-            applyBobbing(matrixStackIn, player, partialTicks, 0.07f);
+            applyBobbing(matrixStackIn, player, partialTicks, 0.06f);
         } else {
             if (ClientProxy.offHandStatus.holdingGun.get() || ClientProxy.mainHandStatus.holdingGun.get()) {
                 ci.cancel();

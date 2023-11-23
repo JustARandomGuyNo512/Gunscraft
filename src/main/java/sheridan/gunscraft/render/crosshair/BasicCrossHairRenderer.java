@@ -1,4 +1,4 @@
-package sheridan.gunscraft.render.crosshairs;
+package sheridan.gunscraft.render.crosshair;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;

@@ -7,6 +7,7 @@ import sheridan.gunscraft.Config;
 public class KeyBinds {
     public static final KeyBinding KEY_RELOAD = new KeyBinding("key.gunscraft.reload", 82, "key.categories.gunscraft");
     public static final KeyBinding KEY_SWITCH_FIRE_MODE = new KeyBinding("key.gunscraft.switch_fire_mode", 86, "key.categories.gunscraft");
+    public static final KeyBinding KEY_SHOW_ATTACHMENTS_GUI = new KeyBinding("key.gunscraft.show_attachments_gui", 71, "key.categories.gunscraft");
 
     public static final KeyBinding KEY_DEBUG_X_ADD = new KeyBinding("key.gunscraft.debug_x_add", 72, "key.categories.gunscraft");
     public static final KeyBinding KEY_DEBUG_X_DEC = new KeyBinding("key.gunscraft.debug_x_dec", 75, "key.categories.gunscraft");
@@ -22,6 +23,7 @@ public class KeyBinds {
     static {
         ClientRegistry.registerKeyBinding(KEY_RELOAD);
         ClientRegistry.registerKeyBinding(KEY_SWITCH_FIRE_MODE);
+        ClientRegistry.registerKeyBinding(KEY_SHOW_ATTACHMENTS_GUI);
 
         if (Config.isInDebug) {
             ClientRegistry.registerKeyBinding(KEY_DEBUG_X_ADD);

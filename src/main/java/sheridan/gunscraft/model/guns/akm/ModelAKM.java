@@ -1,4 +1,4 @@
-package sheridan.gunscraft.model.guns;
+package sheridan.gunscraft.model.guns.akm;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
@@ -117,7 +117,7 @@ public class ModelAKM extends EntityModel<Entity> implements IGunModel {
     public static IAnimation slideRecoil;
 
     public ModelAKM() {
-        slideRecoil = CommonAnimations.createSingleAxisBlotBack(0.28f, 3.4f);
+        slideRecoil = CommonAnimations.createSingleAxisBlotBack(0.15f, 3.5f);
 
         textureWidth = 512;
         textureHeight = 512;

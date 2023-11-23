@@ -3,7 +3,7 @@ package sheridan.gunscraft;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ClientStatus {
+public class ClientWeaponStatus {
     public AtomicBoolean buttonDown = new AtomicBoolean(false);
     public AtomicBoolean holdingGun = new AtomicBoolean(false);
     public AtomicInteger shootDelay = new AtomicInteger(1);
@@ -17,7 +17,7 @@ public class ClientStatus {
     public boolean hand;
     public boolean isPistol;
 
-    public ClientStatus(boolean hand) {
+    public ClientWeaponStatus(boolean hand) {
         this.hand = hand;
     }
 

@@ -20,6 +20,7 @@ import sheridan.gunscraft.Gunscraft;
 import sheridan.gunscraft.items.guns.IGenericGun;
 import sheridan.gunscraft.keybind.KeyBinds;
 import sheridan.gunscraft.network.PacketHandler;
+import sheridan.gunscraft.network.packets.AttachmentGuiPacket;
 import sheridan.gunscraft.network.packets.ReloadGunPacket;
 import sheridan.gunscraft.network.packets.SwitchFireModePacket;
 
@@ -137,6 +138,11 @@ public class ControllerEvents {
                        player.world.playSound(player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.PLAYERS, 0.8f, 1.37f, false);
                     }
                 }
+            }
+
+            if (KeyBinds.KEY_SHOW_ATTACHMENTS_GUI.isKeyDown() && event.getAction() == 1 && Minecraft.getInstance().currentScreen == null) {
+                System.out.println("key pressed");
+                PacketHandler.CommonChannel.sendToServer(new AttachmentGuiPacket());
             }
 
             if (Config.isInDebug) {

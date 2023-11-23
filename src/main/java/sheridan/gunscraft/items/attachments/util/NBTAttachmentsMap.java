@@ -1,10 +1,12 @@
 package sheridan.gunscraft.items.attachments.util;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
+import sheridan.gunscraft.ClientProxy;
 import sheridan.gunscraft.items.attachments.AttachmentRegistry;
 import sheridan.gunscraft.items.attachments.GenericAttachment;
 import sheridan.gunscraft.items.attachments.IGenericAttachment;
@@ -22,7 +24,7 @@ public class NBTAttachmentsMap{
         return slot;
     }
 
-    public static void init(List<Slot> slots, ItemStack stack, boolean reset) {
+    public static void init(List<GunAttachmentSlot> slots, ItemStack stack, boolean reset) {
         CompoundNBT stackNBT = stack.getTag();
         if (stackNBT == null) {
             System.out.println("nbt not init...");
@@ -36,13 +38,13 @@ public class NBTAttachmentsMap{
             stackNBT.remove("attachments");
         }
         CompoundNBT slotsNBT = new CompoundNBT();
-        for (Slot slot : slots) {
+        for (GunAttachmentSlot slot : slots) {
             slotsNBT.put(slot.name, createEmptySlot(slot.name));
         }
         slotsNBT.put("attachments", slotsNBT);
     }
 
-    public static void renderAttachments(MatrixStack matrixStack, IVertexBuilder buffer, ItemCameraTransforms.TransformType transformType,
+    public static void renderAttachments(MatrixStack matrixStack, ItemCameraTransforms.TransformType transformType,
            int packedLight, int packedOverlay, float red, float green, float blue, float alpha, int bulletLeft,
            long lastFireTime, boolean mainHand, int fireMode,ItemStack stack, IGenericGun gun) {
         CompoundNBT slots = checkAndGet(stack);
@@ -51,13 +53,15 @@ public class NBTAttachmentsMap{
                 CompoundNBT slot = slots.getCompound(slotName);
                 if (!slot.getBoolean("empty")) {
                     int attachmentId = slot.getInt("attachment_id");
-                    IAttachmentModel model = AttachmentRegistry.get(attachmentId).getModel();
-                    Slot slotInGun = gun.getSlot(slotName);
-                    if (model != null && slotInGun != null) {
+                    IAttachmentModel model = ClientProxy.attachmentModelMap.get(stack.getItem());
+                    GunAttachmentSlot slotInGun = gun.getSlot(slotName);
+                    IGenericAttachment attachment = AttachmentRegistry.get(attachmentId);
+                    if (model != null && slotInGun != null && attachment != null) {
                         matrixStack.push();
                         slotInGun.applyTrans(matrixStack);
                         //do model render...
-                        model.render(matrixStack,buffer, transformType,packedLight, packedOverlay,
+                        model.render(matrixStack, Minecraft.getInstance().getRenderTypeBuffers().getBufferSource().getBuffer( RenderType.getEntityCutoutNoCull(attachment.getTexture())),
+                                transformType,packedLight, packedOverlay,
                                 red, green, blue, alpha, bulletLeft, lastFireTime, mainHand, fireMode);
                         matrixStack.pop();
                     }
@@ -67,7 +71,7 @@ public class NBTAttachmentsMap{
     }
 
     public static boolean set(String slotName, int attachmentId, ItemStack stack, IGenericGun gun) {
-        Slot slot = gun.getSlot(slotName);
+        GunAttachmentSlot slot = gun.getSlot(slotName);
         if (slot != null && slot.accept(attachmentId)) {
             CompoundNBT slots = checkAndGet(stack);
             if (slots != null && slots.contains(slotName)) {

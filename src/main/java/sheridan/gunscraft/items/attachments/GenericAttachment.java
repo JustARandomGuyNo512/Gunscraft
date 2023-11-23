@@ -2,6 +2,8 @@ package sheridan.gunscraft.items.attachments;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import sheridan.gunscraft.ClientProxy;
 import sheridan.gunscraft.items.guns.IGenericGun;
 import sheridan.gunscraft.model.IAttachmentModel;
 
@@ -11,14 +13,14 @@ public class GenericAttachment extends Item implements IGenericAttachment{
     protected int id;
     protected String type;
     protected String name;
-    protected IAttachmentModel model;
+    public ResourceLocation texture;
 
-    public GenericAttachment(Properties properties, int id, String type, String name, IAttachmentModel model) {
+    public GenericAttachment(Properties properties, int id, String type, String name, ResourceLocation texture) {
         super(properties);
         this.id = id;
         this.type = type;
+        this.texture = texture;
         this.name = name;
-        this.model = model;
     }
 
     @Override
@@ -47,7 +49,8 @@ public class GenericAttachment extends Item implements IGenericAttachment{
     }
 
     @Override
-    public IAttachmentModel getModel() {
-        return model;
+    public ResourceLocation getTexture() {
+        return texture;
     }
+
 }

@@ -2,6 +2,7 @@ package sheridan.gunscraft.items.attachments;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import sheridan.gunscraft.items.guns.IGenericGun;
@@ -21,8 +22,13 @@ public interface IGenericAttachment {
     default void beforeShoot() {}
     default void afterShoot() {}
 
+    @OnlyIn(Dist.CLIENT)
+    default void beforeRenderGun() {}
+    @OnlyIn(Dist.CLIENT)
+    default void afterRenderGun() {}
+
     String getSlotType();
     int getID();
     String getAttachmentName();
-    IAttachmentModel getModel();
+    ResourceLocation getTexture();
 }

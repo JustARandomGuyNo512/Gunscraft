@@ -156,7 +156,7 @@ public class ModelM4a1 extends EntityModel<Entity> implements IGunModel {
     public static IAnimation slideRecoil;
 
     public ModelM4a1() {
-        slideRecoil = CommonAnimations.createSingleAxisBlotBack(0.22f, 3.0f);
+        slideRecoil = CommonAnimations.createSingleAxisBlotBack(0.12f, 3.0f);
         hand_guard_original = new HandGuardOriginal();
         is_original = new ISOriginal();
 

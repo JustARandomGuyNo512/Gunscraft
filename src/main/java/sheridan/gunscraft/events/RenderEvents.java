@@ -15,7 +15,7 @@ import sheridan.gunscraft.ClientProxy;
 import sheridan.gunscraft.animation.recoilAnimation.RecoilCameraHandler;
 import sheridan.gunscraft.items.guns.GenericGun;
 import sheridan.gunscraft.items.guns.IGenericGun;
-import sheridan.gunscraft.render.crosshairs.BasicCrossHairRenderer;
+import sheridan.gunscraft.render.crosshair.BasicCrossHairRenderer;
 
 
 @Mod.EventBusSubscriber
