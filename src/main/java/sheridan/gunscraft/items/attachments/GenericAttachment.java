@@ -2,9 +2,8 @@ package sheridan.gunscraft.items.attachments;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import sheridan.gunscraft.items.attachments.util.NBTAttachmentsMap;
 import sheridan.gunscraft.items.guns.IGenericGun;
-import sheridan.gunscraft.model.attachments.IAttachmentModel;
+import sheridan.gunscraft.model.IAttachmentModel;
 
 public class GenericAttachment extends Item implements IGenericAttachment{
     public static final String MUZZLE = "muzzle", GRIP = "grip", MAG = "mag", SCOPE = "scope", STOCK = "stock", HAND_GUARD = "hand_guard";

@@ -648,7 +648,7 @@ public class ModelMp5 extends EntityModel<Entity> implements IGunModel {
 
 
     @Override
-    public void render(MatrixStack matrixStack, IVertexBuilder buffer, ItemCameraTransforms.TransformType transformType, int packedLight, int packedOverlay, float red, float green, float blue, float alpha, int bulletLeft, long lastFireTime, boolean mainHand, int fireMode) {
+    public void render(MatrixStack matrixStack, IVertexBuilder buffer,  ItemCameraTransforms.TransformType transformType, int packedLight, int packedOverlay, float red, float green, float blue, float alpha, int bulletLeft, long lastFireTime, boolean mainHand, int fireMode) {
         slide.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         barrel.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         mag.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);

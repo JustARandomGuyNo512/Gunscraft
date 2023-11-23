@@ -1,10 +1,14 @@
-package sheridan.gunscraft.model.guns;// Made with Blockbench 4.8.3
+package sheridan.gunscraft.model.guns.m4a1;// Made with Blockbench 4.8.3
 // Exported for Minecraft version 1.15 - 1.16 with MCP mappings
 // Paste this class into your mod and generate all required imports
 
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.entity.Entity;
@@ -14,14 +18,25 @@ import sheridan.gunscraft.model.IGunModel;
 import sheridan.gunscraft.model.ModelRenderer;
 
 public class ModelM4a1 extends EntityModel<Entity> implements IGunModel {
-    private final ModelRenderer IS;
+    public final ModelRenderer IS;
+    public final ModelRenderer hand_guard;
+    public final ModelRenderer muzzle;
+    public final ModelRenderer ring;
+    public final ModelRenderer stock;
+    public final ModelRenderer mag;
+    public final ModelRenderer body;
+    public final ModelRenderer charge;
+    public final ModelRenderer grip;
+    public final ModelRenderer safety;
+    public final ModelRenderer blot;
+    public final HandGuardOriginal hand_guard_original;
+    public final ISOriginal is_original;
+
     private final ModelRenderer cube_r1;
     private final ModelRenderer cube_r2;
     private final ModelRenderer cube_r3;
     private final ModelRenderer cube_r4;
-    private final ModelRenderer muzzle;
     private final ModelRenderer cube_r5;
-    private final ModelRenderer hand_guard;
     private final ModelRenderer cube_r6;
     private final ModelRenderer cube_r7;
     private final ModelRenderer cube_r8;
@@ -46,7 +61,6 @@ public class ModelM4a1 extends EntityModel<Entity> implements IGunModel {
     private final ModelRenderer cube_r27;
     private final ModelRenderer cube_r28;
     private final ModelRenderer cube_r29;
-    private final ModelRenderer ring;
     private final ModelRenderer cube_r30;
     private final ModelRenderer cube_r31;
     private final ModelRenderer cube_r32;
@@ -59,7 +73,6 @@ public class ModelM4a1 extends EntityModel<Entity> implements IGunModel {
     private final ModelRenderer cube_r39;
     private final ModelRenderer cube_r40;
     private final ModelRenderer cube_r41;
-    private final ModelRenderer stock;
     private final ModelRenderer cube_r42;
     private final ModelRenderer cube_r43;
     private final ModelRenderer cube_r44;
@@ -69,13 +82,10 @@ public class ModelM4a1 extends EntityModel<Entity> implements IGunModel {
     private final ModelRenderer cube_r48;
     private final ModelRenderer cube_r49;
     private final ModelRenderer cube_r50;
-    private final ModelRenderer mag;
     private final ModelRenderer cube_r51;
     private final ModelRenderer cube_r52;
-    private final ModelRenderer charge;
     private final ModelRenderer cube_r53;
     private final ModelRenderer cube_r54;
-    private final ModelRenderer body;
     private final ModelRenderer cube_r55;
     private final ModelRenderer cube_r56;
     private final ModelRenderer cube_r57;
@@ -133,23 +143,22 @@ public class ModelM4a1 extends EntityModel<Entity> implements IGunModel {
     private final ModelRenderer cube_r109;
     private final ModelRenderer cube_r110;
     private final ModelRenderer cube_r111;
-    private final ModelRenderer grip;
     private final ModelRenderer cube_r112;
     private final ModelRenderer cube_r113;
     private final ModelRenderer cube_r114;
-    private final ModelRenderer safety;
     private final ModelRenderer cube_r115;
     private final ModelRenderer cube_r116;
     private final ModelRenderer blotRelease;
     private final ModelRenderer cube_r117;
     private final ModelRenderer cube_r118;
-    private final ModelRenderer blot;
     private final ModelRenderer blot_r1;
 
     public static IAnimation slideRecoil;
 
     public ModelM4a1() {
         slideRecoil = CommonAnimations.createSingleAxisBlotBack(0.22f, 3.0f);
+        hand_guard_original = new HandGuardOriginal();
+        is_original = new ISOriginal();
 
         textureWidth = 620;
         textureHeight = 620;
@@ -1005,9 +1014,9 @@ public class ModelM4a1 extends EntityModel<Entity> implements IGunModel {
 
     @Override
     public void render(MatrixStack matrixStack, IVertexBuilder buffer, ItemCameraTransforms.TransformType transformType, int packedLight, int packedOverlay, float red, float green, float blue, float alpha, int bulletLeft, long lastFireTime, boolean mainHand, int fireMode) {
-        IS.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        //IS.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         muzzle.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        hand_guard.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        //hand_guard.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         ring.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         stock.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         mag.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
@@ -1016,10 +1025,11 @@ public class ModelM4a1 extends EntityModel<Entity> implements IGunModel {
         grip.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         safety.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         blotRelease.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        //bb_main.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         matrixStack.push();
         slideRecoil.play(lastFireTime, matrixStack, transformType);
         blot.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         matrixStack.pop();
+        hand_guard_original.render(matrixStack, Minecraft.getInstance().getRenderTypeBuffers().getBufferSource().getBuffer( RenderType.getEntityCutoutNoCull(hand_guard_original.texture)), packedLight,packedOverlay, 1, 1, 1, 1);
+        is_original.render(matrixStack, Minecraft.getInstance().getRenderTypeBuffers().getBufferSource().getBuffer( RenderType.getEntityCutoutNoCull(is_original.texture)), packedLight,packedOverlay, 1, 1, 1, 1);
     }
 }

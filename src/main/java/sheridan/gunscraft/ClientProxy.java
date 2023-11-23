@@ -19,6 +19,7 @@ import sheridan.gunscraft.items.ModItems;
 import sheridan.gunscraft.items.guns.IGenericGun;
 import sheridan.gunscraft.model.IGunModel;
 import sheridan.gunscraft.model.guns.*;
+import sheridan.gunscraft.model.guns.m4a1.ModelM4a1;
 import sheridan.gunscraft.network.PacketHandler;
 import sheridan.gunscraft.network.packets.GunFirePacket;
 import sheridan.gunscraft.render.TransformData;

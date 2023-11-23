@@ -5,7 +5,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import sheridan.gunscraft.items.guns.IGenericGun;
-import sheridan.gunscraft.model.attachments.IAttachmentModel;
+import sheridan.gunscraft.model.IAttachmentModel;
 
 public interface IGenericAttachment {
     void onAttach(ItemStack stack, IGenericGun gun);

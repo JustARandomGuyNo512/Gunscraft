@@ -29,6 +29,8 @@ import sheridan.gunscraft.events.PlayerEvents;
 import sheridan.gunscraft.events.RenderEvents;
 import sheridan.gunscraft.items.guns.IGenericGun;
 import sheridan.gunscraft.model.IGunModel;
+import sheridan.gunscraft.model.guns.m4a1.HandGuardOriginal;
+import sheridan.gunscraft.model.guns.m4a1.ModelM4a1;
 import sheridan.gunscraft.render.fx.muzzleFlash.CommonMuzzleFlash;
 import sheridan.gunscraft.render.fx.muzzleFlash.MuzzleFlash;
 import sheridan.gunscraft.render.fx.muzzleFlash.MuzzleFlashTrans;
@@ -55,7 +57,7 @@ public class GenericGunRenderer implements IGunRender{
                 transformData.applyTransform(transformTypeIn, matrixStackIn, false, 0);
                 int fireMode = gun.getFireMode(itemStackIn);
                 model.render(matrixStackIn, bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(gun.getTexture(gun.getCurrentTextureIndex(itemStackIn)))),
-                        transformTypeIn, combinedLightIn, combinedOverlayIn, 1, 1, 1, 1, 1,0, false, fireMode);
+                      transformTypeIn, combinedLightIn, combinedOverlayIn, 1, 1, 1, 1, 1,0, false, fireMode);
                 matrixStackIn.pop();
             }
         }
@@ -116,7 +118,8 @@ public class GenericGunRenderer implements IGunRender{
                     }
                     stackIn.push();
                     model.render(stackIn, bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(gun.getTexture(gun.getCurrentTextureIndex(itemStackIn)))),
-                            type, combinedLightIn, combinedOverlayIn, 1, 1, 1, 1, 1, lastShoot, !leftHand, fireMode);
+                          type, combinedLightIn, combinedOverlayIn, 1, 1, 1, 1, 1, lastShoot, !leftHand, fireMode);
+
                     stackIn.pop();
                     renderMuzzleFlash(gun, itemStackIn, transformData, lastShoot, bufferIn, stackIn, false);
                 }

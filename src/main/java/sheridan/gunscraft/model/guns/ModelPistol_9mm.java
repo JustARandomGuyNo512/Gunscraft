@@ -5,6 +5,7 @@ package sheridan.gunscraft.model.guns;// Made with Blockbench 4.8.3
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 //import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;

@@ -134,8 +134,8 @@ public class TransformData {
         reSet(armModel);
         armModel.rotateAngleX = -90;
         stackIn.scale(BASE_ARM_SIZE, BASE_ARM_SIZE, BASE_ARM_SIZE);
-        float armWidth = isSlim ? -0.02f : 0f;
-        float armLength = isSlim ? 0.05f : 0f;
+        float armWidth = isSlim ? -0.018f : 0f;
+        float armLength = isSlim ? 0.0625f : 0f;
         switch (type) {
             case RIGHT_SIDE_RIGHT_HAND:
                 stackIn.translate(FPHandPoseTrans[0][0][0] + armWidth, FPHandPoseTrans[0][0][1], FPHandPoseTrans[0][0][2]);

@@ -4,7 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import sheridan.gunscraft.items.guns.IGenericGun;
-import sheridan.gunscraft.model.attachments.IAttachmentModel;
+import sheridan.gunscraft.model.IAttachmentModel;
 
 public class GenericScope extends GenericAttachment{
     public ResourceLocation scopeTexture;

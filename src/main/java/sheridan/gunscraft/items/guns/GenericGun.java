@@ -56,6 +56,7 @@ public class GenericGun extends BaseItem implements IGenericGun{
     public float recoilRandom;
     public float recoilDec;
     public Map<String, Slot> slotMap;
+    public int bulletPreShoot;
 
     public GenericGun(Properties properties, int baseMagSize,boolean canHoldInOneHand,
                       ResourceLocation[] textures, int[] fireModes,
@@ -328,7 +329,7 @@ public class GenericGun extends BaseItem implements IGenericGun{
 
     @Override
     public Slot getSlot(String name) {
-        return slotMap.getOrDefault(name, null);
+        return slotMap == null ? null : slotMap.getOrDefault(name, null);
     }
 
 

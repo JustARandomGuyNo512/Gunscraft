@@ -1,4 +1,4 @@
-package sheridan.gunscraft.model.attachments;
+package sheridan.gunscraft.model;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;

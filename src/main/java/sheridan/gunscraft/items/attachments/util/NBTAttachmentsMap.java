@@ -5,12 +5,11 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
-import net.minecraft.util.text.ITextComponent;
 import sheridan.gunscraft.items.attachments.AttachmentRegistry;
 import sheridan.gunscraft.items.attachments.GenericAttachment;
 import sheridan.gunscraft.items.attachments.IGenericAttachment;
 import sheridan.gunscraft.items.guns.IGenericGun;
-import sheridan.gunscraft.model.attachments.IAttachmentModel;
+import sheridan.gunscraft.model.IAttachmentModel;
 
 import java.util.List;
 
