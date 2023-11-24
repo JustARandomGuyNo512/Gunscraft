@@ -18,5 +18,4 @@ public class ModItems {
     public static final RegistryObject<Mac10> MAC10 = ITEMS.register("mac10", Mac10::new);
 
     public static final RegistryObject<ARExpansionMag> AR_EXPANSION_MAG = ITEMS.register("ar_expansion_mag", ARExpansionMag::new);
-    
 }

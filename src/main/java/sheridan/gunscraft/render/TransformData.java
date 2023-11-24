@@ -200,7 +200,7 @@ public class TransformData {
                 stackIn.rotate(new Quaternion(TPTrans[1][1][0], TPTrans[1][1][1], TPTrans[1][1][2], true));
                 stackIn.scale(TPTrans[1][2][0], TPTrans[1][2][1], TPTrans[1][2][2]);
                 break;
-            case  GUI:
+            case GUI:
                 stackIn.translate(GUITrans[0][0], GUITrans[0][1], GUITrans[0][2]);
                 stackIn.rotate(new Quaternion(GUITrans[1][0], GUITrans[1][1], GUITrans[1][2], true));
                 stackIn.scale(GUITrans[2][0], GUITrans[2][1], GUITrans[2][2]);

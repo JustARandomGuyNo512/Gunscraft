@@ -22,6 +22,8 @@ import sheridan.gunscraft.render.GenericGunRenderer;
 import sheridan.gunscraft.render.IGunRender;
 import sheridan.gunscraft.render.TransformData;
 
+import static net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType.GUI;
+
 
 @Mixin(ItemRenderer.class)
 public class RenderItemMixin {

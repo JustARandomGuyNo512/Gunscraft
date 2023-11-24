@@ -15,5 +15,16 @@
 
   "key.categories.gunscraft": "枪械工艺：按键绑定",
 
-  "container.gunscraft.attachments": "为你的武器安装配件"
+  "container.gunscraft.attachments": "为你的武器安装配件",
+
+  "tooltip.gunscraft.damage": "基础伤害：",
+  "tooltip.gunscraft.spread": "子弹散布：",
+  "tooltip.gunscraft.speed": "子弹飞行速度：",
+  "tooltip.gunscraft.reload_len": "换弹时间：",
+
+  "introduction.gunscraft.akm": "AKM 突击步枪--钢与木的艺术：\nAK47突击步枪的升级版，性能优异，结实耐用。\n在任何地方都是你最可靠的伙伴，在Minecraft里也一样。",
+  "introduction.gunscraft.m4a1": "没写呢。。。",
+  "introduction.gunscraft.pistol_9mm": "没写呢。。。",
+  "introduction.gunscraft.mp5": "没写呢。。。",
+  "introduction.gunscraft.mac10": "没写呢。。。"
 }

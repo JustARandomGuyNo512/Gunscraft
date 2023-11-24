@@ -13,6 +13,8 @@ public interface IGunRender {
                                 ItemStack itemStackIn, ItemCameraTransforms.TransformType type, IRenderTypeBuffer bufferIn, IGenericGun gun,
                                 int combinedLightIn, int combinedOverlayIn, boolean leftHand, IGunModel model, TransformData transformData);
 
+    void renderInGuiScreen(ItemStack itemStack, MatrixStack matrixStack, IGenericGun gun, IGunModel model);
+
     void justRenderModel(ItemStack itemStackIn, ItemCameraTransforms.TransformType transformTypeIn,
                          MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn, IGenericGun gun, IGunModel model, TransformData transformData);
 }

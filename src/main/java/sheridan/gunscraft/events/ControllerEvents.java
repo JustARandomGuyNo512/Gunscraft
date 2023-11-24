@@ -141,14 +141,12 @@ public class ControllerEvents {
             }
 
             if (KeyBinds.KEY_SHOW_ATTACHMENTS_GUI.isKeyDown() && event.getAction() == 1 && Minecraft.getInstance().currentScreen == null) {
-                System.out.println("key pressed");
                 PacketHandler.CommonChannel.sendToServer(new AttachmentGuiPacket());
             }
 
             if (Config.isInDebug) {
                 handleDebugKeys(event);
             }
-
         }
     }
 

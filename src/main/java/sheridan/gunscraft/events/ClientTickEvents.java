@@ -47,6 +47,9 @@ public class ClientTickEvents {
                 clientDelta = (float) dis * 0.001f;
             }
         }
+        if (Minecraft.getInstance().currentScreen != null) {
+            // System.out.println(Minecraft.getInstance().currentScreen.getClass());
+        }
     }
 
 }

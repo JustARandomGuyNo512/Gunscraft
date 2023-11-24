@@ -1,11 +1,17 @@
 package sheridan.gunscraft.items.guns;
 
+import com.mojang.brigadier.Message;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentUtils;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import sheridan.gunscraft.ClientProxy;
 import sheridan.gunscraft.animation.recoilAnimation.RecoilAnimationHandler;
@@ -19,7 +25,9 @@ import sheridan.gunscraft.items.attachments.util.GunAttachmentSlot;
 import sheridan.gunscraft.render.TransformData;
 import sheridan.gunscraft.sounds.SoundEvents;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GenericGun extends BaseItem implements IGenericGun{
@@ -56,7 +64,7 @@ public class GenericGun extends BaseItem implements IGenericGun{
     public float recoilRandom;
     public float recoilDec;
     public Map<String, GunAttachmentSlot> slotMap;
-    public int bulletPreShoot;
+    private TranslationTextComponent introduction;
 
     public GenericGun(Properties properties, int baseMagSize,boolean canHoldInOneHand,
                       ResourceLocation[] textures, int[] fireModes,
@@ -376,5 +384,20 @@ public class GenericGun extends BaseItem implements IGenericGun{
         nbt.putFloat("recoil_random", this.recoilRandom);
         nbt.putFloat("recoil_dec", this.recoilDec);
         stack.setTag(nbt);
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+        super.addInformation(stack, worldIn, tooltip, flagIn);
+        tooltip.add(ITextComponent.getTextComponentOrEmpty(
+                new TranslationTextComponent("tooltip.gunscraft.damage").getString() + this.baseDamage + " ~ " + this.minDamage));
+        tooltip.add(ITextComponent.getTextComponentOrEmpty(new TranslationTextComponent("tooltip.gunscraft.spread").getString() + getMinSpread(stack) + " ~ " + getMaxSpread(stack)));
+        tooltip.add(ITextComponent.getTextComponentOrEmpty(new TranslationTextComponent("tooltip.gunscraft.speed").getString() + this.bulletSpeed));
+        tooltip.add(ITextComponent.getTextComponentOrEmpty(
+                new TranslationTextComponent("tooltip.gunscraft.reload_len").getString() + getReloadLength(stack) / 20f + " s"));
+        if (introduction == null) {
+            introduction = new TranslationTextComponent("introduction.gunscraft." + getRegistryName().getPath());
+        }
+        tooltip.add(introduction.mergeStyle(TextFormatting.AQUA, TextFormatting.ITALIC));
     }
 }

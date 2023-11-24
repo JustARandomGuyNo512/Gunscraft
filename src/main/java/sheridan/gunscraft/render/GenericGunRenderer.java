@@ -5,18 +5,24 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.PlayerRenderer;
+import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Quaternion;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.client.ClientHooks;
 import org.lwjgl.opengl.GL11;
 import sheridan.gunscraft.ClientProxy;
 import sheridan.gunscraft.Gunscraft;
@@ -126,6 +132,19 @@ public class GenericGunRenderer implements IGunRender{
                 stackIn.pop();
             }
         }
+    }
+
+    @Override
+    public void renderInGuiScreen(ItemStack itemStack, MatrixStack matrixStack, IGenericGun gun, IGunModel model) {
+        matrixStack.push();
+        applyFOV();
+        TransformData transformData = ClientProxy.transformDataMap.get(itemStack.getItem());
+        transformData.applyTransform(ItemCameraTransforms.TransformType.GUI, matrixStack, false, 0);
+        model.render(matrixStack,
+                Minecraft.getInstance().getRenderTypeBuffers().getBufferSource().getBuffer(RenderType.getEntityCutoutNoCull(gun.getTexture(gun.getCurrentTextureIndex(itemStack)))),
+                ItemCameraTransforms.TransformType.GUI,15728880, 655360, 1, 1, 1, 1,0,0,  true, 0);
+
+        matrixStack.pop();
     }
 
     private static void renderMuzzleFlash(IGenericGun gun, ItemStack itemStack, TransformData transformData, long startTime, IRenderTypeBuffer buffer, MatrixStack stack, boolean firsPerson) {

@@ -1029,7 +1029,11 @@ public class ModelM4a1 extends EntityModel<Entity> implements IGunModel {
         slideRecoil.play(lastFireTime, matrixStack, transformType);
         blot.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         matrixStack.pop();
-        hand_guard_original.render(matrixStack, Minecraft.getInstance().getRenderTypeBuffers().getBufferSource().getBuffer( RenderType.getEntityCutoutNoCull(hand_guard_original.texture)), packedLight,packedOverlay, 1, 1, 1, 1);
-        is_original.render(matrixStack, Minecraft.getInstance().getRenderTypeBuffers().getBufferSource().getBuffer( RenderType.getEntityCutoutNoCull(is_original.texture)), packedLight,packedOverlay, 1, 1, 1, 1);
+        IRenderTypeBuffer.Impl bufferImpl = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
+        hand_guard_original.render(matrixStack, bufferImpl.getBuffer( RenderType.getEntityCutoutNoCull(hand_guard_original.texture)), packedLight,packedOverlay, 1, 1, 1, 1);
+        bufferImpl.finish();
+        bufferImpl = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
+        is_original.render(matrixStack, bufferImpl.getBuffer( RenderType.getEntityCutoutNoCull(is_original.texture)), packedLight,packedOverlay, 1, 1, 1, 1);
+        bufferImpl.finish();
     }
 }

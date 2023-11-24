@@ -15,5 +15,16 @@
 
   "key.categories.gunscraft": "Gun's craft key bindings",
 
-  "container.gunscraft.attachments": "Install attachments for your weapon"
+  "container.gunscraft.attachments": "Install attachments for your weapon",
+
+  "tooltip.gunscraft.damage": "Base damage: ",
+  "tooltip.gunscraft.spread": "Bullet spread: ",
+  "tooltip.gunscraft.speed": "Bullet speed: ",
+  "tooltip.gunscraft.reload_len": "Reload time: ",
+
+  "introduction.gunscraft.akm": "I will write this soon...",
+  "introduction.gunscraft.m4a1": "I will write this soon...",
+  "introduction.gunscraft.pistol_9mm": "I will write this soon...",
+  "introduction.gunscraft.mp5": "I will write this soon...",
+  "introduction.gunscraft.mac10": "I will write this soon..."
 }

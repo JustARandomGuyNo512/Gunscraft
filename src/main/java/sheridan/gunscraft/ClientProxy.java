@@ -178,7 +178,7 @@ public class ClientProxy extends CommonProxy{
                 .setTPLeftHand(new float[][]{{0f, -0, -0},{0, 0, 0},{0, 0, 0}})
                 .setFrameTrans(new float[][]{{12f, -5f, -0.25f},{0, -90, 0},{1.7f, 1.7f, 1.7f}})
                 .setGroundTrans(new float[][]{{0, -3, -6f},{0, 0, 0},{0.85f, 0.85f, 0.85f}})
-                .setGUITrans(new float[][]{{6, -3, -0f},{0, -80, 0},{0.9f, 0.9f, 0.9f}})
+                .setGUITrans(new float[][]{{6, -3, 100f},{0, -90, 0},{0.9f, 0.9f, 0.9f}})
                 .setHandPoseRightSideRightHand(new float[][]{{0.325f, 0.6f, 2.5f},{-1.5707963267948966f, -0.049f, 0},{1.0f, 1.0f, 1.0f}})
                 .setHandPoseRightSideLeftHand(new float[][]{{-0.158f, 0.55f, 1.30f},{-1.6580627893947f, 0.26179938779917f,  0.30543261909903f},{1.0f, 1.0f, 1.0f}})
                 .setHandPoseLeftSide(new float[][]{{-0, 0, 0},{-0, 0, 0},{0, 0, 0}})
