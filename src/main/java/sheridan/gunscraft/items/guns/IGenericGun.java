@@ -5,6 +5,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import sheridan.gunscraft.items.attachments.util.GunAttachmentSlot;
 
+import java.util.List;
+
 public interface IGenericGun {
     ResourceLocation getTexture(int index);
     int getCurrentTextureIndex(ItemStack stack);
@@ -33,4 +35,5 @@ public interface IGenericGun {
     float getRecoilRandom(ItemStack stack);
     float getRecoilDec(ItemStack stack);
     GunAttachmentSlot getSlot(String name);
+    List<GunAttachmentSlot> getAllSlots();
 }

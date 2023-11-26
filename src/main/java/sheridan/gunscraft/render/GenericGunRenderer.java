@@ -33,6 +33,8 @@ import sheridan.gunscraft.capability.CapabilityHandler;
 import sheridan.gunscraft.events.ClientTickEvents;
 import sheridan.gunscraft.events.PlayerEvents;
 import sheridan.gunscraft.events.RenderEvents;
+import sheridan.gunscraft.items.attachments.util.GunAttachmentSlot;
+import sheridan.gunscraft.items.attachments.util.NBTAttachmentsMap;
 import sheridan.gunscraft.items.guns.IGenericGun;
 import sheridan.gunscraft.model.IGunModel;
 import sheridan.gunscraft.model.guns.m4a1.HandGuardOriginal;
@@ -69,13 +71,25 @@ public class GenericGunRenderer implements IGunRender{
         }
     }
 
-
+    int delay = 0;
     public void renderWithLivingEntity(LivingEntity entityIn, MatrixStack stackIn,
         ItemStack itemStackIn, ItemCameraTransforms.TransformType type, IRenderTypeBuffer bufferIn, IGenericGun gun,
         int combinedLightIn, int combinedOverlayIn, boolean leftHand, IGunModel model, TransformData transformData) {
         if (!Gunscraft.proxy.shouldRenderCustom(itemStackIn, gun, entityIn, !leftHand)) {
             return;
         }
+
+        if (delay >= 100) {
+//            MatrixStack stack = new MatrixStack();
+//            stack.getLast().getMatrix().setIdentity();
+//            System.out.println("m1: " + stack.getLast().getMatrix());
+//
+//            stack.rotate(new Quaternion(0,10,0,true));
+//            System.out.println("m2: " + stack.getLast().getMatrix());
+
+            delay = 0;
+        }
+        delay ++;
         if (entityIn == null) {
             justRenderModel(itemStackIn,type,stackIn,bufferIn,combinedLightIn,combinedOverlayIn,gun,model,transformData);
             return;
@@ -135,7 +149,7 @@ public class GenericGunRenderer implements IGunRender{
     }
 
     @Override
-    public void renderInGuiScreen(ItemStack itemStack, MatrixStack matrixStack, IGenericGun gun, IGunModel model) {
+    public void renderInGuiScreen(ItemStack itemStack, MatrixStack matrixStack, IGenericGun gun, IGunModel model, GunAttachmentSlot selectSlot) {
         matrixStack.push();
         // applyFOV();
         TransformData transformData = ClientProxy.transformDataMap.get(itemStack.getItem());
@@ -143,7 +157,7 @@ public class GenericGunRenderer implements IGunRender{
         model.render(matrixStack,
                 Minecraft.getInstance().getRenderTypeBuffers().getBufferSource().getBuffer(RenderType.getEntityCutoutNoCull(gun.getTexture(gun.getCurrentTextureIndex(itemStack)))),
                 ItemCameraTransforms.TransformType.GROUND,15728880, 655360, 1, 1, 1, 1,0,0,  true, 0);
-
+        NBTAttachmentsMap.renderAttachmentIcons(matrixStack, gun, selectSlot);
         matrixStack.pop();
     }
 

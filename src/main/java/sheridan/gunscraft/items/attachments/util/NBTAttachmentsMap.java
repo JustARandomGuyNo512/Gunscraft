@@ -41,7 +41,7 @@ public class NBTAttachmentsMap{
         for (GunAttachmentSlot slot : slots) {
             slotsNBT.put(slot.name, createEmptySlot(slot.name));
         }
-        slotsNBT.put("attachments", slotsNBT);
+        stackNBT.put("attachments", slotsNBT);
     }
 
     public static void renderAttachments(MatrixStack matrixStack, ItemCameraTransforms.TransformType transformType,
@@ -68,6 +68,11 @@ public class NBTAttachmentsMap{
                 }
             }
         }
+    }
+
+    public static GunAttachmentSlotEntry getEntry(String slotName, ItemStack stack, IGenericGun gun) {
+
+        return null;
     }
 
     public static boolean set(String slotName, int attachmentId, ItemStack stack, IGenericGun gun) {
@@ -106,6 +111,21 @@ public class NBTAttachmentsMap{
             return nbt.getCompound("attachments");
         }
         return null;
+    }
+
+    public static void renderAttachmentIcons(MatrixStack matrixStack, IGenericGun gun, GunAttachmentSlot selectSlot) {
+        List<GunAttachmentSlot> slots = gun.getAllSlots();
+        if (slots != null) {
+            for (GunAttachmentSlot slot : slots) {
+                if (slot != null) {
+                    boolean selected = false;
+                    if (selectSlot != null && slot == selectSlot) {
+                        selected = true;
+                    }
+                    slot.renderIcon(matrixStack, selected, false);
+                }
+            }
+        }
     }
 
 

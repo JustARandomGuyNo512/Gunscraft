@@ -22,10 +22,12 @@ import sheridan.gunscraft.events.ClientTickEvents;
 import sheridan.gunscraft.events.RenderEvents;
 import sheridan.gunscraft.items.BaseItem;
 import sheridan.gunscraft.items.attachments.util.GunAttachmentSlot;
+import sheridan.gunscraft.items.attachments.util.NBTAttachmentsMap;
 import sheridan.gunscraft.render.TransformData;
 import sheridan.gunscraft.sounds.SoundEvents;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -356,6 +358,15 @@ public class GenericGun extends BaseItem implements IGenericGun{
         return slotMap == null ? null : slotMap.getOrDefault(name, null);
     }
 
+    @Override
+    public List<GunAttachmentSlot> getAllSlots() {
+        if (slotMap != null) {
+            List<GunAttachmentSlot> slots = new ArrayList<>(slotMap.values());
+            return slots;
+        }
+        return null;
+    }
+
 
     private CompoundNBT checkAndGet(ItemStack stack) {
         CompoundNBT nbt = stack.getTag();
@@ -384,6 +395,9 @@ public class GenericGun extends BaseItem implements IGenericGun{
         nbt.putFloat("recoil_random", this.recoilRandom);
         nbt.putFloat("recoil_dec", this.recoilDec);
         stack.setTag(nbt);
+        if (slotMap != null) {
+            NBTAttachmentsMap.init(new ArrayList<>(slotMap.values()), stack, false);
+        }
     }
 
     @Override

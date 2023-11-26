@@ -4,6 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -19,7 +20,10 @@ import org.lwjgl.opengl.GL11;
 import sheridan.gunscraft.ClientProxy;
 import sheridan.gunscraft.Gunscraft;
 import sheridan.gunscraft.container.AttachmentContainer;
+import sheridan.gunscraft.items.attachments.util.GunAttachmentSlot;
 import sheridan.gunscraft.items.guns.IGenericGun;
+
+import java.util.List;
 
 import static net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType.*;
 
@@ -30,6 +34,11 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
     private final TranslationTextComponent title = new TranslationTextComponent("container.gunscraft.attachments");
 
     private IInventory inventory;
+    private IInventory attachmentInventory;
+    private List<GunAttachmentSlot> slots;
+    private int selectedIndex = 0;
+    private GunAttachmentSlot selectedSlot;
+    private IGenericGun gun;
 
     private boolean isMouseDruggingModel = false;
     private float modelRX;
@@ -51,6 +60,7 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
     public AttachmentScreen(AttachmentContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
         this.inventory = screenContainer.playerInventory;
+        this.attachmentInventory = screenContainer.attachmentInventory;
     }
 
     @Override
@@ -69,9 +79,51 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
     }
 
     @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        System.out.println(keyCode);
+        if (slots != null && slots.size() > 1) {
+            switch (keyCode) {
+                case 263:
+                    selectedIndex --;
+                    selectedIndex = Math.max(selectedIndex, 0);
+                    break;
+                case 262:
+                    selectedIndex ++;
+                    break;
+                case 265:
+                    System.out.println("install attachment...");
+                    break;
+                case 264:
+                    System.out.println("down attachment...");
+                    break;
+            }
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
     public void tick() {
+        PlayerEntity player = this.minecraft.player;
+        if (player == null) {
+            this.closeScreen();
+        }
         if (this.minecraft != null) {
+            ItemStack stack = player.getHeldItemMainhand();
+            if (!(stack.getItem() instanceof IGenericGun)) {
+                this.closeScreen();
+            } else {
+                if (gun == null || slots == null) {
+                    this.gun = (IGenericGun) stack.getItem();
+                    slots = gun.getAllSlots();
+                    if (slots.size() > 1) {
+                        selectedSlot = slots.get(0);
+                    }
+                }
+            }
             this.minecraft.displayGuiScreen(this);
+        }
+        if (slots != null && slots.size() > 1) {
+            selectedSlot = slots.get(selectedIndex % slots.size());
         }
         super.tick();
 
@@ -122,9 +174,7 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
             matrixstack.rotate(rx);
             IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
             RenderSystem.color4f(1,1,1,1);
-//        Minecraft.getInstance().getItemRenderer().renderItem(new ItemStack(livingEntity.getHeldItemMainhand().getItem()),GROUND,
-//                15728880,655360, matrixstack, buffer);
-            ClientProxy.renderer.renderInGuiScreen(stack, matrixstack, gun, ClientProxy.gunModelMap.get(stack.getItem()));
+            ClientProxy.renderer.renderInGuiScreen(stack, matrixstack, gun, ClientProxy.gunModelMap.get(stack.getItem()), selectedSlot);
             buffer.finish();
             GL11.glDisable(GL11.GL_SCISSOR_TEST);
             RenderSystem.popMatrix();
@@ -209,7 +259,7 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
     }
 
     private boolean isMouseInModelArea(double mx, double my) {
-        if (isMouseInDragArea(mx, my) || isMouseInResetArea(mx, my)) {
+        if (isMouseInDragArea(mx, my) || isMouseInResetArea(mx, my) || isMouseInAttachmentSlotArea(mx, my)) {
             return false;
         }
         float sx = (this.width - this.xSize) / 2f;
@@ -229,6 +279,12 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
         return mx > sx + 150 && mx <  sx + 166 && my > sy + 32 && my < sy + 48;
     }
 
+    private boolean isMouseInAttachmentSlotArea(double mx, double my) {
+        float sx = (this.width - this.xSize) / 2f;
+        float sy = (this.height - this.ySize) / 2f;
+        return mx > sx + 152 && mx <  sx + 170 && my > sy + 63 && my < sy + 81;
+    }
+
     @Override
     protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mx, int my) {
         if (this.minecraft != null) {
@@ -244,11 +300,11 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
             blit(matrixStack, startX + 150, startY + 8,16,16, 0, 0,32,32,32,32);
             this.minecraft.getTextureManager().bindTexture(RESET_BUTTON);
             if (isResetBtnDown) {
-                RenderSystem.color4f(1,1,1,0.75f);
+                RenderSystem.color4f(0.5f,1,1,1f);
             }
             blit(matrixStack, startX + 150, startY + 32,16,16, 0, 0,32,32,32,32);
             if (isResetBtnDown) {
-                RenderSystem.color4f(1,1,1,1f);
+                RenderSystem.color4f(0.5f,1,1,1f);
             }
         }
     }
