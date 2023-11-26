@@ -28,7 +28,7 @@ import static net.minecraft.client.renderer.model.ItemCameraTransforms.Transform
 @Mixin(ItemRenderer.class)
 public class RenderItemMixin {
 
-    private IGunRender renderer = ClientProxy.renderer;
+    private final IGunRender renderer = ClientProxy.renderer;
 
     // all model, ground, gui, other
     @Inject(at = @At("HEAD"), method = "renderItem(Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/renderer/model/ItemCameraTransforms$TransformType;ZLcom/mojang/blaze3d/matrix/MatrixStack;Lnet/minecraft/client/renderer/IRenderTypeBuffer;IILnet/minecraft/client/renderer/model/IBakedModel;)V", cancellable = true)

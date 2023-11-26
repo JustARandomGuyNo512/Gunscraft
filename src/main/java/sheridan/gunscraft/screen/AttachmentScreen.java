@@ -16,8 +16,10 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.lwjgl.opengl.GL11;
+import sheridan.gunscraft.ClientProxy;
 import sheridan.gunscraft.Gunscraft;
 import sheridan.gunscraft.container.AttachmentContainer;
+import sheridan.gunscraft.items.guns.IGenericGun;
 
 import static net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType.*;
 
@@ -90,7 +92,6 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
             return false;
         }
         if (isDragBtnDown) {
-            System.out.println(this.dragX + " " + this.dragY);
             this.dragX = tempDragX + (float) (mouseX - dragStartX) * 0.5f;
             this.dragY = tempDragY + (float) (mouseY - dragStartY) * 0.5f;
             return false;
@@ -101,28 +102,33 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
     }
 
     private void renderGun(float posX, float posY, float scale, LivingEntity livingEntity) {
-        RenderSystem.pushMatrix();
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        renderInWindow((this.width - this.xSize) / 2 + 7,
-                (this.height - this.ySize) / 2 + 7, 176 - 15, 79 - 7);
-        RenderSystem.translatef(posX, posY, 1000.0F);
-        RenderSystem.scalef(1.0F, 1.0F, -1.0F);
-        MatrixStack matrixstack = new MatrixStack();
-        matrixstack.translate(0.0D + dragX, 0.0D + dragY, 1000.0D);
-        matrixstack.scale(scale + scaleZoom, scale + scaleZoom, scale + scaleZoom);
-        Quaternion rz = Vector3f.ZP.rotationDegrees(180.0F);
-        Quaternion ry = Vector3f.YP.rotationDegrees(90F + modelRY);
-        Quaternion rx = Vector3f.XP.rotationDegrees( - modelRX);
-        rz.multiply(ry);
-        matrixstack.rotate(rz);
-        matrixstack.rotate(rx);
-        IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
-        RenderSystem.color4f(1,1,1,1);
-        Minecraft.getInstance().getItemRenderer().renderItem(new ItemStack(livingEntity.getHeldItemMainhand().getItem()),GROUND,
-                15728880,655360, matrixstack, buffer);
-        buffer.finish();
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
-        RenderSystem.popMatrix();
+        ItemStack stack = livingEntity.getHeldItemMainhand();
+        if (stack.getItem() instanceof IGenericGun) {
+            IGenericGun gun = (IGenericGun) stack.getItem();
+            RenderSystem.pushMatrix();
+            GL11.glEnable(GL11.GL_SCISSOR_TEST);
+            renderInWindow((this.width - this.xSize) / 2 + 7,
+                    (this.height - this.ySize) / 2 + 7, 176 - 15, 79 - 7);
+            RenderSystem.translatef(posX, posY, 1000.0F);
+            RenderSystem.scalef(1.0F, 1.0F, -1.0F);
+            MatrixStack matrixstack = new MatrixStack();
+            matrixstack.translate(0.0D + dragX, 0.0D + dragY, 1000.0D);
+            matrixstack.scale(scale + scaleZoom, scale + scaleZoom, scale + scaleZoom);
+            Quaternion rz = Vector3f.ZP.rotationDegrees(180.0F);
+            Quaternion ry = Vector3f.YP.rotationDegrees(90F + modelRY);
+            Quaternion rx = Vector3f.XP.rotationDegrees( - modelRX);
+            rz.multiply(ry);
+            matrixstack.rotate(rz);
+            matrixstack.rotate(rx);
+            IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
+            RenderSystem.color4f(1,1,1,1);
+//        Minecraft.getInstance().getItemRenderer().renderItem(new ItemStack(livingEntity.getHeldItemMainhand().getItem()),GROUND,
+//                15728880,655360, matrixstack, buffer);
+            ClientProxy.renderer.renderInGuiScreen(stack, matrixstack, gun, ClientProxy.gunModelMap.get(stack.getItem()));
+            buffer.finish();
+            GL11.glDisable(GL11.GL_SCISSOR_TEST);
+            RenderSystem.popMatrix();
+        }
     }
 
     public static void renderInWindow(int x, int y, int width, int height) {

@@ -137,12 +137,12 @@ public class GenericGunRenderer implements IGunRender{
     @Override
     public void renderInGuiScreen(ItemStack itemStack, MatrixStack matrixStack, IGenericGun gun, IGunModel model) {
         matrixStack.push();
-        applyFOV();
+        // applyFOV();
         TransformData transformData = ClientProxy.transformDataMap.get(itemStack.getItem());
-        transformData.applyTransform(ItemCameraTransforms.TransformType.GUI, matrixStack, false, 0);
+        transformData.applyTransform(ItemCameraTransforms.TransformType.GROUND, matrixStack, false, 0);
         model.render(matrixStack,
                 Minecraft.getInstance().getRenderTypeBuffers().getBufferSource().getBuffer(RenderType.getEntityCutoutNoCull(gun.getTexture(gun.getCurrentTextureIndex(itemStack)))),
-                ItemCameraTransforms.TransformType.GUI,15728880, 655360, 1, 1, 1, 1,0,0,  true, 0);
+                ItemCameraTransforms.TransformType.GROUND,15728880, 655360, 1, 1, 1, 1,0,0,  true, 0);
 
         matrixStack.pop();
     }
