@@ -39,7 +39,7 @@ public class PacketHandler
                 .encoder(LoginPacks.S2CSyncedPlayerData::encode)
                 .consumer(FMLHandshakeHandler.biConsumerFor((handler, msg, supplier) -> {
                     supplier.get().setPacketHandled(true);
-                    if(!CapabilityHandler.instance().updateMappings(msg))
+                    if(!CapabilityHandler.getInstance().updateMappings(msg))
                     {
                         supplier.get().getNetworkManager().closeChannel(new StringTextComponent("Connection refused - received unknown capability entry"));
                         return;
@@ -55,6 +55,8 @@ public class PacketHandler
         registerPacket(ReloadGunPacket.class, new ReloadGunPacket());
         registerPacket(SwitchFireModePacket.class, new SwitchFireModePacket());
         registerPacket(AttachmentGuiPacket.class, new AttachmentGuiPacket());
+        registerPacket(SetAttachmentPacket.class, new SetAttachmentPacket());
+        registerPacket(GiveBackItemPacket.class, new GiveBackItemPacket());
     }
 
     private static <T> void registerPacket(Class<T> clazz, IPacket<T> message)

@@ -44,52 +44,69 @@ public class NBTAttachmentsMap{
         stackNBT.put("attachments", slotsNBT);
     }
 
-    public static void renderAttachments(MatrixStack matrixStack, ItemCameraTransforms.TransformType transformType,
-           int packedLight, int packedOverlay, float red, float green, float blue, float alpha, int bulletLeft,
-           long lastFireTime, boolean mainHand, int fireMode,ItemStack stack, IGenericGun gun) {
+
+
+    public static GunRenderContext renderAttachments(MatrixStack matrixStack, ItemCameraTransforms.TransformType transformType,
+           int packedLight, int packedOverlay, int bulletLeft, long lastFireTime, boolean mainHand, int fireMode,ItemStack stack, IGenericGun gun) {
         CompoundNBT slots = checkAndGet(stack);
+        GunRenderContext params = new GunRenderContext();
         if (slots != null) {
             for (String slotName : slots.keySet()) {
                 CompoundNBT slot = slots.getCompound(slotName);
                 if (!slot.getBoolean("empty")) {
                     int attachmentId = slot.getInt("attachment_id");
-                    IAttachmentModel model = ClientProxy.attachmentModelMap.get(stack.getItem());
+                    IAttachmentModel model = AttachmentRegistry.getModel(attachmentId);
                     GunAttachmentSlot slotInGun = gun.getSlot(slotName);
                     IGenericAttachment attachment = AttachmentRegistry.get(attachmentId);
                     if (model != null && slotInGun != null && attachment != null) {
+                        attachment.handleParams(params);
                         matrixStack.push();
                         slotInGun.applyTrans(matrixStack);
-                        //do model render...
-                        model.render(matrixStack, Minecraft.getInstance().getRenderTypeBuffers().getBufferSource().getBuffer( RenderType.getEntityCutoutNoCull(attachment.getTexture())),
-                                transformType,packedLight, packedOverlay,
-                                red, green, blue, alpha, bulletLeft, lastFireTime, mainHand, fireMode);
+                        model.render(matrixStack, transformType, packedLight, packedOverlay, bulletLeft, lastFireTime, mainHand, fireMode, gun);
                         matrixStack.pop();
                     }
                 }
             }
         }
+        return params;
     }
 
     public static GunAttachmentSlotEntry getEntry(String slotName, ItemStack stack, IGenericGun gun) {
-
+        GunAttachmentSlot slot = gun.getSlot(slotName);
+        if (slot != null) {
+            CompoundNBT nbt = checkAndGet(stack);
+            if (nbt != null) {
+                CompoundNBT slotNBT = nbt.getCompound(slotName);
+                GunAttachmentSlotEntry entry = new GunAttachmentSlotEntry();
+                entry.empty = slotNBT.getBoolean("empty");
+                entry.attachmentId = slotNBT.getInt("attachment_id");
+                entry.slot = slot;
+                return entry;
+            }
+        }
         return null;
     }
 
-    public static boolean set(String slotName, int attachmentId, ItemStack stack, IGenericGun gun) {
+    public static boolean isSlotOccupied() {return false;}
+
+    public static IGenericAttachment set(String slotName, int attachmentId, ItemStack stack, IGenericGun gun) {
         GunAttachmentSlot slot = gun.getSlot(slotName);
-        if (slot != null && slot.accept(attachmentId)) {
+        if (slot != null && (slot.accept(attachmentId) || attachmentId == GenericAttachment.NONE)) {
             CompoundNBT slots = checkAndGet(stack);
             if (slots != null && slots.contains(slotName)) {
                 CompoundNBT slotNBT = slots.getCompound(slotName);
                 if (attachmentId == GenericAttachment.NONE) {
+                    IGenericAttachment returnVal = null;
                     if (!slotNBT.getBoolean("empty")) {
                         IGenericAttachment attachment = AttachmentRegistry.get(slotNBT.getInt("attachment_id"));
                         if(attachment != null) {
                             attachment.onOff(stack, gun);
+                            returnVal = attachment;
                         }
                     }
                     slotNBT.putBoolean("empty", true);
                     slotNBT.putInt("attachment_id", attachmentId);
+                    return returnVal;
                 } else {
                     if (slotNBT.getBoolean("empty")) {
                         IGenericAttachment attachment = AttachmentRegistry.get(attachmentId);
@@ -97,12 +114,13 @@ public class NBTAttachmentsMap{
                             slotNBT.putBoolean("empty", false);
                             slotNBT.putInt("attachment_id", attachmentId);
                             attachment.onAttach(stack, gun);
+                            return attachment;
                         }
                     }
                 }
             }
         }
-        return false;
+        return null;
     }
 
     private static CompoundNBT checkAndGet(ItemStack stack) {
@@ -113,16 +131,15 @@ public class NBTAttachmentsMap{
         return null;
     }
 
-    public static void renderAttachmentIcons(MatrixStack matrixStack, IGenericGun gun, GunAttachmentSlot selectSlot) {
+    public static void renderAttachmentIcons(MatrixStack matrixStack, IGenericGun gun, GunAttachmentSlot selectSlot, ItemStack stack) {
         List<GunAttachmentSlot> slots = gun.getAllSlots();
         if (slots != null) {
             for (GunAttachmentSlot slot : slots) {
                 if (slot != null) {
-                    boolean selected = false;
-                    if (selectSlot != null && slot == selectSlot) {
-                        selected = true;
-                    }
-                    slot.renderIcon(matrixStack, selected, false);
+                    GunAttachmentSlotEntry entry = NBTAttachmentsMap.getEntry(slot.name, stack, gun);
+                    boolean selected = selectSlot != null && slot == selectSlot;
+                    boolean occupied = entry != null && !entry.empty;
+                    slot.renderIcon(matrixStack, selected, occupied);
                 }
             }
         }

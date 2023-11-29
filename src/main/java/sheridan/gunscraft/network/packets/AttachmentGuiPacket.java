@@ -28,7 +28,6 @@ public class AttachmentGuiPacket implements IPacket<AttachmentGuiPacket>{
         supplier.get().enqueueWork(() -> {
             ServerPlayerEntity player = supplier.get().getSender();
             if (player != null) {
-                //ServerPlayHandler.handleAttachments(player);
                 ItemStack heldItem = player.getHeldItemMainhand();
                 if (heldItem.getItem() instanceof IGenericGun) {
                     NetworkHooks.openGui(player, new SimpleNamedContainerProvider((windowId, playerInventory, player1) -> new AttachmentContainer(windowId, playerInventory, heldItem),

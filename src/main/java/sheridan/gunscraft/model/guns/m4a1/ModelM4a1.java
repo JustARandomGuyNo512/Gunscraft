@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.entity.Entity;
 import sheridan.gunscraft.animation.CommonAnimations;
 import sheridan.gunscraft.animation.IAnimation;
+import sheridan.gunscraft.items.attachments.util.GunRenderContext;
 import sheridan.gunscraft.model.IGunModel;
 import sheridan.gunscraft.model.ModelRenderer;
 
@@ -1013,13 +1014,16 @@ public class ModelM4a1 extends EntityModel<Entity> implements IGunModel {
 
 
     @Override
-    public void render(MatrixStack matrixStack, IVertexBuilder buffer, ItemCameraTransforms.TransformType transformType, int packedLight, int packedOverlay, float red, float green, float blue, float alpha, int bulletLeft, long lastFireTime, boolean mainHand, int fireMode) {
+    public void render(MatrixStack matrixStack, IVertexBuilder buffer, ItemCameraTransforms.TransformType transformType, int packedLight, int packedOverlay, float red, float green, float blue, float alpha, int bulletLeft, long lastFireTime, boolean mainHand, int fireMode, GunRenderContext context) {
+        boolean nullFlag = context == null;
         //IS.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         muzzle.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         //hand_guard.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         ring.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         stock.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        mag.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        if (!nullFlag && !context.occupiedMag) {
+            mag.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        }
         charge.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         body.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         grip.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
@@ -1029,11 +1033,16 @@ public class ModelM4a1 extends EntityModel<Entity> implements IGunModel {
         slideRecoil.play(lastFireTime, matrixStack, transformType);
         blot.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         matrixStack.pop();
+
+
         IRenderTypeBuffer.Impl bufferImpl = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
         hand_guard_original.render(matrixStack, bufferImpl.getBuffer( RenderType.getEntityCutoutNoCull(hand_guard_original.texture)), packedLight,packedOverlay, 1, 1, 1, 1);
         bufferImpl.finish();
-        bufferImpl = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
-        is_original.render(matrixStack, bufferImpl.getBuffer( RenderType.getEntityCutoutNoCull(is_original.texture)), packedLight,packedOverlay, 1, 1, 1, 1);
-        bufferImpl.finish();
+
+        if (!nullFlag && !context.occupiedIS) {
+            bufferImpl = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
+            is_original.render(matrixStack, bufferImpl.getBuffer( RenderType.getEntityCutoutNoCull(is_original.texture)), packedLight,packedOverlay, 1, 1, 1, 1);
+            bufferImpl.finish();
+        }
     }
 }

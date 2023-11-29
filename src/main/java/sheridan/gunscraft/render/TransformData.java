@@ -6,7 +6,6 @@ import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
 import sheridan.gunscraft.ClientProxy;
-import sheridan.gunscraft.animation.IAnimation;
 import sheridan.gunscraft.animation.recoilAnimation.RecoilAnimationData;
 import sheridan.gunscraft.render.fx.muzzleFlash.MuzzleFlashTrans;
 
@@ -130,8 +129,8 @@ public class TransformData {
 
 
 
-    public void applyFPArmPoseTransform(int type, MatrixStack stackIn, boolean isSlim, ModelRenderer armModel) {
-        reSet(armModel);
+    public void applyFPArmPoseTransform(int type, MatrixStack stackIn, boolean isSlim, ModelRenderer armModel, boolean mainHand) {
+        clear(armModel, mainHand);
         armModel.rotateAngleX = -90;
         stackIn.scale(BASE_ARM_SIZE, BASE_ARM_SIZE, BASE_ARM_SIZE);
         float armWidth = isSlim ? -0.018f : 0f;
@@ -161,11 +160,13 @@ public class TransformData {
         }
     }
 
-    private void reSet(ModelRenderer model) {
+    private void clear(ModelRenderer model, boolean mainHand) {
         model.rotateAngleZ = 0;
         model.rotateAngleX = 0;
         model.rotateAngleY = 0;
         model.rotationPointY = 2.0f;
+        model.rotationPointX = mainHand ? -5f : 5f;
+        model.rotationPointZ = 0.0f;
         model.showModel = true;
     }
 

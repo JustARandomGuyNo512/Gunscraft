@@ -51,13 +51,11 @@ public class ControllerEvents {
                         if (event.getAction() == 1) {
                             if (holdGunMain) {
                                 ClientProxy.mainHandStatus.buttonDown.set(!(ClientTickEvents.reloadingHandler.getReloadTimer() > 0));
+                                event.setCanceled(true);
                             }
                         } else if (event.getAction() == 0) {
                             ClientProxy.mainHandStatus.buttonDown.set(false);
                             ClientProxy.mainHandStatus.fireCount = 0;
-                        }
-                        if (holdGunMain) {
-                            event.setCanceled(true);
                         }
                     }
                     if (event.getButton() == 1) {

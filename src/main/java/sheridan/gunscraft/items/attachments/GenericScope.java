@@ -9,9 +9,9 @@ import sheridan.gunscraft.model.IAttachmentModel;
 public class GenericScope extends GenericAttachment{
     public float rate = 1.0f;
 
-    public GenericScope(Properties properties, int id, String type, String name, ResourceLocation scopeTexture,
+    public GenericScope(Properties properties, int id, String type, String name,
                         float rate) {
-        super(properties, id, type, name, scopeTexture);
+        super(properties, id, type, name);
         this.rate = rate;
     }
 

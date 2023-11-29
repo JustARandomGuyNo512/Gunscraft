@@ -1,6 +1,5 @@
 package sheridan.gunscraft.items.guns;
 
-import com.mojang.brigadier.Message;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
@@ -9,7 +8,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentUtils;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
@@ -149,11 +147,11 @@ public class GenericGun extends BaseItem implements IGenericGun{
             long now = System.currentTimeMillis();
             TransformData transformData = ClientProxy.transformDataMap.get(stack.getItem());
             if (mainHand) {
-                CapabilityHandler.instance().set((PlayerEntity) entity, ClientProxy.LAST_SHOOT_RIGHT, now);
+                CapabilityHandler.getInstance().set((PlayerEntity) entity, ClientProxy.LAST_SHOOT_RIGHT, now);
                 ClientProxy.mainHandStatus.lastShoot = now;
                 //GenericGunRenderer.recoilAnimationState.onShoot(System.currentTimeMillis(), transformData.getRecoilAnimationData());
             } else {
-                CapabilityHandler.instance().set((PlayerEntity) entity, ClientProxy.LAST_SHOOT_LEFT, now);
+                CapabilityHandler.getInstance().set((PlayerEntity) entity, ClientProxy.LAST_SHOOT_LEFT, now);
                 ClientProxy.offHandStatus.lastShoot = now;
             }
             int direction = randomIndex();
@@ -203,9 +201,9 @@ public class GenericGun extends BaseItem implements IGenericGun{
     public void shoot(ItemStack stack, LivingEntity entity, boolean mainHand, float spread) {
         long now = System.currentTimeMillis();
         if (mainHand) {
-            CapabilityHandler.instance().set((PlayerEntity) entity, ClientProxy.LAST_SHOOT_RIGHT, now);
+            CapabilityHandler.getInstance().set((PlayerEntity) entity, ClientProxy.LAST_SHOOT_RIGHT, now);
         } else {
-            CapabilityHandler.instance().set((PlayerEntity) entity, ClientProxy.LAST_SHOOT_LEFT, now);
+            CapabilityHandler.getInstance().set((PlayerEntity) entity, ClientProxy.LAST_SHOOT_LEFT, now);
         }
         this.setAmmoLeft(stack, this.getAmmoLeft(stack) - 1);
         if (!entity.world.isRemote) {

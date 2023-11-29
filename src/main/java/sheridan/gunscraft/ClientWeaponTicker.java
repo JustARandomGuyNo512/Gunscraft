@@ -47,10 +47,10 @@ public class ClientWeaponTicker extends TimerTask {
             ItemStack stack = mainHand ? player.getHeldItemMainhand() : player.getHeldItemOffhand();
             if (stack.getItem() instanceof IGenericGun) {
                 if (mainHand) {
-                    minecraft.enqueue(ClientProxy::tryFireMain);
+                    minecraft.enqueue(ClientProxy::handleFireMain);
                     mainHandPostDelay = ClientProxy.mainHandStatus.shootDelay.get();
                 } else {
-                    minecraft.enqueue(ClientProxy::tryFireOff);
+                    minecraft.enqueue(ClientProxy::handleFireOff);
                     offHandPostDelay = ClientProxy.offHandStatus.shootDelay.get();
                 }
             }

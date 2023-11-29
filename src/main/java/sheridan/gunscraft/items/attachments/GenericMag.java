@@ -7,8 +7,8 @@ import sheridan.gunscraft.items.guns.IGenericGun;
 public class GenericMag extends GenericAttachment{
     public int ammoIncrement;
 
-    public GenericMag(Properties properties, int id, String type, String name, int ammoIncrement, ResourceLocation texture) {
-        super(properties, id, type, name, texture);
+    public GenericMag(Properties properties, int id, String type, String name, int ammoIncrement) {
+        super(properties, id, type, name);
         this.ammoIncrement = ammoIncrement;
     }
 
@@ -20,5 +20,8 @@ public class GenericMag extends GenericAttachment{
     @Override
     public void onOff(ItemStack stack, IGenericGun gun) {
         gun.setMagSize(stack, gun.getMagSize(stack) - ammoIncrement);
+        int ammoDec = gun.getAmmoLeft(stack);
+        ammoDec = ammoDec > ammoIncrement ? ammoDec - ammoIncrement : 0;
+        gun.setAmmoLeft(stack, ammoDec);
     }
 }

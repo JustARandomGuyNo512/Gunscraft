@@ -50,7 +50,7 @@ public class LoginPacks
         public S2CSyncedPlayerData()
         {
             this.keyMap = new HashMap<>();
-            List<CapabilityKey<?>> keys = CapabilityHandler.instance().getKeys();
+            List<CapabilityKey<?>> keys = CapabilityHandler.getInstance().getKeys();
             keys.forEach(syncedDataKey -> this.keyMap.put(syncedDataKey.getKey(), syncedDataKey.getId()));
         }
 
@@ -61,7 +61,7 @@ public class LoginPacks
 
         void encode(PacketBuffer output)
         {
-            List<CapabilityKey<?>> keys = CapabilityHandler.instance().getKeys();
+            List<CapabilityKey<?>> keys = CapabilityHandler.getInstance().getKeys();
             keys.forEach(syncedDataKey -> {
                 output.writeResourceLocation(syncedDataKey.getKey());
                 output.writeVarInt(syncedDataKey.getId());
@@ -71,7 +71,7 @@ public class LoginPacks
         static S2CSyncedPlayerData decode(PacketBuffer input)
         {
             Map<ResourceLocation, Integer> keyMap = new HashMap<>();
-            List<CapabilityKey<?>> keys = CapabilityHandler.instance().getKeys();
+            List<CapabilityKey<?>> keys = CapabilityHandler.getInstance().getKeys();
             keys.forEach(syncedDataKey -> keyMap.put(input.readResourceLocation(), input.readVarInt()));
             return new S2CSyncedPlayerData(keyMap);
         }

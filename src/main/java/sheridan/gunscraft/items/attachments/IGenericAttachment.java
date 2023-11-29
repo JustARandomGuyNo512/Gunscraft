@@ -5,12 +5,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import sheridan.gunscraft.items.attachments.util.GunRenderContext;
 import sheridan.gunscraft.items.guns.IGenericGun;
-import sheridan.gunscraft.model.IAttachmentModel;
 
 public interface IGenericAttachment {
     void onAttach(ItemStack stack, IGenericGun gun);
     void onOff(ItemStack stack, IGenericGun gun);
+    int getId();
 
     @OnlyIn(Dist.CLIENT)
     default void beforePreShoot() {}
@@ -30,5 +31,6 @@ public interface IGenericAttachment {
     String getSlotType();
     int getID();
     String getAttachmentName();
-    ResourceLocation getTexture();
+    void handleParams(GunRenderContext params);
+    int getItemId();
 }

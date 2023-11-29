@@ -2,6 +2,7 @@ package sheridan.gunscraft.items.guns.regular;
 
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.system.CallbackI;
+import sheridan.gunscraft.items.attachments.AttachmentRegistry;
 import sheridan.gunscraft.items.attachments.util.GunAttachmentSlot;
 import sheridan.gunscraft.items.guns.GenericGun;
 import sheridan.gunscraft.tabs.CreativeTabs;
@@ -18,15 +19,15 @@ public class M4a1 extends GenericGun {
                 2.2f);
         Map<String, GunAttachmentSlot> slotMap = new HashMap<>();
 
-        GunAttachmentSlot muzzleSlot = new GunAttachmentSlot("muzzle", new HashSet<>(Arrays.asList(1,2,3)));
+        GunAttachmentSlot muzzleSlot = new GunAttachmentSlot("muzzle", new HashSet<>(Arrays.asList(999)));
         muzzleSlot.setTrans(new float[][]{{0,0,0},{0,0,0},{1,1,1}});
         slotMap.put("muzzle", muzzleSlot);
 
-        GunAttachmentSlot magSlot = new GunAttachmentSlot("mag", new HashSet<>(Arrays.asList(1,2,3)));
-        magSlot.setTrans(new float[][]{{0, 40f / 16f, 85f / 16f},{0,0,0},{1,1,1}});
+        GunAttachmentSlot magSlot = new GunAttachmentSlot("mag", new HashSet<>(Arrays.asList(AttachmentRegistry.getIdByName("ar_expansion_mag"))));
+        magSlot.setTrans(new float[][]{{0, 35f / 16f, 85f / 16f},{0,0,0},{1,1,1}});
         slotMap.put("mag", magSlot);
 
-        GunAttachmentSlot scopeSlot = new GunAttachmentSlot("scope", new HashSet<>(Arrays.asList(1,2,3)));
+        GunAttachmentSlot scopeSlot = new GunAttachmentSlot("scope", new HashSet<>(Arrays.asList(999)));
         scopeSlot.setTrans(new float[][]{{0, -7.8592f / 16f, 120 / 16f},{0,0,0}, {1,1,1}});
         slotMap.put("scope", scopeSlot);
 

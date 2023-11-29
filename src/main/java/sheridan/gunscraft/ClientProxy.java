@@ -5,7 +5,6 @@ import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -43,7 +42,6 @@ public class ClientProxy extends CommonProxy{
 
     public static HashMap<Item, TransformData> transformDataMap = new HashMap<>();
     public static HashMap<Item, IGunModel> gunModelMap = new HashMap<>();
-    public static HashMap<Item, IAttachmentModel> attachmentModelMap = new HashMap<>();
     public static final IGunRender renderer = new GenericGunRenderer();
     public static int equipDuration = 0;
     @OnlyIn(Dist.CLIENT)
@@ -77,10 +75,9 @@ public class ClientProxy extends CommonProxy{
     }
 
     static {
-        AIMING = CapabilityKey.builder(Serializers.BOOLEAN).setId(new ResourceLocation(Gunscraft.MOD_ID, "aiming")).defaultValueSupplier(() -> false).resetOnDeath().build();
-        LAST_SHOOT_RIGHT = CapabilityKey.builder(Serializers.LONG).setId(new ResourceLocation(Gunscraft.MOD_ID, "last_shoot_right")).defaultValueSupplier(() -> 0L).build();
-        LAST_SHOOT_LEFT = CapabilityKey.builder(Serializers.LONG).setId(new ResourceLocation(Gunscraft.MOD_ID, "last_shoot_left")).defaultValueSupplier(() -> 0L).build();
-
+        AIMING = CapabilityKey.builder(Serializers.BOOLEAN).setId(new ResourceLocation(Gunscraft.MOD_ID, "aiming")).defaultValue(() -> false).resetOnDeath().build();
+        LAST_SHOOT_RIGHT = CapabilityKey.builder(Serializers.LONG).setId(new ResourceLocation(Gunscraft.MOD_ID, "last_shoot_right")).defaultValue(() -> 0L).build();
+        LAST_SHOOT_LEFT = CapabilityKey.builder(Serializers.LONG).setId(new ResourceLocation(Gunscraft.MOD_ID, "last_shoot_left")).defaultValue(() -> 0L).build();
     }
 
     @Override
@@ -193,15 +190,12 @@ public class ClientProxy extends CommonProxy{
         gunModelMap.put(ModItems.M4A1.get(), new ModelM4a1());
 
 
-        attachmentModelMap.put(ModItems.AR_EXPANSION_MAG.get(), new ModelARExpansionMag());
-
-
         timer = new Timer();
         timer.schedule(new ClientWeaponTicker(), 0, 10L);
 
-        CapabilityHandler.instance().registerKey(AIMING);
-        CapabilityHandler.instance().registerKey(LAST_SHOOT_RIGHT);
-        CapabilityHandler.instance().registerKey(LAST_SHOOT_LEFT);
+        CapabilityHandler.getInstance().registerKey(AIMING);
+        CapabilityHandler.getInstance().registerKey(LAST_SHOOT_RIGHT);
+        CapabilityHandler.getInstance().registerKey(LAST_SHOOT_LEFT);
 
         ScreenManager.registerFactory(ModContainers.ATTACHMENTS.get(), AttachmentScreen::new);
     }
@@ -253,17 +247,17 @@ public class ClientProxy extends CommonProxy{
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static void tryFireMain() {
-        tryFire(true, System.currentTimeMillis() - mainHandStatus.lastShoot);
+    public static void handleFireMain() {
+        handleFire(true, System.currentTimeMillis() - mainHandStatus.lastShoot);
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static void tryFireOff() {
-        tryFire(false, System.currentTimeMillis() - offHandStatus.lastShoot);
+    public static void handleFireOff() {
+        handleFire(false, System.currentTimeMillis() - offHandStatus.lastShoot);
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static void tryFire(boolean mainHand, long dis) {
+    public static void handleFire(boolean mainHand, long dis) {
         Minecraft minecraft = Minecraft.getInstance();
         PlayerEntity player = minecraft.player;
         if (player != null) {
@@ -297,7 +291,7 @@ public class ClientProxy extends CommonProxy{
             if(entity != null && entity instanceof PlayerEntity) {
                 PlayerEntity player = (PlayerEntity) entity;
                 for (CapabilityHandler.Pair<?> pair : pairs) {
-                    CapabilityHandler.instance().updateClientEntry(player, pair);
+                    CapabilityHandler.getInstance().updateClientData(player, pair);
                 }
             }
         }

@@ -15,6 +15,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import sheridan.gunscraft.animation.CommonAnimations;
 import sheridan.gunscraft.animation.curve.CurveAnimation;
+import sheridan.gunscraft.items.attachments.util.GunRenderContext;
 import sheridan.gunscraft.model.IGunModel;
 import sheridan.gunscraft.model.ModelRenderer;
 
@@ -518,7 +519,7 @@ public class ModelPistol_9mm extends EntityModel<Entity> implements IGunModel {
 	}
 
 	@Override
-	public void render(MatrixStack matrixStack, IVertexBuilder buffer, ItemCameraTransforms.TransformType transformType, int packedLight, int packedOverlay, float red, float green, float blue, float alpha, int bulletLeft, long lastFireTime, boolean mainHand, int fireMode) {
+	public void render(MatrixStack matrixStack, IVertexBuilder buffer, ItemCameraTransforms.TransformType transformType, int packedLight, int packedOverlay, float red, float green, float blue, float alpha, int bulletLeft, long lastFireTime, boolean mainHand, int fireMode, GunRenderContext context) {
 		matrixStack.push();
 		slideBlotBack.play(lastFireTime, matrixStack, transformType);
 		slide.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);

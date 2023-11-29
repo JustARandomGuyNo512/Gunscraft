@@ -4,13 +4,14 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
@@ -20,12 +21,16 @@ import org.lwjgl.opengl.GL11;
 import sheridan.gunscraft.ClientProxy;
 import sheridan.gunscraft.Gunscraft;
 import sheridan.gunscraft.container.AttachmentContainer;
+import sheridan.gunscraft.items.attachments.GenericAttachment;
+import sheridan.gunscraft.items.attachments.IGenericAttachment;
 import sheridan.gunscraft.items.attachments.util.GunAttachmentSlot;
+import sheridan.gunscraft.items.attachments.util.NBTAttachmentsMap;
 import sheridan.gunscraft.items.guns.IGenericGun;
+import sheridan.gunscraft.network.PacketHandler;
+import sheridan.gunscraft.network.packets.GiveBackItemPacket;
+import sheridan.gunscraft.network.packets.SetAttachmentPacket;
 
 import java.util.List;
-
-import static net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType.*;
 
 public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
     public static final ResourceLocation BACK_GROUND = new ResourceLocation(Gunscraft.MOD_ID, "textures/gui/screen/attachment_screen.png");
@@ -33,12 +38,26 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
     private static final ResourceLocation RESET_BUTTON = new ResourceLocation(Gunscraft.MOD_ID, "textures/gui/screen/reset_button.png");
     private final TranslationTextComponent title = new TranslationTextComponent("container.gunscraft.attachments");
 
+    private ItemStack heldStack;
+
+    @Override
+    public void onClose() {
+        if (attachmentInventory != null) {
+            ItemStack attachment = attachmentInventory.getStackInSlot(0);
+            if (!attachment.isEmpty()) {
+                PacketHandler.CommonChannel.sendToServer(new GiveBackItemPacket(Item.getIdFromItem(attachment.getItem()), attachment.getCount()));
+            }
+        }
+        super.onClose();
+    }
+
     private IInventory inventory;
     private IInventory attachmentInventory;
     private List<GunAttachmentSlot> slots;
     private int selectedIndex = 0;
     private GunAttachmentSlot selectedSlot;
     private IGenericGun gun;
+    private int maxIndex;
 
     private boolean isMouseDruggingModel = false;
     private float modelRX;
@@ -80,25 +99,52 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        System.out.println(keyCode);
         if (slots != null && slots.size() > 1) {
             switch (keyCode) {
                 case 263:
-                    selectedIndex --;
-                    selectedIndex = Math.max(selectedIndex, 0);
+                    selectedIndex = selectedIndex - 1 < 0 ? maxIndex : selectedIndex - 1;
                     break;
                 case 262:
                     selectedIndex ++;
                     break;
                 case 265:
-                    System.out.println("install attachment...");
+                    handleAttachmentChange(true);
                     break;
                 case 264:
-                    System.out.println("down attachment...");
+                    handleAttachmentChange(false);
                     break;
             }
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    private void handleAttachmentChange(boolean install) {
+        if (install) {
+            ItemStack stack = attachmentInventory.getStackInSlot(0);
+            if (stack.getItem() instanceof IGenericAttachment) {
+                System.out.println("install attachment...");
+                IGenericAttachment attachment = (IGenericAttachment) stack.getItem();
+                String slotName = selectedSlot.name;
+                ItemStack gunStack = this.minecraft.player.getHeldItemMainhand();
+                if (gunStack.getItem() instanceof IGenericGun) {
+                    IGenericGun gun = (IGenericGun) gunStack.getItem();
+                    if (NBTAttachmentsMap.set(slotName, attachment.getID(), gunStack, gun) != null) {
+                        PacketHandler.CommonChannel.sendToServer(new SetAttachmentPacket(attachment.getID(), slotName));
+                        attachmentInventory.setInventorySlotContents(0, new ItemStack(Items.AIR));
+                    }
+                }
+            }
+        } else {
+            ItemStack gunStack = this.minecraft.player.getHeldItemMainhand();
+            if (gunStack.getItem() instanceof IGenericGun) {
+                IGenericGun gun = (IGenericGun) gunStack.getItem();
+                IGenericAttachment attachment = NBTAttachmentsMap.set(selectedSlot.name, GenericAttachment.NONE, gunStack, gun);
+                if (attachment != null) {
+                    PacketHandler.CommonChannel.sendToServer(new SetAttachmentPacket(GenericAttachment.NONE, selectedSlot.name));
+                    PacketHandler.CommonChannel.sendToServer(new GiveBackItemPacket(attachment.getItemId(), 1));
+                }
+            }
+        }
     }
 
     @Override
@@ -112,11 +158,16 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
             if (!(stack.getItem() instanceof IGenericGun)) {
                 this.closeScreen();
             } else {
+                if (heldStack != stack) {
+                    heldStack = stack;
+                    clearData();
+                }
                 if (gun == null || slots == null) {
                     this.gun = (IGenericGun) stack.getItem();
                     slots = gun.getAllSlots();
-                    if (slots.size() > 1) {
+                    if (slots != null && slots.size() > 1) {
                         selectedSlot = slots.get(0);
+                        maxIndex = slots.size() - 1;
                     }
                 }
             }
@@ -126,7 +177,14 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
             selectedSlot = slots.get(selectedIndex % slots.size());
         }
         super.tick();
+    }
 
+    private void clearData() {
+        gun = null;
+        slots = null;
+        selectedIndex = 0;
+        maxIndex = 0;
+        selectedSlot = null;
     }
 
     @Override
@@ -147,8 +205,7 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
             this.dragX = tempDragX + (float) (mouseX - dragStartX) * 0.5f;
             this.dragY = tempDragY + (float) (mouseY - dragStartY) * 0.5f;
             return false;
-        }
-        else {
+        } else {
             return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
         }
     }
@@ -161,10 +218,10 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
             GL11.glEnable(GL11.GL_SCISSOR_TEST);
             renderInWindow((this.width - this.xSize) / 2 + 7,
                     (this.height - this.ySize) / 2 + 7, 176 - 15, 79 - 7);
-            RenderSystem.translatef(posX, posY, 1000.0F);
+            RenderSystem.translatef(posX, posY, 1850.0F);
             RenderSystem.scalef(1.0F, 1.0F, -1.0F);
             MatrixStack matrixstack = new MatrixStack();
-            matrixstack.translate(0.0D + dragX, 0.0D + dragY, 1000.0D);
+            matrixstack.translate(0.0D + dragX, 0.0D + dragY, 1050.0D);
             matrixstack.scale(scale + scaleZoom, scale + scaleZoom, scale + scaleZoom);
             Quaternion rz = Vector3f.ZP.rotationDegrees(180.0F);
             Quaternion ry = Vector3f.YP.rotationDegrees(90F + modelRY);
@@ -194,7 +251,7 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
             this.minecraft.fontRenderer.drawText(matrixStack, title, 8, 8, 0xffffff);
             PlayerEntity player = minecraft.player;
             if (player != null) {
-
+                renderGun(175 / 2f, 42, 75f, this.minecraft.player);
             }
         }
 
@@ -293,9 +350,6 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
             int startX = (this.width - this.xSize) / 2;
             int startY = (this.height - this.ySize) / 2;
             this.blit(matrixStack, startX, startY, 0, 0, this.xSize, this.ySize);
-            if (this.minecraft.player != null) {
-                renderGun(startX + 175 / 2f, startY + 42, 75f, this.minecraft.player);
-            }
             this.minecraft.getTextureManager().bindTexture(DRAG_BUTTON);
             blit(matrixStack, startX + 150, startY + 8,16,16, 0, 0,32,32,32,32);
             this.minecraft.getTextureManager().bindTexture(RESET_BUTTON);

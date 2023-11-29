@@ -41,7 +41,6 @@ import org.apache.commons.lang3.Validate;
 import sheridan.gunscraft.ClientProxy;
 import sheridan.gunscraft.Gunscraft;
 import sheridan.gunscraft.animation.recoilAnimation.RecoilAnimationHandler;
-import sheridan.gunscraft.animation.recoilAnimation.RecoilCameraHandler;
 import sheridan.gunscraft.events.RenderEvents;
 import sheridan.gunscraft.network.LoginPacks;
 import sheridan.gunscraft.network.PacketHandler;
@@ -53,16 +52,15 @@ public class CapabilityHandler {
 
     public static CapabilityHandler INSTANCE;
     private static boolean init = false;
+    public boolean dataChanged = false;
 
-    private final Map<ResourceLocation, CapabilityKey<?>> registeredDataKeys = new HashMap<>();
-    private final Map<Integer, CapabilityKey<?>> idToDataKey = new HashMap<>();
+    private final Map<ResourceLocation, CapabilityKey<?>> keyMap = new HashMap<>();
+    private final Map<Integer, CapabilityKey<?>> keyIdMap = new HashMap<>();
     private int nextKeyId = 0;
-
-    private boolean dataChanged = false;
 
     private CapabilityHandler() {}
 
-    public static CapabilityHandler instance() {
+    public static CapabilityHandler getInstance() {
         if(INSTANCE == null) {
             INSTANCE = new CapabilityHandler();
         }
@@ -72,22 +70,22 @@ public class CapabilityHandler {
     public static void init() {
         if(!init) {
             CapabilityManager.INSTANCE.register(PlayerDataManager.class, new Storage(), PlayerDataManager::new);
-            MinecraftForge.EVENT_BUS.register(instance());
+            MinecraftForge.EVENT_BUS.register(getInstance());
             init = true;
         }
     }
 
     public void registerKey(CapabilityKey<?> key) {
-        if(!this.registeredDataKeys.containsKey(key.getKey())) {
+        if(!this.keyMap.containsKey(key.getKey())) {
             int nextId = this.nextKeyId++;
             key.setId(nextId);
-            this.registeredDataKeys.put(key.getKey(), key);
-            this.idToDataKey.put(nextId, key);
+            this.keyMap.put(key.getKey(), key);
+            this.keyIdMap.put(nextId, key);
         }
     }
 
     public <T> void set(PlayerEntity player, CapabilityKey<T> key, T value) {
-        if(this.registeredDataKeys.containsValue(key)) {
+        if(this.keyMap.containsValue(key)) {
             PlayerDataManager manager = this.getDataManager(player);
             if(manager != null && manager.set(player, key, value)) {
                 if(!player.world.isRemote) {
@@ -98,7 +96,7 @@ public class CapabilityHandler {
     }
 
     public <T> T get(PlayerEntity player, CapabilityKey<T> key) {
-        if(this.registeredDataKeys.containsValue(key)) {
+        if(this.keyMap.containsValue(key)) {
             PlayerDataManager manager = this.getDataManager(player);
             return manager != null ? manager.get(key) : key.getDefaultValueSupplier().get();
         }
@@ -106,17 +104,17 @@ public class CapabilityHandler {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public <T> void updateClientEntry(PlayerEntity player, Pair<T> entry) {
-        CapabilityHandler.instance().set(player, entry.getKey(), entry.getValue());
+    public <T> void updateClientData(PlayerEntity player, Pair<T> entry) {
+        CapabilityHandler.getInstance().set(player, entry.getKey(), entry.getValue());
     }
 
     @Nullable
     public CapabilityKey<?> getKey(int id) {
-        return this.idToDataKey.get(id);
+        return this.keyIdMap.get(id);
     }
 
     public List<CapabilityKey<?>> getKeys() {
-        return ImmutableList.copyOf(this.registeredDataKeys.values());
+        return ImmutableList.copyOf(this.keyMap.values());
     }
 
     @Nullable
@@ -124,29 +122,34 @@ public class CapabilityHandler {
         return player.getCapability(CAPABILITY, null).orElse(null);
     }
 
-    //forge event 设置capability
     @SubscribeEvent
     public void attachCapabilities(AttachCapabilitiesEvent<Entity> event) {
         if(event.getObject() instanceof PlayerEntity) {
-            event.addCapability(new ResourceLocation(Gunscraft.MOD_ID, "sync_player_data"), new Provider());
+            event.addCapability(new ResourceLocation(Gunscraft.MOD_ID, "sync_player_data"), new CapabilityProvider());
         }
     }
 
-    //需要同步给所有玩家
-    @SubscribeEvent
-    public void onStartTracking(PlayerEvent.StartTracking event) {
-        if(event.getTarget() instanceof PlayerEntity && !event.getPlayer().world.isRemote) {
-            PlayerEntity player = (PlayerEntity) event.getTarget();
-            PlayerDataManager manager = this.getDataManager(player);
-            if(manager != null) {
-                List<Pair<?>> pairs = manager.gatherAll();
-                pairs.removeIf(entry -> !entry.getKey().shouldSyncToAllPlayers());
-                if(!pairs.isEmpty()) {
-                    PacketHandler.CommonChannel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncPlayerDataPacket(player.getEntityId(), pairs));
-                }
-            }
+    public static class CapabilityProvider implements ICapabilitySerializable<ListNBT> {
+        final PlayerDataManager INSTANCE = new PlayerDataManager();
+
+        @Override
+        public ListNBT serializeNBT()
+        {
+            return (ListNBT) CAPABILITY.getStorage().writeNBT(CAPABILITY, INSTANCE, null);
+        }
+
+        @Override
+        public void deserializeNBT(ListNBT compound) {
+            CAPABILITY.getStorage().readNBT(CAPABILITY, INSTANCE, null, compound);
+        }
+
+        @Nonnull
+        @Override
+        public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+            return CAPABILITY.orEmpty(cap, LazyOptional.of(() -> INSTANCE));
         }
     }
+
 
     @SubscribeEvent
     public void onPlayerJoinWorld(EntityJoinWorldEvent event) {
@@ -156,6 +159,21 @@ public class CapabilityHandler {
             PlayerDataManager manager = this.getDataManager(player);
             if(manager != null) {
                 List<Pair<?>> pairs = manager.gatherAll();
+                if(!pairs.isEmpty()) {
+                    PacketHandler.CommonChannel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncPlayerDataPacket(player.getEntityId(), pairs));
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onStartTracking(PlayerEvent.StartTracking event) {
+        if(event.getTarget() instanceof PlayerEntity && !event.getPlayer().world.isRemote) {
+            PlayerEntity player = (PlayerEntity) event.getTarget();
+            PlayerDataManager manager = this.getDataManager(player);
+            if(manager != null) {
+                List<Pair<?>> pairs = manager.gatherAll();
+                pairs.removeIf(entry -> !entry.getKey().shouldSyncToAllPlayers());
                 if(!pairs.isEmpty()) {
                     PacketHandler.CommonChannel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncPlayerDataPacket(player.getEntityId(), pairs));
                 }
@@ -189,8 +207,7 @@ public class CapabilityHandler {
     }
 
     @SubscribeEvent
-    public void onServerTick(TickEvent.PlayerTickEvent event)
-    {
+    public void onServerTick(TickEvent.PlayerTickEvent event) {
         if(event.phase == TickEvent.Phase.END) {
             if(this.dataChanged) {
                 PlayerEntity player = event.player;
@@ -200,12 +217,12 @@ public class CapabilityHandler {
                         List<Pair<?>> entries = manager.gatherDirty();
                         if(!entries.isEmpty()) {
                             PacketHandler.CommonChannel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncPlayerDataPacket(player.getEntityId(), entries));
-                            List<Pair<?>> pairs = entries.stream().filter(entry -> entry.getKey().shouldSyncToAllPlayers()).collect(Collectors.toList());
+                            List<Pair<?>> pairs = entries.stream().filter(pair -> pair.getKey().shouldSyncToAllPlayers()).collect(Collectors.toList());
                             if(!pairs.isEmpty()) {
                                 PacketHandler.CommonChannel.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new SyncPlayerDataPacket(player.getEntityId(), pairs));
                             }
                         }
-                        manager.clean();
+                        manager.clear();
                     }
                 }
             }
@@ -213,8 +230,7 @@ public class CapabilityHandler {
     }
 
     @SubscribeEvent
-    public void onServerTick(TickEvent.ServerTickEvent event)
-    {
+    public void onServerTick(TickEvent.ServerTickEvent event) {
         if(event.phase == TickEvent.Phase.END) {
             if(this.dataChanged) {
                 this.dataChanged = false;
@@ -222,17 +238,14 @@ public class CapabilityHandler {
         }
     }
 
-    public static class PlayerDataManager
-    {
+    public static class PlayerDataManager {
         private Map<CapabilityKey<?>, Pair<?>> dataMap = new HashMap<>();
         private boolean dataChanged = false;
 
         @SuppressWarnings("unchecked")
-        public <T> boolean set(PlayerEntity player, CapabilityKey<T> key, T value)
-        {
+        public <T> boolean set(PlayerEntity player, CapabilityKey<T> key, T value) {
             Pair<T> entry = (Pair<T>) this.dataMap.computeIfAbsent(key, Pair::new);
-            if(!entry.getValue().equals(value))
-            {
+            if(!entry.getValue().equals(value)) {
                 boolean dirty = !player.world.isRemote && entry.getKey().shouldSyncToClient();
                 entry.setValue(value, dirty);
                 this.dataChanged = dirty;
@@ -253,34 +266,28 @@ public class CapabilityHandler {
             return this.dataChanged;
         }
 
-        public void clean()
-        {
+        public void clear() {
             this.dataChanged = false;
-            this.dataMap.forEach((key, entry) -> entry.clean());
+            this.dataMap.forEach((key, pair) -> pair.clear());
         }
 
-        public List<Pair<?>> gatherDirty()
-        {
+        public List<Pair<?>> gatherDirty() {
             return this.dataMap.values().stream().filter(Pair::isDataChanged).filter(entry -> entry.getKey().shouldSyncToClient()).collect(Collectors.toList());
         }
 
-        public List<Pair<?>> gatherAll()
-        {
+        public List<Pair<?>> gatherAll() {
             return this.dataMap.values().stream().filter(entry -> entry.getKey().shouldSyncToClient()).collect(Collectors.toList());
         }
 
-        public PlayerDataManager() {
-        }
+        public PlayerDataManager() {}
     }
 
-    public static class Pair<T>
-    {
+    public static class Pair<T> {
         private CapabilityKey<T> key;
         private T value;
         private boolean dataChanged;
 
-        private Pair(CapabilityKey<T> key)
-        {
+        private Pair(CapabilityKey<T> key) {
             this.key = key;
             this.value = key.getDefaultValueSupplier().get();
         }
@@ -305,7 +312,7 @@ public class CapabilityHandler {
             return this.dataChanged;
         }
 
-        public void clean()
+        public void clear()
         {
             this.dataChanged = false;
         }
@@ -316,11 +323,13 @@ public class CapabilityHandler {
         }
 
         public static Pair<?> read(PacketBuffer buffer) {
-            CapabilityKey<?> key = CapabilityHandler.instance().getKey(buffer.readVarInt());
-            Validate.notNull(key, "Synced key does not exist for setId");
-            Pair<?> entry = new Pair<>(key);
-            entry.readValue(buffer);
-            return entry;
+            CapabilityKey<?> key = CapabilityHandler.getInstance().getKey(buffer.readVarInt());
+            if (key != null) {
+                Pair<?> entry = new Pair<>(key);
+                entry.readValue(buffer);
+                return entry;
+            }
+            return null;
         }
 
         private void readValue(PacketBuffer buffer)
@@ -340,14 +349,14 @@ public class CapabilityHandler {
     }
 
     public boolean updateMappings(LoginPacks.S2CSyncedPlayerData message) {
-        this.idToDataKey.clear();
+        this.keyIdMap.clear();
         Map<ResourceLocation, Integer> keyMappings = message.getKeyMap();
         for(ResourceLocation key : keyMappings.keySet()) {
-            CapabilityKey<?> syncedDataKey = this.registeredDataKeys.get(key);
+            CapabilityKey<?> syncedDataKey = this.keyMap.get(key);
             if(syncedDataKey == null) return false;
             int id = keyMappings.get(key);
             syncedDataKey.setId(id);
-            this.idToDataKey.put(id, syncedDataKey);
+            this.keyIdMap.put(id, syncedDataKey);
         }
         return true;
     }
@@ -376,7 +385,7 @@ public class CapabilityHandler {
                 CompoundNBT keyTag = (CompoundNBT) entryTag;
                 ResourceLocation key = ResourceLocation.tryCreate(keyTag.getString("Key"));
                 INBT value = keyTag.get("Value");
-                CapabilityKey<?> syncedDataKey = CapabilityHandler.instance().registeredDataKeys.get(key);
+                CapabilityKey<?> syncedDataKey = CapabilityHandler.getInstance().keyMap.get(key);
                 if(syncedDataKey != null && syncedDataKey.shouldSave()) {
                     Pair<?> entry = new Pair<>(syncedDataKey);
                     entry.readValue(value);
@@ -386,24 +395,4 @@ public class CapabilityHandler {
         }
     }
 
-    public static class Provider implements ICapabilitySerializable<ListNBT> {
-        final PlayerDataManager INSTANCE = new PlayerDataManager();
-
-        @Override
-        public ListNBT serializeNBT()
-        {
-            return (ListNBT) CAPABILITY.getStorage().writeNBT(CAPABILITY, INSTANCE, null);
-        }
-
-        @Override
-        public void deserializeNBT(ListNBT compound) {
-            CAPABILITY.getStorage().readNBT(CAPABILITY, INSTANCE, null, compound);
-        }
-
-        @Nonnull
-        @Override
-        public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-            return CAPABILITY.orEmpty(cap, LazyOptional.of(() -> INSTANCE));
-        }
-    }
 }

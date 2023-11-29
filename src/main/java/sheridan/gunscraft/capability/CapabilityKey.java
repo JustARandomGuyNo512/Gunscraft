@@ -111,8 +111,8 @@ public class CapabilityKey<T> {
             return this;
         }
 
-        public CapabilityKey.Builder<T> defaultValueSupplier(Supplier<T> defaultValueSupplier) {
-            this.defaultValueSupplier = defaultValueSupplier;
+        public CapabilityKey.Builder<T> defaultValue(Supplier<T> defaultValue) {
+            this.defaultValueSupplier = defaultValue;
             return this;
         }
 

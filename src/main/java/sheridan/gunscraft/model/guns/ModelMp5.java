@@ -8,6 +8,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.entity.Entity;
+import sheridan.gunscraft.items.attachments.util.GunRenderContext;
 import sheridan.gunscraft.model.IGunModel;
 import sheridan.gunscraft.model.ModelRenderer;
 
@@ -648,7 +649,7 @@ public class ModelMp5 extends EntityModel<Entity> implements IGunModel {
 
 
     @Override
-    public void render(MatrixStack matrixStack, IVertexBuilder buffer,  ItemCameraTransforms.TransformType transformType, int packedLight, int packedOverlay, float red, float green, float blue, float alpha, int bulletLeft, long lastFireTime, boolean mainHand, int fireMode) {
+    public void render(MatrixStack matrixStack, IVertexBuilder buffer,  ItemCameraTransforms.TransformType transformType, int packedLight, int packedOverlay, float red, float green, float blue, float alpha, int bulletLeft, long lastFireTime, boolean mainHand, int fireMode, GunRenderContext context) {
         slide.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         barrel.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         mag.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);

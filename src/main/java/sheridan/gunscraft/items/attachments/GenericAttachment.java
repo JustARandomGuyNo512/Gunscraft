@@ -3,9 +3,8 @@ package sheridan.gunscraft.items.attachments;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import sheridan.gunscraft.ClientProxy;
+import sheridan.gunscraft.items.attachments.util.GunRenderContext;
 import sheridan.gunscraft.items.guns.IGenericGun;
-import sheridan.gunscraft.model.IAttachmentModel;
 
 public class GenericAttachment extends Item implements IGenericAttachment{
     public static final String MUZZLE = "muzzle", GRIP = "grip", MAG = "mag", SCOPE = "scope", STOCK = "stock", HAND_GUARD = "hand_guard";
@@ -13,13 +12,15 @@ public class GenericAttachment extends Item implements IGenericAttachment{
     protected int id;
     protected String type;
     protected String name;
-    public ResourceLocation texture;
 
-    public GenericAttachment(Properties properties, int id, String type, String name, ResourceLocation texture) {
+    public String getType() {
+        return type;
+    }
+
+    public GenericAttachment(Properties properties, int id, String type, String name) {
         super(properties);
         this.id = id;
         this.type = type;
-        this.texture = texture;
         this.name = name;
     }
 
@@ -31,6 +32,11 @@ public class GenericAttachment extends Item implements IGenericAttachment{
     @Override
     public void onOff(ItemStack stack, IGenericGun gun) {
 
+    }
+
+    @Override
+    public int getId() {
+        return this.id;
     }
 
     @Override
@@ -48,9 +54,34 @@ public class GenericAttachment extends Item implements IGenericAttachment{
         return name;
     }
 
+
     @Override
-    public ResourceLocation getTexture() {
-        return texture;
+    public void handleParams(GunRenderContext params) {
+        switch (this.type) {
+            case MUZZLE:
+                params.occupiedMuzzle = true;
+                break;
+            case HAND_GUARD:
+                params.occupiedHandGuard = true;
+                break;
+            case MAG:
+                params.occupiedMag = true;
+                break;
+            case SCOPE:
+                params.occupiedIS = true;
+                break;
+            case STOCK:
+                params.occupiedStock = true;
+                break;
+            case GRIP:
+                params.occupiedGrip = true;
+                break;
+        }
+    }
+
+    @Override
+    public int getItemId() {
+        return Item.getIdFromItem(this);
     }
 
 }

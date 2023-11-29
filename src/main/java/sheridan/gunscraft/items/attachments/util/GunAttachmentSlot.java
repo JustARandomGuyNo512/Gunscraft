@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Quaternion;
+import net.minecraft.util.math.vector.Vector3f;
 import sheridan.gunscraft.Gunscraft;
 
 import java.nio.FloatBuffer;
@@ -43,6 +44,7 @@ public class GunAttachmentSlot {
         if (trans != null) {
             matrixStack.push();
             applyTrans(matrixStack);
+            matrixStack.rotate(new Quaternion(Vector3f.YP, 90, true));
             ResourceLocation texture = chooseTexture(selected, occupied);
             // clear rotate factors...
             FloatBuffer buffer1 = FloatBuffer.allocate(16);
@@ -86,7 +88,7 @@ public class GunAttachmentSlot {
 
     public void applyTrans(MatrixStack matrixStack) {
         matrixStack.translate(trans[0][0], trans[0][1], trans[0][2]);
-        matrixStack.rotate(new Quaternion(trans[1][0], trans[1][1] + 90, trans[1][2], true));
+        matrixStack.rotate(new Quaternion(trans[1][0], trans[1][1], trans[1][2], true));
         matrixStack.scale(trans[2][0], trans[2][1], trans[2][2]);
     }
 }

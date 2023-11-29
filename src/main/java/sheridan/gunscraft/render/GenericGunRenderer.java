@@ -5,40 +5,30 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.PlayerRenderer;
-import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.client.ClientHooks;
 import org.lwjgl.opengl.GL11;
 import sheridan.gunscraft.ClientProxy;
 import sheridan.gunscraft.Gunscraft;
 import sheridan.gunscraft.animation.recoilAnimation.RecoilAnimationData;
 import sheridan.gunscraft.animation.recoilAnimation.RecoilAnimationHandler;
-import sheridan.gunscraft.animation.recoilAnimation.RecoilAnimationState;
 import sheridan.gunscraft.capability.CapabilityHandler;
-import sheridan.gunscraft.events.ClientTickEvents;
 import sheridan.gunscraft.events.PlayerEvents;
 import sheridan.gunscraft.events.RenderEvents;
 import sheridan.gunscraft.items.attachments.util.GunAttachmentSlot;
+import sheridan.gunscraft.items.attachments.util.GunRenderContext;
 import sheridan.gunscraft.items.attachments.util.NBTAttachmentsMap;
 import sheridan.gunscraft.items.guns.IGenericGun;
 import sheridan.gunscraft.model.IGunModel;
-import sheridan.gunscraft.model.guns.m4a1.HandGuardOriginal;
-import sheridan.gunscraft.model.guns.m4a1.ModelM4a1;
 import sheridan.gunscraft.render.fx.muzzleFlash.CommonMuzzleFlash;
 import sheridan.gunscraft.render.fx.muzzleFlash.MuzzleFlash;
 import sheridan.gunscraft.render.fx.muzzleFlash.MuzzleFlashTrans;
@@ -64,32 +54,22 @@ public class GenericGunRenderer implements IGunRender{
                 matrixStackIn.push();
                 transformData.applyTransform(transformTypeIn, matrixStackIn, false, 0);
                 int fireMode = gun.getFireMode(itemStackIn);
+                int ammoLeft = gun.getAmmoLeft(itemStackIn);
+                GunRenderContext context = NBTAttachmentsMap.renderAttachments(matrixStackIn, transformTypeIn, combinedLightIn, combinedOverlayIn, ammoLeft, 0, true, fireMode,itemStackIn, gun);
                 model.render(matrixStackIn, bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(gun.getTexture(gun.getCurrentTextureIndex(itemStackIn)))),
-                      transformTypeIn, combinedLightIn, combinedOverlayIn, 1, 1, 1, 1, 1,0, false, fireMode);
+                      transformTypeIn, combinedLightIn, combinedOverlayIn, 1, 1, 1, 1, 1,0, false, fireMode,context);
                 matrixStackIn.pop();
             }
         }
     }
 
-    int delay = 0;
     public void renderWithLivingEntity(LivingEntity entityIn, MatrixStack stackIn,
         ItemStack itemStackIn, ItemCameraTransforms.TransformType type, IRenderTypeBuffer bufferIn, IGenericGun gun,
         int combinedLightIn, int combinedOverlayIn, boolean leftHand, IGunModel model, TransformData transformData) {
         if (!Gunscraft.proxy.shouldRenderCustom(itemStackIn, gun, entityIn, !leftHand)) {
             return;
         }
-
-        if (delay >= 100) {
-//            MatrixStack stack = new MatrixStack();
-//            stack.getLast().getMatrix().setIdentity();
-//            System.out.println("m1: " + stack.getLast().getMatrix());
-//
-//            stack.rotate(new Quaternion(0,10,0,true));
-//            System.out.println("m2: " + stack.getLast().getMatrix());
-
-            delay = 0;
-        }
-        delay ++;
+        int ammoLeft = gun.getAmmoLeft(itemStackIn);
         if (entityIn == null) {
             justRenderModel(itemStackIn,type,stackIn,bufferIn,combinedLightIn,combinedOverlayIn,gun,model,transformData);
             return;
@@ -118,8 +98,10 @@ public class GenericGunRenderer implements IGunRender{
                         renderArm(stackIn, bufferIn, combinedLightIn, combinedOverlayIn, transformData, handPose, leftHand);
                     }
 
+                    GunRenderContext context = NBTAttachmentsMap.renderAttachments(stackIn, type, combinedLightIn, combinedOverlayIn, ammoLeft, lastShootTime, !leftHand, fireMode,itemStackIn, gun);
+
                     model.render(stackIn, bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(gun.getTexture(gun.getCurrentTextureIndex(itemStackIn)))),
-                            type, combinedLightIn, combinedOverlayIn, 1, 1, 1, 1, 1, lastShootTime, !leftHand, fireMode);
+                            type, combinedLightIn, combinedOverlayIn, 1, 1, 1, 1, ammoLeft, lastShootTime, !leftHand, fireMode, context);
 
                     renderMuzzleFlash(gun, itemStackIn, transformData, lastShootTime, bufferIn, stackIn, true);
 
@@ -132,13 +114,13 @@ public class GenericGunRenderer implements IGunRender{
                         }
                     } else {
                         lastShoot = leftHand ?
-                                CapabilityHandler.instance().get((PlayerEntity) entityIn, ClientProxy.LAST_SHOOT_LEFT) :
-                                CapabilityHandler.instance().get((PlayerEntity) entityIn, ClientProxy.LAST_SHOOT_RIGHT);
-
+                                CapabilityHandler.getInstance().get((PlayerEntity) entityIn, ClientProxy.LAST_SHOOT_LEFT) :
+                                CapabilityHandler.getInstance().get((PlayerEntity) entityIn, ClientProxy.LAST_SHOOT_RIGHT);
                     }
+                    GunRenderContext context = NBTAttachmentsMap.renderAttachments(stackIn, type, combinedLightIn, combinedOverlayIn, ammoLeft, lastShoot, !leftHand, fireMode,itemStackIn, gun);
                     stackIn.push();
                     model.render(stackIn, bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(gun.getTexture(gun.getCurrentTextureIndex(itemStackIn)))),
-                          type, combinedLightIn, combinedOverlayIn, 1, 1, 1, 1, 1, lastShoot, !leftHand, fireMode);
+                          type, combinedLightIn, combinedOverlayIn, 1, 1, 1, 1, ammoLeft, lastShoot, !leftHand, fireMode, context);
 
                     stackIn.pop();
                     renderMuzzleFlash(gun, itemStackIn, transformData, lastShoot, bufferIn, stackIn, false);
@@ -152,12 +134,17 @@ public class GenericGunRenderer implements IGunRender{
     public void renderInGuiScreen(ItemStack itemStack, MatrixStack matrixStack, IGenericGun gun, IGunModel model, GunAttachmentSlot selectSlot) {
         matrixStack.push();
         // applyFOV();
+        int ammoLeft = gun.getAmmoLeft(itemStack);
+        int fireMode = gun.getFireMode(itemStack);
         TransformData transformData = ClientProxy.transformDataMap.get(itemStack.getItem());
         transformData.applyTransform(ItemCameraTransforms.TransformType.GROUND, matrixStack, false, 0);
+        GunRenderContext context = NBTAttachmentsMap.renderAttachments(matrixStack, ItemCameraTransforms.TransformType.GROUND, 15728880, 655360,
+                ammoLeft, 0, true, fireMode,itemStack, gun);
         model.render(matrixStack,
                 Minecraft.getInstance().getRenderTypeBuffers().getBufferSource().getBuffer(RenderType.getEntityCutoutNoCull(gun.getTexture(gun.getCurrentTextureIndex(itemStack)))),
-                ItemCameraTransforms.TransformType.GROUND,15728880, 655360, 1, 1, 1, 1,0,0,  true, 0);
-        NBTAttachmentsMap.renderAttachmentIcons(matrixStack, gun, selectSlot);
+                ItemCameraTransforms.TransformType.GROUND,15728880, 655360, 1, 1, 1, 1,0,0,  true, 0, context);
+
+        NBTAttachmentsMap.renderAttachmentIcons(matrixStack, gun, selectSlot, itemStack);
         matrixStack.pop();
     }
 
@@ -205,25 +192,25 @@ public class GenericGunRenderer implements IGunRender{
             ModelRenderer rightArm = renderPlayer.getEntityModel().bipedRightArm;
             ModelRenderer leftArm = renderPlayer.getEntityModel().bipedLeftArm;
             if (handPose == PlayerEvents.TWO_HAND_PISTOL || handPose == PlayerEvents.RIFLE) {
-                renderArmModel(matrixStack, buffer, light, overlay, TransformData.RIGHT_SIDE_RIGHT_HAND, rightArm, data, skin, isSlim);
-                renderArmModel(matrixStack, buffer, light, overlay, TransformData.RIGHT_SIDE_LEFT_HAND, leftArm, data, skin, isSlim);
+                renderArmModel(matrixStack, buffer, light, overlay, TransformData.RIGHT_SIDE_RIGHT_HAND, rightArm, data, skin, isSlim, true);
+                renderArmModel(matrixStack, buffer, light, overlay, TransformData.RIGHT_SIDE_LEFT_HAND, leftArm, data, skin, isSlim, false);
             } else if (handPose == PlayerEvents.RIGHT_HAND_PISTOL) {
-                renderArmModel(matrixStack, buffer, light, overlay, TransformData.RIGHT_SIDE_RIGHT_HAND, rightArm, data, skin, isSlim);
+                renderArmModel(matrixStack, buffer, light, overlay, TransformData.RIGHT_SIDE_RIGHT_HAND, rightArm, data, skin, isSlim, true);
             } else if (handPose == PlayerEvents.LEFT_HAND_PISTOL) {
-                renderArmModel(matrixStack, buffer, light, overlay, TransformData.LEFT_SIDE, leftArm, data, skin, isSlim);
+                renderArmModel(matrixStack, buffer, light, overlay, TransformData.LEFT_SIDE, leftArm, data, skin, isSlim, false);
             } else if (handPose == PlayerEvents.DOUBLE_PISTOL) {
                 if (!leftHand) {
-                    renderArmModel(matrixStack, buffer, light, overlay, TransformData.RIGHT_SIDE_RIGHT_HAND, rightArm, data, skin, isSlim);
+                    renderArmModel(matrixStack, buffer, light, overlay, TransformData.RIGHT_SIDE_RIGHT_HAND, rightArm, data, skin, isSlim, true);
                 } else {
-                    renderArmModel(matrixStack, buffer, light, overlay, TransformData.LEFT_SIDE, leftArm, data, skin, isSlim);
+                    renderArmModel(matrixStack, buffer, light, overlay, TransformData.LEFT_SIDE, leftArm, data, skin, isSlim, false);
                 }
             }
         }
     }
 
-    private void renderArmModel(MatrixStack matrixStack, IRenderTypeBuffer buffer, int light, int overlay, int trans, ModelRenderer model, TransformData data, ResourceLocation skin, boolean isSlim){
+    private void renderArmModel(MatrixStack matrixStack, IRenderTypeBuffer buffer, int light, int overlay, int trans, ModelRenderer model, TransformData data, ResourceLocation skin, boolean isSlim, boolean mainHand){
         matrixStack.push();
-        data.applyFPArmPoseTransform(trans, matrixStack, isSlim, model);
+        data.applyFPArmPoseTransform(trans, matrixStack, isSlim, model, mainHand);
         model.render(matrixStack, buffer.getBuffer(RenderType.getEntityCutout(skin)), light, overlay);
         matrixStack.pop();
     }
