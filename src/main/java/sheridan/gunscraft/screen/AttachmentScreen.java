@@ -227,7 +227,8 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
             RenderSystem.scalef(1.0F, 1.0F, -1.0F);
             MatrixStack matrixstack = new MatrixStack();
             matrixstack.translate(0.0D + dragX, 0.0D + dragY, 1050.0D);
-            matrixstack.scale(scale + scaleZoom, scale + scaleZoom, scale + scaleZoom);
+            float scaleFactor = gun.isPistol() ? 1.5f : 1f;
+            matrixstack.scale(scale * scaleFactor + scaleZoom, scale * scaleFactor + scaleZoom, scale * scaleFactor + scaleZoom);
             Quaternion rz = Vector3f.ZP.rotationDegrees(180.0F);
             Quaternion ry = Vector3f.YP.rotationDegrees(90F + modelRY);
             Quaternion rx = Vector3f.XP.rotationDegrees( - modelRX);
@@ -355,16 +356,21 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
             int startX = (this.width - this.xSize) / 2;
             int startY = (this.height - this.ySize) / 2;
             this.blit(matrixStack, startX, startY, 0, 0, this.xSize, this.ySize);
+
+            if (isDragBtnDown) {
+                RenderSystem.color4f(0.5f,1,1,1f);
+            }
             this.minecraft.getTextureManager().bindTexture(DRAG_BUTTON);
             blit(matrixStack, startX + 150, startY + 8,16,16, 0, 0,32,32,32,32);
+            RenderSystem.color4f(1,1,1,1f);
+
+
             this.minecraft.getTextureManager().bindTexture(RESET_BUTTON);
             if (isResetBtnDown) {
                 RenderSystem.color4f(0.5f,1,1,1f);
             }
             blit(matrixStack, startX + 150, startY + 32,16,16, 0, 0,32,32,32,32);
-            if (isResetBtnDown) {
-                RenderSystem.color4f(0.5f,1,1,1f);
-            }
+            RenderSystem.color4f(1,1,1,1f);
         }
     }
 

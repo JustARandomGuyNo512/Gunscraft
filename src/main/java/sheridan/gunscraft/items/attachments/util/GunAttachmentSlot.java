@@ -23,6 +23,7 @@ public class GunAttachmentSlot {
     public static final ResourceLocation OCCUPIED = new ResourceLocation(Gunscraft.MOD_ID, "textures/gui/icon/attachment_occupied.png");
     public static final ResourceLocation OCCUPIED_SELECTED = new ResourceLocation(Gunscraft.MOD_ID, "textures/gui/icon/attachment_occupied_selected.png");
     public String name;
+    public static final float BASE_ICON_SCALE = 4.5f;
 
     @Override
     public String toString() {
@@ -59,7 +60,7 @@ public class GunAttachmentSlot {
             // clear rotate factors...
             FloatBuffer buffer1 = FloatBuffer.allocate(16);
             matrixStack.getLast().getMatrix().write(buffer1);
-            float scale = selected ? 5 * 1.2f : 5f;
+            float scale = selected ? BASE_ICON_SCALE * 1.2f : BASE_ICON_SCALE;
             buffer1.put(0, scale);
             buffer1.put(4, 0);
             buffer1.put(8, 0);
@@ -71,16 +72,20 @@ public class GunAttachmentSlot {
             buffer1.put(2, 0);
             buffer1.put(6, 0);
             buffer1.put(10, scale);
+            //buffer1.put(14, 900f);
+            //System.out.println(Arrays.toString(buffer1.array()));
             Matrix4f matrix4f1 = new Matrix4f(buffer1.array());
             matrix4f1.transpose();
+            //System.out.println(matrix4f1);
             BufferBuilder buffer = Tessellator.getInstance().getBuffer();
             RenderSystem.enableBlend();
             Minecraft.getInstance().getTextureManager().bindTexture(texture);
             buffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-            buffer.pos(matrix4f1, -1, 3,0).tex(0,1).color(1, 1, 1,1f).endVertex();
-            buffer.pos(matrix4f1, 1, 3,0).tex(1,1).color(1, 1, 1,1f).endVertex();
-            buffer.pos(matrix4f1, 1, 1,0).tex(1,0).color(1, 1, 1,1f).endVertex();
-            buffer.pos(matrix4f1, -1, 1,0).tex(0,0).color(1, 1, 1,1f).endVertex();
+            float zFactor = 5f;
+            buffer.pos(matrix4f1, -1, 3,zFactor).tex(0,1).color(1, 1, 1,1f).endVertex();
+            buffer.pos(matrix4f1, 1, 3,zFactor).tex(1,1).color(1, 1, 1,1f).endVertex();
+            buffer.pos(matrix4f1, 1, 1,zFactor).tex(1,0).color(1, 1, 1,1f).endVertex();
+            buffer.pos(matrix4f1, -1, 1,zFactor).tex(0,0).color(1, 1, 1,1f).endVertex();
             buffer.finishDrawing();
             WorldVertexBufferUploader.draw(buffer);
             RenderSystem.disableBlend();

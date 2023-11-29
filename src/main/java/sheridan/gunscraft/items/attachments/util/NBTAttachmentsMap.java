@@ -91,7 +91,9 @@ public class NBTAttachmentsMap{
 
     public static IGenericAttachment set(String slotName, int attachmentId, ItemStack stack, IGenericGun gun) {
         GunAttachmentSlot slot = gun.getSlot(slotName);
+        System.out.println(slot + " " + " " + attachmentId + " " + slotName);
         if (slot != null && (slot.accept(attachmentId) || attachmentId == GenericAttachment.NONE)) {
+            System.out.println("aaa");
             CompoundNBT slots = checkAndGet(stack);
             if (slots != null && slots.contains(slotName)) {
                 CompoundNBT slotNBT = slots.getCompound(slotName);
@@ -108,9 +110,12 @@ public class NBTAttachmentsMap{
                     slotNBT.putInt("attachment_id", attachmentId);
                     return returnVal;
                 } else {
+                    System.out.println("bbb");
                     if (slotNBT.getBoolean("empty")) {
+                        System.out.println("ccc");
                         IGenericAttachment attachment = AttachmentRegistry.get(attachmentId);
                         if (attachment != null) {
+                            System.out.println("ddd");
                             slotNBT.putBoolean("empty", false);
                             slotNBT.putInt("attachment_id", attachmentId);
                             attachment.onAttach(stack, gun);

@@ -805,6 +805,7 @@ public class ModelAKM extends EntityModel<Entity> implements IGunModel {
                        float red, float green, float blue, float alpha, int bulletLeft, long lastFireTime, boolean mainHand, int fireMode, GunRenderContext context) {
         barrel.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         matrixStack.push();
+        boolean nullFlag = context == null;
         if (slideRecoil != null) {
             slideRecoil.play(lastFireTime, matrixStack, transformType);
         }
@@ -815,10 +816,13 @@ public class ModelAKM extends EntityModel<Entity> implements IGunModel {
         handguard.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         IS.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         dust_cover.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        mag.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        if (!nullFlag && !context.occupiedMag) {
+            mag.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        }
         grip.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         safety.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         stock.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         body.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+
     }
 }

@@ -140,10 +140,11 @@ public class GenericGunRenderer implements IGunRender{
         transformData.applyTransform(ItemCameraTransforms.TransformType.GROUND, matrixStack, false, 0);
         GunRenderContext context = NBTAttachmentsMap.renderAttachments(matrixStack, ItemCameraTransforms.TransformType.GROUND, 15728880, 655360,
                 ammoLeft, 0, true, fireMode,itemStack, gun);
+        IRenderTypeBuffer.Impl impl = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
         model.render(matrixStack,
-                Minecraft.getInstance().getRenderTypeBuffers().getBufferSource().getBuffer(RenderType.getEntityCutoutNoCull(gun.getTexture(gun.getCurrentTextureIndex(itemStack)))),
+                impl.getBuffer(RenderType.getEntityCutoutNoCull(gun.getTexture(gun.getCurrentTextureIndex(itemStack)))),
                 ItemCameraTransforms.TransformType.GROUND,15728880, 655360, 1, 1, 1, 1,0,0,  true, 0, context);
-
+       impl.finish();
         NBTAttachmentsMap.renderAttachmentIcons(matrixStack, gun, selectSlot, itemStack);
         matrixStack.pop();
     }

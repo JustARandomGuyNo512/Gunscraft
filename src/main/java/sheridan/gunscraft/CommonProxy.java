@@ -56,6 +56,21 @@ public class CommonProxy implements IProxy{
 
     private void registerAttachmentSlot() {
         registerAttachmentM4a1();
+        registerAttachmentAKM();
+    }
+
+    private void registerAttachmentAKM() {
+        Map<String, GunAttachmentSlot> slotMap = new HashMap<>();
+
+        GunAttachmentSlot muzzleSlot = new GunAttachmentSlot("muzzle", new HashSet<>(Arrays.asList(999)));
+        muzzleSlot.setTrans(new float[][]{{0,0,0},{0,0,0},{1,1,1}});
+        slotMap.put("muzzle", muzzleSlot);
+
+        GunAttachmentSlot mageSlot = new GunAttachmentSlot("mag", new HashSet<>(Arrays.asList(AttachmentRegistry.getIdByName("assault_expansion_mag"))));
+        mageSlot.setTrans(new float[][]{{0, 22f / 16f, 136 / 16f},{0,0,0},{1,1,1}});
+        slotMap.put("mag", mageSlot);
+
+        ModItems.AKM.get().slotMap = slotMap;
     }
 
     private void registerAttachmentM4a1() {
@@ -65,7 +80,7 @@ public class CommonProxy implements IProxy{
         muzzleSlot.setTrans(new float[][]{{0,0,0},{0,0,0},{1,1,1}});
         slotMap.put("muzzle", muzzleSlot);
 
-        GunAttachmentSlot magSlot = new GunAttachmentSlot("mag", new HashSet<>(Arrays.asList(AttachmentRegistry.getIdByName("ar_expansion_mag"))));
+        GunAttachmentSlot magSlot = new GunAttachmentSlot("mag", new HashSet<>(Arrays.asList(AttachmentRegistry.getIdByName("assault_expansion_mag"))));
         magSlot.setTrans(new float[][]{{0, 39f / 16f, 86f / 16f},{0,0,0},{1,1,1}});
         slotMap.put("mag", magSlot);
 

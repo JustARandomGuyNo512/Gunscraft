@@ -16,7 +16,6 @@ public class Akm extends GenericGun {
                 8f, 30, 12, "item.akm.fire", new float[] {0.6f, 1f, 1f, 1f},
                 false,false,4 * 20, 1, 3.2f,4.3f,1.4f,
                 1.85f, "ak");
-        this.slotMap = new HashMap<String, GunAttachmentSlot>();
 
     }
 
