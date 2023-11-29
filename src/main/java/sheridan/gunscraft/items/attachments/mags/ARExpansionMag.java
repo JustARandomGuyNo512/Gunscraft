@@ -13,7 +13,7 @@ import java.util.Arrays;
 
 public class ARExpansionMag extends GenericMag {
     public ARExpansionMag() {
-        super(new Properties().group(CreativeTabs.REGULAR_ATTACHMENTS).maxStackSize(1), AttachmentRegistry.getID(),
+        super(new Properties().group(CreativeTabs.REGULAR_ATTACHMENTS).maxStackSize(1), AttachmentRegistry.getID("ar_expansion_mag"),
                 GenericAttachment.MAG, "ar_expansion_mag", 10);
 
         AttachmentRegistry.register(this.id, this);

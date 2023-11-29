@@ -1016,11 +1016,11 @@ public class ModelM4a1 extends EntityModel<Entity> implements IGunModel {
     @Override
     public void render(MatrixStack matrixStack, IVertexBuilder buffer, ItemCameraTransforms.TransformType transformType, int packedLight, int packedOverlay, float red, float green, float blue, float alpha, int bulletLeft, long lastFireTime, boolean mainHand, int fireMode, GunRenderContext context) {
         boolean nullFlag = context == null;
-        //IS.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         muzzle.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        //hand_guard.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         ring.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        stock.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        if (!nullFlag && !context.occupiedStock) {
+            stock.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        }
         if (!nullFlag && !context.occupiedMag) {
             mag.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         }
@@ -1034,12 +1034,19 @@ public class ModelM4a1 extends EntityModel<Entity> implements IGunModel {
         blot.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         matrixStack.pop();
 
+        boolean handGuardFlag = !nullFlag && (context.occupiedHandGuard || context.occupiedGrip);
+        boolean ISFlag = !nullFlag && context.occupiedIS;
 
-        IRenderTypeBuffer.Impl bufferImpl = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
-        hand_guard_original.render(matrixStack, bufferImpl.getBuffer( RenderType.getEntityCutoutNoCull(hand_guard_original.texture)), packedLight,packedOverlay, 1, 1, 1, 1);
-        bufferImpl.finish();
+        IRenderTypeBuffer.Impl bufferImpl;
+        if (handGuardFlag) {
+            hand_guard.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        } else {
+            bufferImpl = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
+            hand_guard_original.render(matrixStack, bufferImpl.getBuffer( RenderType.getEntityCutoutNoCull(hand_guard_original.texture)), packedLight,packedOverlay, 1, 1, 1, 1);
+            bufferImpl.finish();
+        }
 
-        if (!nullFlag && !context.occupiedIS) {
+        if (!ISFlag) {
             bufferImpl = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
             is_original.render(matrixStack, bufferImpl.getBuffer( RenderType.getEntityCutoutNoCull(is_original.texture)), packedLight,packedOverlay, 1, 1, 1, 1);
             bufferImpl.finish();

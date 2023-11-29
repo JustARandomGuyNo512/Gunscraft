@@ -6,7 +6,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import sheridan.gunscraft.items.ModItems;
+import sheridan.gunscraft.items.attachments.AttachmentRegistry;
+import sheridan.gunscraft.items.attachments.util.GunAttachmentSlot;
 import sheridan.gunscraft.items.guns.IGenericGun;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 public class CommonProxy implements IProxy{
     @Override
@@ -38,6 +47,32 @@ public class CommonProxy implements IProxy{
     @Override
     public PlayerEntity getClientPlayer() {
         return null;
+    }
+
+    @Override
+    public void commonSetUp(FMLCommonSetupEvent event) {
+        registerAttachmentSlot();
+    }
+
+    private void registerAttachmentSlot() {
+        registerAttachmentM4a1();
+    }
+
+    private void registerAttachmentM4a1() {
+        Map<String, GunAttachmentSlot> slotMap = new HashMap<>();
+
+        GunAttachmentSlot muzzleSlot = new GunAttachmentSlot("muzzle", new HashSet<>(Arrays.asList(999)));
+        muzzleSlot.setTrans(new float[][]{{0,0,0},{0,0,0},{1,1,1}});
+        slotMap.put("muzzle", muzzleSlot);
+
+        GunAttachmentSlot magSlot = new GunAttachmentSlot("mag", new HashSet<>(Arrays.asList(AttachmentRegistry.getIdByName("ar_expansion_mag"))));
+        magSlot.setTrans(new float[][]{{0, 39f / 16f, 86f / 16f},{0,0,0},{1,1,1}});
+        slotMap.put("mag", magSlot);
+
+        GunAttachmentSlot scopeSlot = new GunAttachmentSlot("scope", new HashSet<>(Arrays.asList(999)));
+        scopeSlot.setTrans(new float[][]{{0, -7.8592f / 16f, 120 / 16f},{0,0,0}, {1,1,1}});
+        slotMap.put("scope", scopeSlot);
+        ModItems.M4A1.get().slotMap = slotMap;
     }
 
 }

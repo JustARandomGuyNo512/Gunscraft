@@ -1,13 +1,17 @@
 package sheridan.gunscraft.container;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.inventory.CreativeCraftingListener;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.inventory.container.IContainerListener;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import sheridan.gunscraft.items.guns.IGenericGun;
 
 import javax.annotation.Nullable;
@@ -30,7 +34,7 @@ public class AttachmentContainer extends Container {
         this.attachmentInventory = new Inventory(1) {
             public void markDirty() {
                 super.markDirty();
-                AttachmentContainer.this.onCraftMatrixChanged(this);
+                AttachmentContainer.this.detectAndSendChanges();
             }
         };
         for (int i = 0; i < 3; i++) {
@@ -43,6 +47,13 @@ public class AttachmentContainer extends Container {
         }
 
         this.addSlot(new Slot(attachmentInventory, 0, 152, 63));
+
+    }
+
+
+    @Override
+    public void putStackInSlot(int slotID, ItemStack stack) {
+        super.putStackInSlot(slotID, stack);
     }
 
     @Override

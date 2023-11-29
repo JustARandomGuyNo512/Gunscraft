@@ -23,6 +23,16 @@ public class GunAttachmentSlot {
     public static final ResourceLocation OCCUPIED = new ResourceLocation(Gunscraft.MOD_ID, "textures/gui/icon/attachment_occupied.png");
     public static final ResourceLocation OCCUPIED_SELECTED = new ResourceLocation(Gunscraft.MOD_ID, "textures/gui/icon/attachment_occupied_selected.png");
     public String name;
+
+    @Override
+    public String toString() {
+        return "GunAttachmentSlot{" +
+                "name='" + name + '\'' +
+                ", acceptAttachments=" + acceptAttachments +
+                ", trans=" + Arrays.toString(trans) +
+                '}';
+    }
+
     public Set<Integer> acceptAttachments;
     public float[][] trans;
 

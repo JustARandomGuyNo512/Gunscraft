@@ -36,4 +36,5 @@ public interface IGenericGun {
     float getRecoilDec(ItemStack stack);
     GunAttachmentSlot getSlot(String name);
     List<GunAttachmentSlot> getAllSlots();
+    String getSeriesName();
 }

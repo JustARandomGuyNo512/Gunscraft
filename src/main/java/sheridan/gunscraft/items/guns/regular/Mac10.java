@@ -11,6 +11,6 @@ public class Mac10 extends GenericGun {
                 new int[] {SEMI, AUTO}, 1.15f, 2.8f, 0.8f, 2.8f, 9f,
                 5f, 25, 7, "item.mac10.fire", new float[] {1f, 1f, 1f, 1f},
                 true, false, (int) (2.8 * 20), 1,4.3f,5f, 2f,
-                2.8f);
+                2.8f, "uzi");
     }
 }

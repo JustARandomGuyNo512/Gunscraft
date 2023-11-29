@@ -65,13 +65,14 @@ public class GenericGun extends BaseItem implements IGenericGun{
     public float recoilDec;
     public Map<String, GunAttachmentSlot> slotMap;
     private TranslationTextComponent introduction;
+    protected String seriesName;
 
     public GenericGun(Properties properties, int baseMagSize,boolean canHoldInOneHand,
                       ResourceLocation[] textures, int[] fireModes,
                       float baseSpread, float maxSpread, float spreadPreShoot, float bulletSpeed,
                       float baseDamage, float minDamage, int bulletLifeLength, int shootDelay, String normalFireSound,
                       float[] soundArgs, boolean isFreeBlot, boolean isPistol, int reloadLength, int burstCount,
-                      float aimingSpeed, float recoilUp, float recoilRandom, float recoilDec) {
+                      float aimingSpeed, float recoilUp, float recoilRandom, float recoilDec, String seriesName) {
         super(properties);
         this.baseMagSize = baseMagSize;
         this.textures = textures;
@@ -95,6 +96,7 @@ public class GenericGun extends BaseItem implements IGenericGun{
         this.recoilUp = recoilUp;
         this.recoilRandom = recoilRandom;
         this.recoilDec = recoilDec;
+        this.seriesName = seriesName;
     }
 
     public static String getFireModeStr(int key) {
@@ -363,6 +365,11 @@ public class GenericGun extends BaseItem implements IGenericGun{
             return slots;
         }
         return null;
+    }
+
+    @Override
+    public String getSeriesName() {
+        return seriesName;
     }
 
 

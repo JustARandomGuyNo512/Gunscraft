@@ -67,6 +67,7 @@ public class Gunscraft {
         PacketHandler.register();
         //EntityRegister.ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
         EntityRegister.registerRenderer();
+        proxy.commonSetUp(event);
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {

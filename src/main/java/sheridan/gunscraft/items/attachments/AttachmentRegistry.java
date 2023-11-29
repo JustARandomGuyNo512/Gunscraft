@@ -12,11 +12,10 @@ public class AttachmentRegistry {
     private static Map<Integer, IGenericAttachment> registryMap = new HashMap<>();
     private static Map<String, Integer> IDMap = new HashMap<>();
     private static Map<Integer, IAttachmentModel> modelMap = new HashMap<>();
-    private static int ID = 0;
+    private static int ID = -1;
 
     public static void register(int id, IGenericAttachment attachment) {
         if (!registryMap.containsKey(id)) {
-            IDMap.put(attachment.getAttachmentName(), id);
             registryMap.put(id, attachment);
         }
     }
@@ -38,9 +37,11 @@ public class AttachmentRegistry {
         return registryMap.getOrDefault(id, null);
     }
 
-    public static int getID() {
+    public static int getID(String name) {
         synchronized (Object.class) {
-            return ++ID;
+            ++ID;
+            IDMap.put(name, ID);
+            return ID;
         }
     }
 }

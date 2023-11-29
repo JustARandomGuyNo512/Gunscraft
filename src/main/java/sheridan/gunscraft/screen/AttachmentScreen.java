@@ -4,11 +4,14 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.gui.screen.inventory.InventoryScreen;
+import net.minecraft.client.network.play.ClientPlayNetHandler;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -58,6 +61,7 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
     private GunAttachmentSlot selectedSlot;
     private IGenericGun gun;
     private int maxIndex;
+    private AttachmentContainer container;
 
     private boolean isMouseDruggingModel = false;
     private float modelRX;
@@ -80,6 +84,7 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
         super(screenContainer, inv, titleIn);
         this.inventory = screenContainer.playerInventory;
         this.attachmentInventory = screenContainer.attachmentInventory;
+        this.container = screenContainer;
     }
 
     @Override
@@ -122,7 +127,6 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
         if (install) {
             ItemStack stack = attachmentInventory.getStackInSlot(0);
             if (stack.getItem() instanceof IGenericAttachment) {
-                System.out.println("install attachment...");
                 IGenericAttachment attachment = (IGenericAttachment) stack.getItem();
                 String slotName = selectedSlot.name;
                 ItemStack gunStack = this.minecraft.player.getHeldItemMainhand();
@@ -130,7 +134,8 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
                     IGenericGun gun = (IGenericGun) gunStack.getItem();
                     if (NBTAttachmentsMap.set(slotName, attachment.getID(), gunStack, gun) != null) {
                         PacketHandler.CommonChannel.sendToServer(new SetAttachmentPacket(attachment.getID(), slotName));
-                        attachmentInventory.setInventorySlotContents(0, new ItemStack(Items.AIR));
+                        attachmentInventory.setInventorySlotContents(0, ItemStack.EMPTY);
+                        attachmentInventory.markDirty();
                     }
                 }
             }

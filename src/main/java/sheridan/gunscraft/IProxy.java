@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import sheridan.gunscraft.items.guns.IGenericGun;
 
 public interface IProxy {
@@ -19,5 +20,7 @@ public interface IProxy {
     @OnlyIn(Dist.CLIENT)
     boolean shouldRenderCustom(ItemStack stack, IGenericGun gun, LivingEntity entity, boolean isMainHand);
     PlayerEntity getClientPlayer();
+
+    void  commonSetUp(FMLCommonSetupEvent event);
 
 }
