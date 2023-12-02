@@ -95,13 +95,6 @@ public class PlayerEvents {
         ClientProxy.minBulletSpread = minSpread;
         ClientProxy.maxBulletSpread = maxSpread;
 
-        if (ClientProxy.bulletSpread > ClientProxy.maxBulletSpread) {
-            ClientProxy.setSpread(ClientProxy.maxBulletSpread);
-        }
-        ClientProxy.addSpread(-0.1f);
-        if (ClientProxy.bulletSpread < ClientProxy.minBulletSpread) {
-            ClientProxy.setSpread(ClientProxy.minBulletSpread);
-        }
     }
 
     public static void updateClientHoldingGun(ItemStack stackMain, ItemStack stackOff) {

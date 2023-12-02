@@ -193,7 +193,7 @@ public class GenericGun extends BaseItem implements IGenericGun{
             if (ClientProxy.mainHandStatus.aiming) {
                 shootSpread *= 0.7f;
             }
-            ClientProxy.addSpread(shootSpread);
+            ClientProxy.bulletSpread += shootSpread;
             SoundEvents.playSound(normalFireSound, entity, soundArgs[0], soundArgs[1]);
         }
         return canPass;

@@ -16,7 +16,7 @@ plugins {
 apply plugin: 'org.spongepowered.mixin'
 
 group = 'sheridan'
-version = '1.02-SNAPSHOT'
+version = '1.03-SNAPSHOT'
 
 java {
     archivesBaseName = 'gunscraft'
@@ -148,7 +148,7 @@ jar {
         attributes([
                 "Specification-Title"     : "gunscraft",
                 "Specification-Vendor"    : "sheridan",
-                "Specification-Version"   : "1.02", // We are version 1 of ourselves
+                "Specification-Version"   : "1.03", // We are version 1 of ourselves
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : project.jar.archiveVersion,
                 "Implementation-Vendor"   : "sheridan",

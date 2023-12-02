@@ -27,6 +27,13 @@ public class ClientTickEvents {
         if (ClientProxy.equipDuration > 0 || Minecraft.getInstance().isGamePaused()) {
             ClientProxy.mainHandStatus.aiming = false;
         }
+        if (ClientProxy.bulletSpread > ClientProxy.maxBulletSpread) {
+            ClientProxy.bulletSpread = ClientProxy.maxBulletSpread;
+        }
+        ClientProxy.addSpread(-0.1f);
+        if (ClientProxy.bulletSpread < ClientProxy.minBulletSpread) {
+            ClientProxy.bulletSpread = ClientProxy.minBulletSpread;
+        }
         if (reloadingHandler != null) {
             reloadingHandler.tick();
         }
@@ -39,9 +46,6 @@ public class ClientTickEvents {
                 lastTick = now;
                 clientDelta = (float) dis * 0.001f;
             }
-        }
-        if (Minecraft.getInstance().currentScreen != null) {
-            // System.out.println(Minecraft.getInstance().currentScreen.getClass());
         }
     }
 

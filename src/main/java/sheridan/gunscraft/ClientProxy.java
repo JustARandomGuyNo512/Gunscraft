@@ -74,12 +74,6 @@ public class ClientProxy extends CommonProxy{
         }
     }
 
-    public static void setSpread(float val) {
-        synchronized (Object.class) {
-            bulletSpread = val;
-        }
-    }
-
     static {
         AIMING = CapabilityKey.builder(Serializers.BOOLEAN).setId(new ResourceLocation(Gunscraft.MOD_ID, "aiming")).defaultValue(() -> false).resetOnDeath().build();
         LAST_SHOOT_RIGHT = CapabilityKey.builder(Serializers.LONG).setId(new ResourceLocation(Gunscraft.MOD_ID, "last_shoot_right")).defaultValue(() -> 0L).build();
@@ -100,7 +94,7 @@ public class ClientProxy extends CommonProxy{
                 .setHandPoseRightSideRightHand(new float[][]{{0.325f, 0.37f, 1.09f},{-1.5707963267948966f, -0.049f, 0},{1, 1, 1}})
                 .setHandPoseRightSideLeftHand(new float[][]{{-0.115f, 0.69f, 0.8f},{-2.08f, 0.5735987755982f, 0.165f},{1, 1, 1}})
                 .setHandPoseLeftSide(new float[][]{{-0.35f, 0.37f, 1.09f},{-1.5707963267948966f, 0, 0},{1, 1, 1}})
-                .registerMuzzleFlash("normal", new TransformData.TransPair().setTrans(new MuzzleFlashTrans().setScale(new float[] {0.75f, 0.75f, 0.75f}).setTranslate(new float[]{0, -0.1f, -0.5f})).setName("pistol_simple"))
+                .registerMuzzleFlash("normal", new TransformData.TransPair().setTrans(new MuzzleFlashTrans().setScale(new float[] {0.75f, 0.75f, 0.75f}).setTranslate(new float[]{0, -0.075f, -0.52f})).setName("pistol_simple"))
                 .setRecoilAnimationData(new RecoilAnimationData(12f,35f, 22f,
                         0.12f,0.095f,0.11f,
                         7.8f, 0.53f, 0.66f,
