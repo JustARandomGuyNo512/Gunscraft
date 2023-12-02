@@ -33,6 +33,8 @@ import sheridan.gunscraft.render.fx.muzzleFlash.CommonMuzzleFlash;
 import sheridan.gunscraft.render.fx.muzzleFlash.MuzzleFlash;
 import sheridan.gunscraft.render.fx.muzzleFlash.MuzzleFlashTrans;
 
+import static sheridan.gunscraft.ClientProxy.TICK_LEN;
+
 @OnlyIn(Dist.CLIENT)
 public class GenericGunRenderer implements IGunRender{
     private static final Matrix4f DEFAULT_FIRST_PERSON_FOV_MATRIX;
@@ -55,9 +57,10 @@ public class GenericGunRenderer implements IGunRender{
                 transformData.applyTransform(transformTypeIn, matrixStackIn, false, 0);
                 int fireMode = gun.getFireMode(itemStackIn);
                 int ammoLeft = gun.getAmmoLeft(itemStackIn);
+                long fireDis = (gun.getShootDelay() - 1) * TICK_LEN;
                 GunRenderContext context = NBTAttachmentsMap.renderAttachments(matrixStackIn, transformTypeIn, combinedLightIn, combinedOverlayIn, ammoLeft, 0, true, fireMode,itemStackIn, gun);
                 model.render(matrixStackIn, bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(gun.getTexture(gun.getCurrentTextureIndex(itemStackIn)))),
-                      transformTypeIn, combinedLightIn, combinedOverlayIn, 1, 1, 1, 1, 1,0, false, fireMode,context);
+                      transformTypeIn, combinedLightIn, combinedOverlayIn, 1, 1, 1, 1, ammoLeft,0, false, fireMode,context,fireDis);
                 matrixStackIn.pop();
             }
         }
@@ -85,6 +88,7 @@ public class GenericGunRenderer implements IGunRender{
                 transformData.applyTransform(type, stackIn, transAiming, aimingProgress);
                 RecoilAnimationData recoilAnimationData = transformData.getRecoilAnimationData();
                 int fireMode = gun.getFireMode(itemStackIn);
+                long fireDis = (gun.getShootDelay() - 1) * TICK_LEN;
 
                 if (isFirstPerson) {
                     applyFOV();
@@ -101,7 +105,7 @@ public class GenericGunRenderer implements IGunRender{
                     GunRenderContext context = NBTAttachmentsMap.renderAttachments(stackIn, type, combinedLightIn, combinedOverlayIn, ammoLeft, lastShootTime, !leftHand, fireMode,itemStackIn, gun);
 
                     model.render(stackIn, bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(gun.getTexture(gun.getCurrentTextureIndex(itemStackIn)))),
-                            type, combinedLightIn, combinedOverlayIn, 1, 1, 1, 1, ammoLeft, lastShootTime, !leftHand, fireMode, context);
+                            type, combinedLightIn, combinedOverlayIn, 1, 1, 1, 1, ammoLeft, lastShootTime, !leftHand, fireMode, context,fireDis);
 
                     renderMuzzleFlash(gun, itemStackIn, transformData, lastShootTime, bufferIn, stackIn, true);
 
@@ -120,7 +124,7 @@ public class GenericGunRenderer implements IGunRender{
                     GunRenderContext context = NBTAttachmentsMap.renderAttachments(stackIn, type, combinedLightIn, combinedOverlayIn, ammoLeft, lastShoot, !leftHand, fireMode,itemStackIn, gun);
                     stackIn.push();
                     model.render(stackIn, bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(gun.getTexture(gun.getCurrentTextureIndex(itemStackIn)))),
-                          type, combinedLightIn, combinedOverlayIn, 1, 1, 1, 1, ammoLeft, lastShoot, !leftHand, fireMode, context);
+                          type, combinedLightIn, combinedOverlayIn, 1, 1, 1, 1, ammoLeft, lastShoot, !leftHand, fireMode, context,fireDis);
 
                     stackIn.pop();
                     renderMuzzleFlash(gun, itemStackIn, transformData, lastShoot, bufferIn, stackIn, false);
@@ -133,9 +137,9 @@ public class GenericGunRenderer implements IGunRender{
     @Override
     public void renderInGuiScreen(ItemStack itemStack, MatrixStack matrixStack, IGenericGun gun, IGunModel model, GunAttachmentSlot selectSlot) {
         matrixStack.push();
-        // applyFOV();
         int ammoLeft = gun.getAmmoLeft(itemStack);
         int fireMode = gun.getFireMode(itemStack);
+        long fireDis = (gun.getShootDelay() - 1) * TICK_LEN;
         TransformData transformData = ClientProxy.transformDataMap.get(itemStack.getItem());
         transformData.applyTransform(ItemCameraTransforms.TransformType.GROUND, matrixStack, false, 0);
         GunRenderContext context = NBTAttachmentsMap.renderAttachments(matrixStack, ItemCameraTransforms.TransformType.GROUND, 15728880, 655360,
@@ -143,8 +147,8 @@ public class GenericGunRenderer implements IGunRender{
         IRenderTypeBuffer.Impl impl = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
         model.render(matrixStack,
                 impl.getBuffer(RenderType.getEntityCutoutNoCull(gun.getTexture(gun.getCurrentTextureIndex(itemStack)))),
-                ItemCameraTransforms.TransformType.GROUND,15728880, 655360, 1, 1, 1, 1,0,0,  true, 0, context);
-       impl.finish();
+                ItemCameraTransforms.TransformType.GROUND,15728880, 655360, 1, 1, 1, 1,ammoLeft,0,  true, 0, context,fireDis);
+        impl.finish();
         NBTAttachmentsMap.renderAttachmentIcons(matrixStack, gun, selectSlot, itemStack);
         matrixStack.pop();
     }

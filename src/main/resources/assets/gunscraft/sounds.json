@@ -3,7 +3,8 @@
   "item.akm.fire":                 { "subtitle": "item.akm.fire",           "sounds": [{ "name": "gunscraft:akm/akm_fire" }]},
   "item.mp5.fire":                 { "subtitle": "item.mp5.fire",           "sounds": [{ "name": "gunscraft:mp5/mp5_fire" }]},
   "item.m4a1.fire":                 { "subtitle": "item.m4a1.fire",           "sounds": [{ "name": "gunscraft:m4a1/rifle_fire_1" }]},
-  "item.mac10.fire":                 { "subtitle": "item.mac10.fire",           "sounds": [{ "name": "gunscraft:mac10/mac10_fire" }]}
+  "item.mac10.fire":                 { "subtitle": "item.mac10.fire",           "sounds": [{ "name": "gunscraft:mac10/mac10_fire" }]},
+  "item.mini_m249.fire":                 { "subtitle": "item.mini_m249.fire",           "sounds": [{ "name": "gunscraft:mini_m249/mini_m249_fire" }]}
 
 
 }

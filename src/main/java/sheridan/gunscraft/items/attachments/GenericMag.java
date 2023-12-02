@@ -2,6 +2,7 @@ package sheridan.gunscraft.items.attachments;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import sheridan.gunscraft.items.attachments.util.GunRenderContext;
 import sheridan.gunscraft.items.guns.IGenericGun;
 
 public class GenericMag extends GenericAttachment{
@@ -23,5 +24,10 @@ public class GenericMag extends GenericAttachment{
         int ammoDec = gun.getAmmoLeft(stack);
         ammoDec = ammoDec > ammoIncrement ? ammoDec - ammoIncrement : 0;
         gun.setAmmoLeft(stack, ammoDec);
+    }
+
+    @Override
+    public void handleParams(GunRenderContext params) {
+        params.occupiedMag = true;
     }
 }

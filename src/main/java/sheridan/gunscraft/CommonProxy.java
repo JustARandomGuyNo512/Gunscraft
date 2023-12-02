@@ -57,6 +57,16 @@ public class CommonProxy implements IProxy{
     private void registerAttachmentSlot() {
         registerAttachmentM4a1();
         registerAttachmentAKM();
+        registerAttachmentMp5();
+    }
+
+    private void registerAttachmentMp5() {
+        Map<String, GunAttachmentSlot> slotMap = new HashMap<>();
+        GunAttachmentSlot magSlot = new GunAttachmentSlot("mag", new HashSet<>(Arrays.asList(AttachmentRegistry.getIdByName("smg_expansion_mag"))));
+        magSlot.setTrans(new float[][]{{0, 20.2f / 16f, 60 / 16f},{0,0,0},{1,1,1}});
+        slotMap.put("mag", magSlot);
+
+        ModItems.MP5.get().slotMap = slotMap;
     }
 
     private void registerAttachmentAKM() {
@@ -66,9 +76,9 @@ public class CommonProxy implements IProxy{
         muzzleSlot.setTrans(new float[][]{{0,0,0},{0,0,0},{1,1,1}});
         slotMap.put("muzzle", muzzleSlot);
 
-        GunAttachmentSlot mageSlot = new GunAttachmentSlot("mag", new HashSet<>(Arrays.asList(AttachmentRegistry.getIdByName("assault_expansion_mag"))));
-        mageSlot.setTrans(new float[][]{{0, 22f / 16f, 136 / 16f},{0,0,0},{1,1,1}});
-        slotMap.put("mag", mageSlot);
+        GunAttachmentSlot magSlot = new GunAttachmentSlot("mag", new HashSet<>(Arrays.asList(AttachmentRegistry.getIdByName("assault_expansion_mag"))));
+        magSlot.setTrans(new float[][]{{0, 22f / 16f, 136 / 16f},{0,0,0},{1,1,1}});
+        slotMap.put("mag", magSlot);
 
         ModItems.AKM.get().slotMap = slotMap;
     }
@@ -81,7 +91,7 @@ public class CommonProxy implements IProxy{
         slotMap.put("muzzle", muzzleSlot);
 
         GunAttachmentSlot magSlot = new GunAttachmentSlot("mag", new HashSet<>(Arrays.asList(AttachmentRegistry.getIdByName("assault_expansion_mag"))));
-        magSlot.setTrans(new float[][]{{0, 39f / 16f, 86f / 16f},{0,0,0},{1,1,1}});
+        magSlot.setTrans(new float[][]{{0, 39f / 16f, 85.5f / 16f},{0,0,0},{1,1,1}});
         slotMap.put("mag", magSlot);
 
         GunAttachmentSlot scopeSlot = new GunAttachmentSlot("scope", new HashSet<>(Arrays.asList(999)));

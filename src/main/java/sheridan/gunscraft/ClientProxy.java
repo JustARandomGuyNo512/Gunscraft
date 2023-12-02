@@ -23,6 +23,7 @@ import sheridan.gunscraft.model.IGunModel;
 import sheridan.gunscraft.model.guns.*;
 import sheridan.gunscraft.model.guns.akm.ModelAKM;
 import sheridan.gunscraft.model.guns.m4a1.ModelM4a1;
+import sheridan.gunscraft.model.guns.miniM249.ModelMiniM249;
 import sheridan.gunscraft.network.PacketHandler;
 import sheridan.gunscraft.network.packets.GunFirePacket;
 import sheridan.gunscraft.render.GenericGunRenderer;
@@ -41,6 +42,7 @@ public class ClientProxy extends CommonProxy{
     public static HashMap<Item, TransformData> transformDataMap = new HashMap<>();
     public static HashMap<Item, IGunModel> gunModelMap = new HashMap<>();
     public static final IGunRender renderer = new GenericGunRenderer();
+    public static final long TICK_LEN = 10L;
     public static int equipDuration = 0;
     @OnlyIn(Dist.CLIENT)
     public static Timer timer;
@@ -72,6 +74,12 @@ public class ClientProxy extends CommonProxy{
         }
     }
 
+    public static void setSpread(float val) {
+        synchronized (Object.class) {
+            bulletSpread = val;
+        }
+    }
+
     static {
         AIMING = CapabilityKey.builder(Serializers.BOOLEAN).setId(new ResourceLocation(Gunscraft.MOD_ID, "aiming")).defaultValue(() -> false).resetOnDeath().build();
         LAST_SHOOT_RIGHT = CapabilityKey.builder(Serializers.LONG).setId(new ResourceLocation(Gunscraft.MOD_ID, "last_shoot_right")).defaultValue(() -> 0L).build();
@@ -97,7 +105,7 @@ public class ClientProxy extends CommonProxy{
                         0.12f,0.095f,0.11f,
                         7.8f, 0.53f, 0.66f,
                         0.115f,0.095f,0.11f,
-                        0.268f, 0.1f, 0.0142f, 0.75f, 750))
+                        0.268f, 0.1f, 0.0142f, 0.75f, 700))
                 .setAimingTrans(new float[] {4.0259995f, -3.108999f, 5.937073f})
         );
         gunModelMap.put(ModItems.PISTOL_9_MM.get(), new ModelPistol_9mm());
@@ -118,8 +126,8 @@ public class ClientProxy extends CommonProxy{
                         0.1f,0.0886f,0.1f,
                         1.48f, 0.61f, 0.3f,
                         0.1f,0.0875f,0.1f,
-                        0.145f, 0.22f, 0.001f, 0.6f, 650))
-                .setAimingTrans(new float[] {2.7699978f, -2.5789995f, 5.410027f})
+                        0.145f, 0.225f, 0.0015f, 0.6f, 650))
+                .setAimingTrans(new float[] {2.7699978f, -2.582f, 5.410027f})
         );
         gunModelMap.put(ModItems.AKM.get(), new ModelAKM());
 
@@ -140,12 +148,12 @@ public class ClientProxy extends CommonProxy{
                         1.2f, 0.42f, 0.18f,
                         0.1f,0.0867f,0.1f,
                         0.145f, 0.15f, 0.001f, 0.32f, 500))
-                .setAimingTrans(new  float[] {2.7109997f, -2.6679995f, 6.377043f})
+                .setAimingTrans(new  float[] {2.7109997f, -2.67f, 6.257043f})
         );
         gunModelMap.put(ModItems.MP5.get(), new ModelMp5());
 
         transformDataMap.put(ModItems.MAC10.get(), new TransformData()
-                .setFPRightHand(new float[][]{{2.1f, -5.75f, -11.8f},{0, 0, 0},{1.72f, 1.72f, 1.72f}})
+                .setFPRightHand(new float[][]{{2.1f, -5.75f, -10.8f},{0, 0, 0},{1.72f, 1.72f, 1.72f}})
                 .setFPLeftHand(new float[][]{{0, -0, -0},{0, 0, 0},{0, 0, 0}})
                 .setTPRightHand(new float[][]{{0f, -2.35f, -1.26f},{0, 0, 0},{0.8f, 0.8f, 0.8f}})
                 .setTPLeftHand(new float[][]{{0f, -0, -0},{0, 0, 0},{0, 0, 0}})
@@ -161,35 +169,57 @@ public class ClientProxy extends CommonProxy{
                         4.5f, 0.52f, 0.31f,
                         0.11f,0.088f,0.1f,
                         0.15f, 0.135f, 0.0087f, 0.52f, 500))
-                .setAimingTrans(new float[] {4.1240017f, -2.3559993f, 9.68f})
+                .setAimingTrans(new float[] {4.1240017f, -2.3559993f, 8.63f})
         );
         gunModelMap.put(ModItems.MAC10.get(), new ModelMac10());
 
 
         transformDataMap.put(ModItems.M4A1.get(), new TransformData()
-                .setFPRightHand(new float[][]{{4.14f, -6.31f, -16.25f},{0, 0, 0},{1.8275f, 1.8275f, 1.8275f}})
+                .setFPRightHand(new float[][]{{4.14f, -6.15f, -14.18f},{0, 0, 0},{1.699575f, 1.699575f, 1.699575f}})
                 .setFPLeftHand(new float[][]{{0, 0, 0},{0, 0, 0},{0, 0, 0}})
-                .setTPRightHand(new float[][]{{0f, -3.2f, -6f},{0, 0, 0},{0.85f, 0.85f, 0.85f}})
+                .setTPRightHand(new float[][]{{0f, -3.2f, -6f},{0, 0, 0},{0.7905f, 0.7905f, 0.7905f}})
                 .setTPLeftHand(new float[][]{{0f, -0, -0},{0, 0, 0},{0, 0, 0}})
-                .setFrameTrans(new float[][]{{12f, -5f, -0.25f},{0, -90, 0},{1.7f, 1.7f, 1.7f}})
-                .setGroundTrans(new float[][]{{0, -3, -6f},{0, 0, 0},{0.85f, 0.85f, 0.85f}})
-                .setGUITrans(new float[][]{{6, -3, 100f},{0, -90, 0},{0.9f, 0.9f, 0.9f}})
+                .setFrameTrans(new float[][]{{12f, -5f, -0.25f},{0, -90, 0},{1.581f, 1.581f, 1.581f}})
+                .setGroundTrans(new float[][]{{0, -3, -6f},{0, 0, 0},{0.7905f, 0.7905f, 0.7905f}})
+                .setGUITrans(new float[][]{{6, -3, 0f},{0, -90, 0},{0.837f, 0.837f, 0.837f}})
                 .setHandPoseRightSideRightHand(new float[][]{{0.325f, 0.6f, 2.5f},{-1.5707963267948966f, -0.049f, 0},{1.0f, 1.0f, 1.0f}})
-                .setHandPoseRightSideLeftHand(new float[][]{{-0.158f, 0.55f, 1.30f},{-1.6580627893947f, 0.26179938779917f,  0.30543261909903f},{1.0f, 1.0f, 1.0f}})
+                .setHandPoseRightSideLeftHand(new float[][]{{-0.156f, 0.55f, 1.35f},{-1.6580627893947f, 0.26179938779917f,  0.30543261909903f},{1.0f, 1.0f, 1.0f}})
                 .setHandPoseLeftSide(new float[][]{{-0, 0, 0},{-0, 0, 0},{0, 0, 0}})
                 .registerMuzzleFlash("normal", new TransformData.TransPair().setTrans(new MuzzleFlashTrans().setTranslate(new float[]{0, 0.2f, -3.25f})).setName("pistol_simple"))
-                .setRecoilAnimationData(new RecoilAnimationData(16.2f,11.3f, 10.5f,
+                .setRecoilAnimationData(new RecoilAnimationData(16.2f,11f, 10.5f,
                         0.1f,0.0887f,0.1f,
-                        1.05f, 0.475f, 0.17f,
+                        0.87f, 0.475f, 0.17f,
                         0.1f,0.0876f,0.1f,
                         0.15f, 0.25f, 0.0015f, 0.22f, 500))
-                .setAimingTrans(new float[] {2.0849983f, -1.749f, 6.2430614f})
+                .setAimingTrans(new float[] {2.0849983f, -1.749f, 5.9f})
         );
         gunModelMap.put(ModItems.M4A1.get(), new ModelM4a1());
 
 
+        transformDataMap.put(ModItems.MINI_M249.get(), new TransformData()
+                .setFPRightHand(new float[][]{{4.25f, -5.74f, -16.52f},{0, 0, 0},{1.64475f, 1.64475f, 1.64475f}})
+                .setFPLeftHand(new float[][]{{0, 0, 0},{0, 0, 0},{0, 0, 0}})
+                .setTPRightHand(new float[][]{{0f, -3.2f, -6f},{0, 0, 0},{0.765f, 0.765f, 0.765f}})
+                .setTPLeftHand(new float[][]{{0f, -0, -0},{0, 0, 0},{0, 0, 0}})
+                .setFrameTrans(new float[][]{{12f, -5f, -0.25f},{0, -90, 0},{1.53f, 1.53f, 1.53f}})
+                .setGroundTrans(new float[][]{{0, -3, -6f},{0, 0, 0},{0.765f, 0.765f, 0.765f}})
+                .setGUITrans(new float[][]{{6, -3, 0f},{0, -90, 0},{0.81f, 0.81f, 0.81f}})
+                .setHandPoseRightSideRightHand(new float[][]{{0.325f, 0.6f, 2.5f},{-1.5707963267948966f, -0.049f, 0},{1.0f, 1.0f, 1.0f}})
+                .setHandPoseRightSideLeftHand(new float[][]{{-0.15f, 0.7f, 1.43f},{-1.6580627893947f, 0.26179938779917f,  0.30543261909903f},{1.0f, 1.0f, 1.0f}})
+                .setHandPoseLeftSide(new float[][]{{-0, 0, 0},{-0, 0, 0},{0, 0, 0}})
+                .registerMuzzleFlash("normal", new TransformData.TransPair().setTrans(new MuzzleFlashTrans().setTranslate(new float[]{0, 0.02f, -1.85f})).setName("pistol_simple"))
+                .setRecoilAnimationData(new RecoilAnimationData(22f,8f, 10.5f,
+                        0.1f,0.0887f,0.1f,
+                        0.7f, 0.425f, 0.18f,
+                        0.1f,0.0876f,0.1f,
+                        0.15f, 0.275f, 0.0017f, 0.275f, 500))
+                .setAimingTrans(new float[] {1.9719835f, -2.219f, 3.1f})
+        );
+        gunModelMap.put(ModItems.MINI_M249.get(), new ModelMiniM249());
+
+
         timer = new Timer();
-        timer.schedule(new ClientWeaponTicker(), 0, 10L);
+        timer.schedule(new ClientWeaponTicker(), 0, TICK_LEN);
 
         CapabilityHandler.getInstance().registerKey(AIMING);
         CapabilityHandler.getInstance().registerKey(LAST_SHOOT_RIGHT);

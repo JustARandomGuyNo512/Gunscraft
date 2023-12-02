@@ -27,14 +27,10 @@ public class NBTAttachmentsMap{
     public static void init(List<GunAttachmentSlot> slots, ItemStack stack, boolean reset) {
         CompoundNBT stackNBT = stack.getTag();
         if (stackNBT == null) {
-            System.out.println("nbt not init...");
             return;
         }
         if (stackNBT.contains("attachments")) {
-            if (!reset) {
-                System.out.println("attachment slots have been created...");
-                return;
-            }
+            if (!reset) {return;}
             stackNBT.remove("attachments");
         }
         CompoundNBT slotsNBT = new CompoundNBT();
@@ -86,8 +82,6 @@ public class NBTAttachmentsMap{
         }
         return null;
     }
-
-    public static boolean isSlotOccupied() {return false;}
 
     public static IGenericAttachment set(String slotName, int attachmentId, ItemStack stack, IGenericGun gun) {
         GunAttachmentSlot slot = gun.getSlot(slotName);

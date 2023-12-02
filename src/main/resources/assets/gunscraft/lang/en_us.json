@@ -4,8 +4,10 @@
   "item.gunscraft.mp5": "mp5",
   "item.gunscraft.mac10": "mac10",
   "item.gunscraft.m4a1": "m4a1",
+  "item.gunscraft.mini_m249": "mini m249",
 
-  "item.gunscraft.ar_expansion_mag": "AR expansion mag",
+  "item.gunscraft.assault_expansion_mag": "assault rifle expansion mag",
+  "item.gunscraft.smg_expansion_mag": "smg expansion mag",
 
   "itemGroup.guns": "guns",
   "itemGroup.attachments": "attachments",
@@ -26,5 +28,6 @@
   "introduction.gunscraft.m4a1": "I will write this soon...",
   "introduction.gunscraft.pistol_9mm": "I will write this soon...",
   "introduction.gunscraft.mp5": "I will write this soon...",
-  "introduction.gunscraft.mac10": "I will write this soon..."
+  "introduction.gunscraft.mac10": "I will write this soon...",
+  "introduction.gunscraft.mini_m249": "I will write this soon..."
 }

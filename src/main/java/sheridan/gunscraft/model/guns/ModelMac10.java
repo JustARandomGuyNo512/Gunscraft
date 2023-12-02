@@ -423,7 +423,7 @@ public class ModelMac10 extends EntityModel<Entity> implements IGunModel {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, IVertexBuilder buffer, ItemCameraTransforms.TransformType transformType, int packedLight, int packedOverlay, float red, float green, float blue, float alpha, int bulletLeft, long lastFireTime, boolean mainHand, int fireMode, GunRenderContext context) {
+    public void render(MatrixStack matrixStack, IVertexBuilder buffer, ItemCameraTransforms.TransformType transformType, int packedLight, int packedOverlay, float red, float green, float blue, float alpha, int bulletLeft, long lastFireTime, boolean mainHand, int fireMode, GunRenderContext context, long fireDis) {
         barrel.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         mag.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         stock.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);

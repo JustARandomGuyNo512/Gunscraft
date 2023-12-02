@@ -802,7 +802,7 @@ public class ModelAKM extends EntityModel<Entity> implements IGunModel {
 
     @Override
     public void render(MatrixStack matrixStack, IVertexBuilder buffer, ItemCameraTransforms.TransformType transformType, int packedLight, int packedOverlay,
-                       float red, float green, float blue, float alpha, int bulletLeft, long lastFireTime, boolean mainHand, int fireMode, GunRenderContext context) {
+                       float red, float green, float blue, float alpha, int bulletLeft, long lastFireTime, boolean mainHand, int fireMode, GunRenderContext context, long fireDis) {
         barrel.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         matrixStack.push();
         boolean nullFlag = context == null;

@@ -80,8 +80,10 @@ public class PlayerEvents {
             maxSpread *= CROUCHING_SPREAD_FACTOR;
         }
         if (entity.moveForward != 0 || entity.moveStrafing != 0 || entity.moveVertical != 0) {
-            minSpread *= 1.4f;
-            maxSpread *= 1.4f;
+            minSpread *= 1.5f;
+            maxSpread *= 1.5f;
+            minSpread += 0.2f;
+            maxSpread += 0.2f;
         }
         float fallFactor = entity.fallDistance < 10 ? entity.fallDistance * 0.15f : 1.5f;
         if (entity.jumpMovementFactor > 0.02f) {
@@ -92,6 +94,14 @@ public class PlayerEvents {
         maxSpread += fallFactor;
         ClientProxy.minBulletSpread = minSpread;
         ClientProxy.maxBulletSpread = maxSpread;
+
+        if (ClientProxy.bulletSpread > ClientProxy.maxBulletSpread) {
+            ClientProxy.setSpread(ClientProxy.maxBulletSpread);
+        }
+        ClientProxy.addSpread(-0.1f);
+        if (ClientProxy.bulletSpread < ClientProxy.minBulletSpread) {
+            ClientProxy.setSpread(ClientProxy.minBulletSpread);
+        }
     }
 
     public static void updateClientHoldingGun(ItemStack stackMain, ItemStack stackOff) {

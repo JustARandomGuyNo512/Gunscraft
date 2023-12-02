@@ -14,6 +14,8 @@ import net.minecraft.util.math.vector.Vector3f;
 import sheridan.gunscraft.entities.projectile.GenericProjectile;
 import sheridan.gunscraft.model.projectilies.ModelRifleProjectile;
 
+import static sheridan.gunscraft.entities.projectile.GenericProjectile.BASE_SPEED_INDEX;
+
 
 public class GenericProjectileRenderer extends EntityRenderer<GenericProjectile> {
     public static ResourceLocation RIFLE = new ResourceLocation("gunscraft","textures/projectile/generic_projectile.png");
@@ -33,8 +35,15 @@ public class GenericProjectileRenderer extends EntityRenderer<GenericProjectile>
 
     @Override
     public void render(GenericProjectile entity, float entityYaw, float partialTicks, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, int light) {
-        if (entity.ticksExisted < 2) {
-            return;
+        float speed = entity.speed / BASE_SPEED_INDEX;
+        if (speed > 4f) {
+            if (entity.ticksExisted <= 1) {
+                return;
+            }
+        } else {
+            if (entity.ticksExisted <= 2) {
+                return;
+            }
         }
         matrixStack.push();
         matrixStack.scale(BASE_SCALE, BASE_SCALE, BASE_SCALE);

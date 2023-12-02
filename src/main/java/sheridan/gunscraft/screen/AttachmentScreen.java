@@ -104,7 +104,7 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (slots != null && slots.size() > 1) {
+        if (slots != null && slots.size() >= 1) {
             switch (keyCode) {
                 case 263:
                     selectedIndex = selectedIndex - 1 < 0 ? maxIndex : selectedIndex - 1;
@@ -126,7 +126,9 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
     private void handleAttachmentChange(boolean install) {
         if (install) {
             ItemStack stack = attachmentInventory.getStackInSlot(0);
+            System.out.println("000");
             if (stack.getItem() instanceof IGenericAttachment) {
+                System.out.println("111");
                 IGenericAttachment attachment = (IGenericAttachment) stack.getItem();
                 String slotName = selectedSlot.name;
                 ItemStack gunStack = this.minecraft.player.getHeldItemMainhand();
@@ -170,7 +172,7 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
                 if (gun == null || slots == null) {
                     this.gun = (IGenericGun) stack.getItem();
                     slots = gun.getAllSlots();
-                    if (slots != null && slots.size() > 1) {
+                    if (slots != null && slots.size() >= 1) {
                         selectedSlot = slots.get(0);
                         maxIndex = slots.size() - 1;
                     }
@@ -178,7 +180,7 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
             }
             this.minecraft.displayGuiScreen(this);
         }
-        if (slots != null && slots.size() > 1) {
+        if (slots != null && slots.size() >= 1) {
             selectedSlot = slots.get(selectedIndex % slots.size());
         }
         super.tick();

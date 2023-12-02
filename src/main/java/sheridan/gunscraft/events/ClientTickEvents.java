@@ -24,13 +24,6 @@ public class ClientTickEvents {
         if (clientPlayer != null) {
             ClientProxy.clientPlayerId = clientPlayer.getEntityId();
         }
-        if (ClientProxy.bulletSpread > ClientProxy.maxBulletSpread) {
-            ClientProxy.bulletSpread = ClientProxy.maxBulletSpread;
-        }
-        ClientProxy.addSpread(-0.1f);
-        if (ClientProxy.bulletSpread < ClientProxy.minBulletSpread) {
-            ClientProxy.bulletSpread = ClientProxy.minBulletSpread;
-        }
         if (ClientProxy.equipDuration > 0 || Minecraft.getInstance().isGamePaused()) {
             ClientProxy.mainHandStatus.aiming = false;
         }

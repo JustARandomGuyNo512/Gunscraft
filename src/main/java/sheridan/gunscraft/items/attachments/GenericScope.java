@@ -3,6 +3,7 @@ package sheridan.gunscraft.items.attachments;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import sheridan.gunscraft.items.attachments.util.GunRenderContext;
 import sheridan.gunscraft.items.guns.IGenericGun;
 import sheridan.gunscraft.model.IAttachmentModel;
 
@@ -18,5 +19,10 @@ public class GenericScope extends GenericAttachment{
     @Override
     public void onAiming(ItemStack stack, IGenericGun gun, MatrixStack matrixStack) {
 
+    }
+
+    @Override
+    public void handleParams(GunRenderContext params) {
+        params.occupiedIS = true;
     }
 }

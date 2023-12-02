@@ -24,6 +24,7 @@ public class ClientWeaponTicker extends TimerTask {
                 handleCoolDown();
                 return;
             }
+
             if (player.isSpectator() || player.isSwimming() || player.isInLava()) {
                 handleCoolDown();
                 return;

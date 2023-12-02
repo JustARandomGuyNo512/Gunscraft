@@ -57,7 +57,6 @@ public class GunAttachmentSlot {
             applyTrans(matrixStack);
             matrixStack.rotate(new Quaternion(Vector3f.YP, 90, true));
             ResourceLocation texture = chooseTexture(selected, occupied);
-            // clear rotate factors...
             FloatBuffer buffer1 = FloatBuffer.allocate(16);
             matrixStack.getLast().getMatrix().write(buffer1);
             float scale = selected ? BASE_ICON_SCALE * 1.2f : BASE_ICON_SCALE;
@@ -72,20 +71,18 @@ public class GunAttachmentSlot {
             buffer1.put(2, 0);
             buffer1.put(6, 0);
             buffer1.put(10, scale);
-            //buffer1.put(14, 900f);
-            //System.out.println(Arrays.toString(buffer1.array()));
+
             Matrix4f matrix4f1 = new Matrix4f(buffer1.array());
             matrix4f1.transpose();
-            //System.out.println(matrix4f1);
             BufferBuilder buffer = Tessellator.getInstance().getBuffer();
             RenderSystem.enableBlend();
             Minecraft.getInstance().getTextureManager().bindTexture(texture);
             buffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
             float zFactor = 5f;
-            buffer.pos(matrix4f1, -1, 3,zFactor).tex(0,1).color(1, 1, 1,1f).endVertex();
-            buffer.pos(matrix4f1, 1, 3,zFactor).tex(1,1).color(1, 1, 1,1f).endVertex();
-            buffer.pos(matrix4f1, 1, 1,zFactor).tex(1,0).color(1, 1, 1,1f).endVertex();
-            buffer.pos(matrix4f1, -1, 1,zFactor).tex(0,0).color(1, 1, 1,1f).endVertex();
+            buffer.pos(matrix4f1, -1, 3.4f,zFactor).tex(0,1).color(1, 1, 1,1f).endVertex();
+            buffer.pos(matrix4f1, 1, 3.4f,zFactor).tex(1,1).color(1, 1, 1,1f).endVertex();
+            buffer.pos(matrix4f1, 1, 1.4f,zFactor).tex(1,0).color(1, 1, 1,1f).endVertex();
+            buffer.pos(matrix4f1, -1, 1.4f,zFactor).tex(0,0).color(1, 1, 1,1f).endVertex();
             buffer.finishDrawing();
             WorldVertexBufferUploader.draw(buffer);
             RenderSystem.disableBlend();

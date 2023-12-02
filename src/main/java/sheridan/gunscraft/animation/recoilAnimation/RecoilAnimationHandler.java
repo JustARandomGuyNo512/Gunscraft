@@ -28,7 +28,7 @@ public class RecoilAnimationHandler {
                         return;
                     }
                     float rotateUp = state.getRotateUpSpeed() * 0.25f;
-                    float rx = state.getRandomRXSpeed() * 0.25f;
+                    float rx = state.getRandomRXSpeed() * 0.185f;
                     float ry = state.getRandomRYSpeed() * 0.25f;
                     float back = state.getMoveBackSpeed() * 0.65f;
                     float moveUp = state.getMoveUpSpeed() * 0.15f;

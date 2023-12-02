@@ -21,16 +21,18 @@ public class GameRendererMixin {
         if (player == null) {
             return;
         }
+        float animateScale = 1f;
         if (ClientProxy.mainHandStatus.aiming) {
             ci.cancel();
             applyBobbing(matrixStackIn, player, partialTicks, 0.06f);
+            animateScale = 0.01f;
         } else {
             if (ClientProxy.offHandStatus.holdingGun.get() || ClientProxy.mainHandStatus.holdingGun.get()) {
                 ci.cancel();
-                float scale = player.jumpMovementFactor > 0.02f ? 1f : 0.5f;
-                applyBobbing(matrixStackIn, player, partialTicks, scale);
+                animateScale = player.jumpMovementFactor > 0.02f ? 1f : 0.35f;
             }
         }
+        applyBobbing(matrixStackIn, player, partialTicks, animateScale);
     }
 
     private void applyBobbing(MatrixStack matrixStackIn, PlayerEntity player, float partialTicks, float scale) {
