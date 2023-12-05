@@ -2,7 +2,7 @@ package sheridan.gunscraft.animation.curve;
 
 public abstract class Curve {
     public float minXVal, maxXVal;
-    private float dis = -1;
+    private float dis = 1;
 
 
 

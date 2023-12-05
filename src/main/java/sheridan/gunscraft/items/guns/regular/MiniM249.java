@@ -11,6 +11,6 @@ public class MiniM249 extends GenericGun {
                 new int[] {AUTO}, 0.8f, 2.1f, 1.1f, 9.5f, 10.5f,
                 7f, 25, 8, "item.mini_m249.fire", new float[] {1f, 1f, 1f, 1f},
                 true, false, (int) (6.5 * 20), 0,2.5f,2.8f, 0.65f,
-                2.0f, "lmg");
+                2.0f, "lmg", "rifle");
     }
 }

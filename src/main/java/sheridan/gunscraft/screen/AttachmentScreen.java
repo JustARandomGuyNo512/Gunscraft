@@ -3,6 +3,7 @@ package sheridan.gunscraft.screen;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.client.network.play.ClientPlayNetHandler;
@@ -164,6 +165,9 @@ public class AttachmentScreen extends ContainerScreen<AttachmentContainer> {
             ItemStack stack = player.getHeldItemMainhand();
             if (!(stack.getItem() instanceof IGenericGun)) {
                 this.closeScreen();
+                super.closeScreen();
+                this.minecraft.displayGuiScreen(null);
+                return;
             } else {
                 if (heldStack != stack) {
                     heldStack = stack;

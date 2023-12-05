@@ -5,8 +5,13 @@ package sheridan.gunscraft.render.bulletShell;// Made with Blockbench 4.8.3
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.ResourceLocation;
+import sheridan.gunscraft.Gunscraft;
 import sheridan.gunscraft.model.ModelRenderer;
 
 import java.util.HashMap;
@@ -23,11 +28,12 @@ public class ModelBulletShell extends EntityModel<Entity> {
     private final ModelRenderer grenade_r1;
 
     public static Map<String, ModelRenderer> models = new HashMap<>();
+    public static ResourceLocation TEXTURE;
 
     public ModelBulletShell() {
         textureWidth = 80;
         textureHeight = 80;
-
+        TEXTURE = new ResourceLocation(Gunscraft.MOD_ID,"textures/fx/bullet_shells/texture.png");
         pistol = new ModelRenderer(this);
         pistol.setRotationPoint(0.0F, 24.0F, 4.5F);
 
@@ -82,10 +88,16 @@ public class ModelBulletShell extends EntityModel<Entity> {
 
     @Override
     public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha){
-        pistol.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        rifle.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        shotgun.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        grenade.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+    }
+
+    public void chooseToRender(MatrixStack matrixStack, int light, int overlay, String name) {
+        ModelRenderer renderer = models.get(name);
+        if (renderer != null) {
+            IRenderTypeBuffer.Impl impl = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
+            renderer.translateRotate(matrixStack);
+            renderer.render(matrixStack, impl.getBuffer(RenderType.getEntityCutout(TEXTURE)), light, overlay, 1,1,1,1);
+            impl.finish();
+        }
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {

@@ -7,7 +7,9 @@ public class BoltActionGun extends GenericGun{
                          int[] fireModes, float baseSpread, float maxSpread, float spreadPreShoot, float bulletSpeed,
                          float baseDamage, float minDamage, int bulletLifeLength, int shootDelay, String normalFireSound,
                          float[] soundArgs, boolean isFreeBlot, boolean isPistol, int reloadLength, int burstCount,
-                         float aimingSpeed, float recoilUp, float recoilRandom, float recoilDec) {
-        super(properties, baseMagSize, canHoldInOneHand, textures, fireModes, baseSpread, maxSpread, spreadPreShoot, bulletSpeed, baseDamage, minDamage, bulletLifeLength, shootDelay, normalFireSound, soundArgs, isFreeBlot, isPistol, reloadLength, burstCount, aimingSpeed, recoilUp, recoilRandom, recoilDec, "blot_action");
+                         float aimingSpeed, float recoilUp, float recoilRandom, float recoilDec, String bulletType) {
+        super(properties, baseMagSize, canHoldInOneHand, textures, fireModes, baseSpread, maxSpread, spreadPreShoot,
+                bulletSpeed, baseDamage, minDamage, bulletLifeLength, shootDelay, normalFireSound, soundArgs, isFreeBlot,
+                isPistol, reloadLength, burstCount, aimingSpeed, recoilUp, recoilRandom, recoilDec, "blot_action", bulletType);
     }
 }

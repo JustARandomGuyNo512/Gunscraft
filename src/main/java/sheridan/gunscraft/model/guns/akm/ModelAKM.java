@@ -118,7 +118,7 @@ public class ModelAKM extends EntityModel<Entity> implements IGunModel {
     public static IAnimation slideRecoil;
 
     public ModelAKM() {
-        slideRecoil = CommonAnimations.createSingleAxisBlotBack(0.15f, 3.5f);
+        slideRecoil = CommonAnimations.createSingleAxisBlotBack(0.15f, 3.8f);
 
         textureWidth = 512;
         textureHeight = 512;

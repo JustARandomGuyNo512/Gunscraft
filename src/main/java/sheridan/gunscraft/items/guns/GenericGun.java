@@ -66,13 +66,14 @@ public class GenericGun extends BaseItem implements IGenericGun{
     public Map<String, GunAttachmentSlot> slotMap;
     private TranslationTextComponent introduction;
     protected String seriesName;
+    public String bulletType;
 
     public GenericGun(Properties properties, int baseMagSize,boolean canHoldInOneHand,
                       ResourceLocation[] textures, int[] fireModes,
                       float baseSpread, float maxSpread, float spreadPreShoot, float bulletSpeed,
                       float baseDamage, float minDamage, int bulletLifeLength, int shootDelay, String normalFireSound,
                       float[] soundArgs, boolean isFreeBlot, boolean isPistol, int reloadLength, int burstCount,
-                      float aimingSpeed, float recoilUp, float recoilRandom, float recoilDec, String seriesName) {
+                      float aimingSpeed, float recoilUp, float recoilRandom, float recoilDec, String seriesName, String bulletType) {
         super(properties);
         this.baseMagSize = baseMagSize;
         this.textures = textures;
@@ -97,6 +98,7 @@ public class GenericGun extends BaseItem implements IGenericGun{
         this.recoilRandom = recoilRandom;
         this.recoilDec = recoilDec;
         this.seriesName = seriesName;
+        this.bulletType = bulletType;
     }
 
     public static String getFireModeStr(int key) {
@@ -194,7 +196,7 @@ public class GenericGun extends BaseItem implements IGenericGun{
                 shootSpread *= 0.7f;
             }
             ClientProxy.bulletSpread += shootSpread;
-            SoundEvents.playSound(normalFireSound, entity, soundArgs[0], soundArgs[1]);
+            SoundEvents.playSound(normalFireSound, entity, soundArgs[0], (float) (soundArgs[1] + Math.random() * 0.1f));
         }
         return canPass;
     }
@@ -361,8 +363,7 @@ public class GenericGun extends BaseItem implements IGenericGun{
     @Override
     public List<GunAttachmentSlot> getAllSlots() {
         if (slotMap != null) {
-            List<GunAttachmentSlot> slots = new ArrayList<>(slotMap.values());
-            return slots;
+            return new ArrayList<>(slotMap.values());
         }
         return null;
     }
@@ -370,6 +371,11 @@ public class GenericGun extends BaseItem implements IGenericGun{
     @Override
     public String getSeriesName() {
         return seriesName;
+    }
+
+    @Override
+    public String getBulletType() {
+        return this.bulletType;
     }
 
 

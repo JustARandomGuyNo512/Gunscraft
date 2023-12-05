@@ -201,13 +201,15 @@ public class ClientProxy extends CommonProxy{
                 .setHandPoseRightSideRightHand(new float[][]{{0.325f, 0.6f, 2.5f},{-1.5707963267948966f, -0.049f, 0},{1.0f, 1.0f, 1.0f}})
                 .setHandPoseRightSideLeftHand(new float[][]{{-0.15f, 0.7f, 1.43f},{-1.6580627893947f, 0.26179938779917f,  0.30543261909903f},{1.0f, 1.0f, 1.0f}})
                 .setHandPoseLeftSide(new float[][]{{-0, 0, 0},{-0, 0, 0},{0, 0, 0}})
-                .registerMuzzleFlash("normal", new TransformData.TransPair().setTrans(new MuzzleFlashTrans().setTranslate(new float[]{0, 0.02f, -1.85f})).setName("pistol_simple"))
+                .registerMuzzleFlash("normal", new TransformData.TransPair().setTrans(new MuzzleFlashTrans().setTranslate(new float[]{0, 0.0f, -1.85f})).setName("pistol_simple"))
                 .setRecoilAnimationData(new RecoilAnimationData(22f,8f, 10.5f,
                         0.1f,0.0887f,0.1f,
                         0.7f, 0.425f, 0.18f,
                         0.1f,0.0876f,0.1f,
                         0.15f, 0.275f, 0.0017f, 0.275f, 500))
                 .setAimingTrans(new float[] {1.9719835f, -2.219f, 3.1f})
+                .setBulletShellTrans(new float[][]{{0, -2f / 16f, 114f / 16f, 0, 0, 0, 1, 1, 1}, {0, 0, 0, 0, 0, 0, 0, 0, 0}})
+                .setBulletShellAniData(new TransformData.BulletShellAniData(20,5,-1,25, 0.25f,10f, 1.0f))
         );
         gunModelMap.put(ModItems.MINI_M249.get(), new ModelMiniM249());
 

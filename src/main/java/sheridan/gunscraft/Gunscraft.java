@@ -22,6 +22,7 @@ import sheridan.gunscraft.entities.EntityRegister;
 import sheridan.gunscraft.events.*;
 import sheridan.gunscraft.items.ModItems;
 import sheridan.gunscraft.network.PacketHandler;
+import sheridan.gunscraft.render.bulletShell.BulletShellRenderer;
 import sheridan.gunscraft.sounds.SoundEvents;
 
 import java.util.stream.Collectors;

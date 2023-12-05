@@ -24,11 +24,23 @@ public class TransformData {
     public float[][] GroundTrans;
     public float[][][] FPHandPoseTrans;
     public float[] aimingTrans;
+    public float[][] bulletShellTrans;
     public MuzzleFlashFransEntry muzzleFlashTransEntry = new MuzzleFlashFransEntry();
     public RecoilAnimationData recoilAnimationData;
+    public BulletShellAniData bulletShellAniData;
+
+    public TransformData setBulletShellAniData(BulletShellAniData bulletShellAniData) {
+        this.bulletShellAniData = bulletShellAniData;
+        return this;
+    }
 
     public TransformData setRecoilAnimationData(RecoilAnimationData recoilAnimationData) {
         this.recoilAnimationData = recoilAnimationData;
+        return this;
+    }
+
+    public TransformData setBulletShellTrans(float[][] bulletShellTrans) {
+        this.bulletShellTrans = bulletShellTrans;
         return this;
     }
 
@@ -127,7 +139,19 @@ public class TransformData {
         return this;
     }
 
-
+    public void applyBulletShellTrans(MatrixStack matrixStack, boolean mainHand) {
+        if (bulletShellTrans != null) {
+            if (mainHand) {
+                matrixStack.translate(bulletShellTrans[0][0],bulletShellTrans[0][1],bulletShellTrans[0][2]);
+                matrixStack.rotate(new Quaternion(bulletShellTrans[0][3],bulletShellTrans[0][4],bulletShellTrans[0][5], true));
+                matrixStack.scale(bulletShellTrans[0][6],bulletShellTrans[0][7],bulletShellTrans[0][8]);
+            } else {
+                matrixStack.translate(bulletShellTrans[1][0],bulletShellTrans[1][1],bulletShellTrans[1][2]);
+                matrixStack.rotate(new Quaternion(bulletShellTrans[1][3],bulletShellTrans[1][4],bulletShellTrans[1][5], true));
+                matrixStack.scale(bulletShellTrans[1][6],bulletShellTrans[1][7],bulletShellTrans[1][8]);
+            }
+        }
+    }
 
     public void applyFPArmPoseTransform(int type, MatrixStack stackIn, boolean isSlim, ModelRenderer armModel, boolean mainHand) {
         clear(armModel, mainHand);
@@ -168,6 +192,25 @@ public class TransformData {
         model.rotationPointX = mainHand ? -5f : 5f;
         model.rotationPointZ = 0.0f;
         model.showModel = true;
+    }
+
+    public void reApplyTrans(boolean mainHand, MatrixStack stackIn, boolean transAiming, float aimingProgress, float rYaw, float rPitch) {
+        if (mainHand) {
+            if (transAiming) {
+                aimingProgress = aimingProgress > 1 ? 1 : aimingProgress;
+                stackIn.translate(FPTrans[0][0][0] + aimingTrans[0] * aimingProgress + ClientProxy.debugX,
+                        FPTrans[0][0][1] + aimingTrans[1] * aimingProgress + ClientProxy.debugY,
+                        FPTrans[0][0][2] + aimingTrans[2] * aimingProgress  + ClientProxy.debugZ);
+            } else {
+                stackIn.translate(FPTrans[0][0][0] + ClientProxy.debugX, FPTrans[0][0][1] + ClientProxy.debugY, FPTrans[0][0][2] + ClientProxy.debugZ);
+            }
+            stackIn.rotate(new Quaternion(FPTrans[0][1][0] + rPitch, FPTrans[0][1][1] + rYaw, FPTrans[0][1][2], true));
+            stackIn.scale(FPTrans[0][2][0], FPTrans[0][2][1], FPTrans[0][2][2]);
+        } else {
+            stackIn.translate(FPTrans[1][0][0], FPTrans[1][0][1], FPTrans[1][0][2]);
+            stackIn.rotate(new Quaternion(FPTrans[1][1][0] + rPitch, FPTrans[1][1][1] + rYaw, FPTrans[1][1][2], true));
+            stackIn.scale(FPTrans[1][2][0], FPTrans[1][2][1], FPTrans[1][2][2]);
+        }
     }
 
     public void applyTransform(ItemCameraTransforms.TransformType type, MatrixStack stackIn, boolean transAiming, float aimingProgress) {
@@ -242,6 +285,27 @@ public class TransformData {
             }
             return transMap.get(key).name;
         }
+    }
+
+    public static class BulletShellAniData {
+        public float xSpeed;
+        public float ySpeed;
+        public float zSpeed;
+        public int rSpeed;
+        public float random;
+        public float drop;
+
+        public BulletShellAniData(float xSpeed, float ySpeed, float zSpeed, int rSpeed, float random, float drop, float length) {
+            this.xSpeed = xSpeed;
+            this.ySpeed = ySpeed;
+            this.zSpeed = zSpeed;
+            this.rSpeed = rSpeed;
+            this.random = random;
+            this.length = length;
+            this.drop = drop;
+        }
+
+        public float length;
     }
 
     public static class TransPair {

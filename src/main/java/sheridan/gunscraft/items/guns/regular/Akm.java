@@ -15,7 +15,7 @@ public class Akm extends GenericGun {
                 new int[] {SEMI, AUTO}, 0.95f, 2.5f, 1.5f, 7.2f, 14f,
                 8f, 30, 12, "item.akm.fire", new float[] {0.6f, 1f, 1f, 1f},
                 false,false,4 * 20, 1, 3.2f,4.3f,1.4f,
-                1.85f, "ak");
+                1.85f, "ak", "rifle");
 
     }
 

@@ -37,4 +37,5 @@ public interface IGenericGun {
     GunAttachmentSlot getSlot(String name);
     List<GunAttachmentSlot> getAllSlots();
     String getSeriesName();
+    String getBulletType();
 }

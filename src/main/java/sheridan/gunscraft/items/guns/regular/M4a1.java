@@ -16,6 +16,6 @@ public class M4a1 extends GenericGun {
                 new int[] {SEMI, AUTO}, 0.75f, 1.85f, 1.0f, 9.5f, 10.5f,
                 7f, 25, 9, "item.m4a1.fire", new float[] {0.75f, 1f, 1f, 1f},
                 false,false,3 * 20, 1, 3.5f,3f, 0.5f,
-                2.2f, "ar");
+                2.2f, "ar", "rifle");
     }
 }

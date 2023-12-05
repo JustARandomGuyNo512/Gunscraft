@@ -29,6 +29,7 @@ import sheridan.gunscraft.items.attachments.util.GunRenderContext;
 import sheridan.gunscraft.items.attachments.util.NBTAttachmentsMap;
 import sheridan.gunscraft.items.guns.IGenericGun;
 import sheridan.gunscraft.model.IGunModel;
+import sheridan.gunscraft.render.bulletShell.BulletShellRenderer;
 import sheridan.gunscraft.render.fx.muzzleFlash.CommonMuzzleFlash;
 import sheridan.gunscraft.render.fx.muzzleFlash.MuzzleFlash;
 import sheridan.gunscraft.render.fx.muzzleFlash.MuzzleFlashTrans;
@@ -39,6 +40,7 @@ import static sheridan.gunscraft.ClientProxy.TICK_LEN;
 public class GenericGunRenderer implements IGunRender{
     private static final Matrix4f DEFAULT_FIRST_PERSON_FOV_MATRIX;
     public static final float DEFAULT_FIRST_PERSON_FOV = 56.75f;
+    public PlayerEntity player;
 
     static {
         DEFAULT_FIRST_PERSON_FOV_MATRIX = new Matrix4f();
@@ -66,6 +68,9 @@ public class GenericGunRenderer implements IGunRender{
         }
     }
 
+    private long tempLastShootClient;
+    int delay;
+    Matrix4f temp;
     public void renderWithLivingEntity(LivingEntity entityIn, MatrixStack stackIn,
         ItemStack itemStackIn, ItemCameraTransforms.TransformType type, IRenderTypeBuffer bufferIn, IGenericGun gun,
         int combinedLightIn, int combinedOverlayIn, boolean leftHand, IGunModel model, TransformData transformData) {
@@ -77,6 +82,7 @@ public class GenericGunRenderer implements IGunRender{
             justRenderModel(itemStackIn,type,stackIn,bufferIn,combinedLightIn,combinedOverlayIn,gun,model,transformData);
             return;
         }
+        delay ++;
         if (model != null) {
             if (transformData != null) {
                 stackIn.push();
@@ -89,11 +95,28 @@ public class GenericGunRenderer implements IGunRender{
                 RecoilAnimationData recoilAnimationData = transformData.getRecoilAnimationData();
                 int fireMode = gun.getFireMode(itemStackIn);
                 long fireDis = (gun.getShootDelay() - 1) * TICK_LEN;
+                player = Minecraft.getInstance().player;
 
+                if (delay > 800) {
+                    delay = 0;
+                }
                 if (isFirstPerson) {
                     applyFOV();
                     long lastShootTime = leftHand ? ClientProxy.offHandStatus.lastShoot : ClientProxy.mainHandStatus.lastShoot;
-
+                    TransformData.BulletShellAniData bulletShellAniData = transformData.bulletShellAniData;
+                    if (bulletShellAniData != null && tempLastShootClient != lastShootTime && player != null) {
+                        stackIn.push();
+                        transformData.applyBulletShellTrans(stackIn, !leftHand);
+                        BulletShellRenderer.push(stackIn, bulletShellAniData.xSpeed,
+                                bulletShellAniData.ySpeed,
+                                bulletShellAniData.zSpeed,
+                                bulletShellAniData.rSpeed,
+                                bulletShellAniData.drop,
+                                bulletShellAniData.random,
+                                bulletShellAniData.length, gun.getBulletType(), !leftHand);
+                        stackIn.pop();
+                        tempLastShootClient = lastShootTime;
+                    }
                     if (entityIn instanceof PlayerEntity) {
                         if (recoilAnimationData != null) {
                             RecoilAnimationHandler.update(recoilAnimationData, stackIn, !leftHand);
@@ -109,6 +132,7 @@ public class GenericGunRenderer implements IGunRender{
 
                     renderMuzzleFlash(gun, itemStackIn, transformData, lastShootTime, bufferIn, stackIn, true);
 
+                    BulletShellRenderer.play(combinedLightIn, combinedOverlayIn);
                 } else {
                     long lastShoot;
                     if (entityIn.getEntityId() == ClientProxy.clientPlayerId) {

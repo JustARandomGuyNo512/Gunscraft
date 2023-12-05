@@ -11,7 +11,8 @@
   "client": [
     "BipedModelMixin",
     "GameRendererMixin",
-    "RenderItemMixin"
+    "RenderItemMixin",
+    "WorldRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

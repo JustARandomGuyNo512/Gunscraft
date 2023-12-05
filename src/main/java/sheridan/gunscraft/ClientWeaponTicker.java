@@ -31,7 +31,7 @@ public class ClientWeaponTicker extends TimerTask {
             }
 
             if (ClientProxy.mainHandStatus.buttonDown.get() && ClientProxy.mainHandStatus.holdingGun.get() &&
-                    ClientProxy.mainHandStatus.shouldHandle.get() && mainHandPostDelay <= 0) {
+                    ClientProxy.mainHandStatus.shouldHandle.get() && mainHandPostDelay <= 0 && ClientProxy.equipDuration <= 0) {
                 postShootTask(minecraft, player, true);
             }
 
