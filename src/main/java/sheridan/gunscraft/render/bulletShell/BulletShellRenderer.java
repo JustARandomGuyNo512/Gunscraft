@@ -1,10 +1,9 @@
 package sheridan.gunscraft.render.bulletShell;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
@@ -71,7 +70,10 @@ public class BulletShellRenderer {
 
     public static void play(int light, int overlay) {
         if (!animations.isEmpty()) {
-            animations.removeIf(context -> context.handle(light, overlay));
+            IRenderTypeBuffer.Impl impl = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
+            IVertexBuilder builder = impl.getBuffer(RenderType.getEntityCutout(ModelBulletShell.TEXTURE));
+            animations.removeIf(context -> context.handle(light, overlay, builder));
+            impl.finish();
         }
     }
 
@@ -95,10 +97,10 @@ public class BulletShellRenderer {
             this.modelType = modelType;
         }
 
-        public boolean handle(int light, int overlay) {
+        public boolean handle(int light, int overlay, IVertexBuilder builder) {
             matrixStack.push();
             animation.play(startTime, matrixStack, mainHand ? ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND);
-            MODEL_BASIC.chooseToRender(matrixStack, light, overlay, modelType);
+            MODEL_BASIC.chooseToRender(matrixStack, light, overlay, modelType, builder);
             matrixStack.pop();
             return animation.isCompleted();
         }

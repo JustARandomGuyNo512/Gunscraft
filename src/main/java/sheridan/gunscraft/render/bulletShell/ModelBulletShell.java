@@ -90,13 +90,11 @@ public class ModelBulletShell extends EntityModel<Entity> {
     public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha){
     }
 
-    public void chooseToRender(MatrixStack matrixStack, int light, int overlay, String name) {
+    public void chooseToRender(MatrixStack matrixStack, int light, int overlay, String name, IVertexBuilder builder) {
         ModelRenderer renderer = models.get(name);
         if (renderer != null) {
-            IRenderTypeBuffer.Impl impl = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
             matrixStack.translate(0,0,- renderer.rotationPointZ / 16f);
-            renderer.render(matrixStack, impl.getBuffer(RenderType.getEntityCutout(TEXTURE)), light, overlay, 1,1,1,1);
-            impl.finish();
+            renderer.render(matrixStack, builder, light, overlay, 1,1,1,1);
         }
     }
 
