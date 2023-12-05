@@ -24,7 +24,7 @@ public class TransformData {
     public float[][] GroundTrans;
     public float[][][] FPHandPoseTrans;
     public float[] aimingTrans;
-    public float[][] bulletShellTrans;
+    public float[] bulletShellTrans;
     public MuzzleFlashFransEntry muzzleFlashTransEntry = new MuzzleFlashFransEntry();
     public RecoilAnimationData recoilAnimationData;
     public BulletShellAniData bulletShellAniData;
@@ -39,7 +39,7 @@ public class TransformData {
         return this;
     }
 
-    public TransformData setBulletShellTrans(float[][] bulletShellTrans) {
+    public TransformData setBulletShellTrans(float[] bulletShellTrans) {
         this.bulletShellTrans = bulletShellTrans;
         return this;
     }
@@ -141,15 +141,9 @@ public class TransformData {
 
     public void applyBulletShellTrans(MatrixStack matrixStack, boolean mainHand) {
         if (bulletShellTrans != null) {
-            if (mainHand) {
-                matrixStack.translate(bulletShellTrans[0][0],bulletShellTrans[0][1],bulletShellTrans[0][2]);
-                matrixStack.rotate(new Quaternion(bulletShellTrans[0][3],bulletShellTrans[0][4],bulletShellTrans[0][5], true));
-                matrixStack.scale(bulletShellTrans[0][6],bulletShellTrans[0][7],bulletShellTrans[0][8]);
-            } else {
-                matrixStack.translate(bulletShellTrans[1][0],bulletShellTrans[1][1],bulletShellTrans[1][2]);
-                matrixStack.rotate(new Quaternion(bulletShellTrans[1][3],bulletShellTrans[1][4],bulletShellTrans[1][5], true));
-                matrixStack.scale(bulletShellTrans[1][6],bulletShellTrans[1][7],bulletShellTrans[1][8]);
-            }
+            matrixStack.translate(bulletShellTrans[0],bulletShellTrans[1],bulletShellTrans[2]);
+            matrixStack.rotate(new Quaternion(bulletShellTrans[3],bulletShellTrans[4],bulletShellTrans[5], true));
+            matrixStack.scale(bulletShellTrans[6],bulletShellTrans[7],bulletShellTrans[8]);
         }
     }
 

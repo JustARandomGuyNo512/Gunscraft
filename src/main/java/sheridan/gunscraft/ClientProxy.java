@@ -101,6 +101,8 @@ public class ClientProxy extends CommonProxy{
                         0.115f,0.095f,0.11f,
                         0.268f, 0.1f, 0.0142f, 0.75f, 700))
                 .setAimingTrans(new float[] {4.0259995f, -3.108999f, 5.937073f})
+                .setBulletShellTrans(new float[]{0, 3f / 16f, 29f / 16f,0,0,0,1,1,1})
+                .setBulletShellAniData(new TransformData.BulletShellAniData(50, 40, -3, 30, 0.25f, 3f, 1.2f))
         );
         gunModelMap.put(ModItems.PISTOL_9_MM.get(), new ModelPistol_9mm());
 
@@ -122,6 +124,8 @@ public class ClientProxy extends CommonProxy{
                         0.1f,0.0875f,0.1f,
                         0.145f, 0.225f, 0.0015f, 0.6f, 650))
                 .setAimingTrans(new float[] {2.7699978f, -2.582f, 5.410027f})
+                .setBulletShellTrans(new float[]{-5f / 16f, 13f / 16f, 137f / 16f,0,0,0,0.9f,1.1f,1.1f})
+                .setBulletShellAniData(new TransformData.BulletShellAniData(50, 30, 10, 5, 1f, 2f, 1.2f))
         );
         gunModelMap.put(ModItems.AKM.get(), new ModelAKM());
 
@@ -143,6 +147,8 @@ public class ClientProxy extends CommonProxy{
                         0.1f,0.0867f,0.1f,
                         0.145f, 0.15f, 0.001f, 0.32f, 500))
                 .setAimingTrans(new  float[] {2.7109997f, -2.67f, 6.257043f})
+                .setBulletShellTrans(new float[]{-1f / 16f, 10f / 16f, 73f / 16f , 0,0,0,1,1,1})
+                .setBulletShellAniData(new TransformData.BulletShellAniData(50, 50, 10, 15, 0.35f, 3f, 1.2f))
         );
         gunModelMap.put(ModItems.MP5.get(), new ModelMp5());
 
@@ -164,6 +170,8 @@ public class ClientProxy extends CommonProxy{
                         0.11f,0.088f,0.1f,
                         0.15f, 0.135f, 0.0087f, 0.52f, 500))
                 .setAimingTrans(new float[] {4.1240017f, -2.3559993f, 8.63f})
+                .setBulletShellTrans(new float[]{-1f/16f, 10f/16f, 41f/16f,0,0,0,1.15f,1.15f,1.15f})
+                .setBulletShellAniData(new TransformData.BulletShellAniData(50, 10, 2, 10, 0.35f, 2f, 1.2f))
         );
         gunModelMap.put(ModItems.MAC10.get(), new ModelMac10());
 
@@ -186,6 +194,8 @@ public class ClientProxy extends CommonProxy{
                         0.1f,0.0876f,0.1f,
                         0.15f, 0.25f, 0.0015f, 0.22f, 500))
                 .setAimingTrans(new float[] {2.0849983f, -1.749f, 5.9f})
+                .setBulletShellTrans(new float[]{-5f/16f, 20f/16f, 105f/16f,0,0,0,1,1,1})
+                .setBulletShellAniData(new TransformData.BulletShellAniData(60, 15, 2, 20, 0.5f, 2f, 1.2f))
         );
         gunModelMap.put(ModItems.M4A1.get(), new ModelM4a1());
 
@@ -208,8 +218,8 @@ public class ClientProxy extends CommonProxy{
                         0.1f,0.0876f,0.1f,
                         0.15f, 0.275f, 0.0017f, 0.275f, 500))
                 .setAimingTrans(new float[] {1.9719835f, -2.219f, 3.1f})
-                .setBulletShellTrans(new float[][]{{0, -2f / 16f, 114f / 16f, 0, 0, 0, 1, 1, 1}, {0, 0, 0, 0, 0, 0, 0, 0, 0}})
-                .setBulletShellAniData(new TransformData.BulletShellAniData(20,5,-1,25, 0.25f,10f, 1.0f))
+                .setBulletShellTrans(new float[]{-5f / 16f, 13f / 16f, 121f / 16f, 0, 0, 0, 1, 1, 1})
+                .setBulletShellAniData(new TransformData.BulletShellAniData(20,5,-1,15, 0.5f,10f, 1.0f))
         );
         gunModelMap.put(ModItems.MINI_M249.get(), new ModelMiniM249());
 

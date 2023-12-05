@@ -35,6 +35,7 @@ import sheridan.gunscraft.render.fx.muzzleFlash.MuzzleFlash;
 import sheridan.gunscraft.render.fx.muzzleFlash.MuzzleFlashTrans;
 
 import static sheridan.gunscraft.ClientProxy.TICK_LEN;
+import static sheridan.gunscraft.ClientProxy.bulletSpread;
 
 @OnlyIn(Dist.CLIENT)
 public class GenericGunRenderer implements IGunRender{
@@ -68,7 +69,8 @@ public class GenericGunRenderer implements IGunRender{
         }
     }
 
-    private long tempLastShootClient;
+    private long tempLastShootMain;
+    private long tempLastShootOff;
     int delay;
     Matrix4f temp;
     public void renderWithLivingEntity(LivingEntity entityIn, MatrixStack stackIn,
@@ -104,18 +106,30 @@ public class GenericGunRenderer implements IGunRender{
                     applyFOV();
                     long lastShootTime = leftHand ? ClientProxy.offHandStatus.lastShoot : ClientProxy.mainHandStatus.lastShoot;
                     TransformData.BulletShellAniData bulletShellAniData = transformData.bulletShellAniData;
-                    if (bulletShellAniData != null && tempLastShootClient != lastShootTime && player != null) {
-                        stackIn.push();
-                        transformData.applyBulletShellTrans(stackIn, !leftHand);
-                        BulletShellRenderer.push(stackIn, bulletShellAniData.xSpeed,
-                                bulletShellAniData.ySpeed,
-                                bulletShellAniData.zSpeed,
-                                bulletShellAniData.rSpeed,
-                                bulletShellAniData.drop,
-                                bulletShellAniData.random,
-                                bulletShellAniData.length, gun.getBulletType(), !leftHand);
-                        stackIn.pop();
-                        tempLastShootClient = lastShootTime;
+                    if (bulletShellAniData != null && player != null) {
+                        boolean shouldPlayBulletShell;
+                        if (!leftHand) {
+                            shouldPlayBulletShell = tempLastShootMain != lastShootTime && lastShootTime != 0L;
+                        } else {
+                            shouldPlayBulletShell = tempLastShootOff != lastShootTime && lastShootTime != 0L;
+                        }
+                        if (shouldPlayBulletShell) {
+                            stackIn.push();
+                            transformData.applyBulletShellTrans(stackIn, !leftHand);
+                            BulletShellRenderer.push(stackIn, bulletShellAniData.xSpeed,
+                                    bulletShellAniData.ySpeed,
+                                    bulletShellAniData.zSpeed,
+                                    bulletShellAniData.rSpeed,
+                                    bulletShellAniData.drop,
+                                    bulletShellAniData.random,
+                                    bulletShellAniData.length, gun.getBulletType(), !leftHand);
+                            stackIn.pop();
+                        }
+                        if (!leftHand) {
+                            tempLastShootMain = lastShootTime;
+                        } else {
+                            tempLastShootOff = lastShootTime;
+                        }
                     }
                     if (entityIn instanceof PlayerEntity) {
                         if (recoilAnimationData != null) {

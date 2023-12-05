@@ -45,7 +45,7 @@ public class ModelBulletShell extends EntityModel<Entity> {
         cube_r1.setTextureOffset(31, 25).addBox(-1.5F, -1.5F, -1.0F, 3.0F, 3.0F, 9.0F, 0.0F, false);
 
         rifle = new ModelRenderer(this);
-        rifle.setRotationPoint(0.0F, 24.0F, 0.0F);
+        rifle.setRotationPoint(0.0F, 24.0F, 7.5F);
 
 
         cube_r2 = new ModelRenderer(this);
@@ -56,7 +56,7 @@ public class ModelBulletShell extends EntityModel<Entity> {
         cube_r2.setTextureOffset(0, 0).addBox(-1.0F, -1.0F, -9.5F, 2.0F, 2.0F, 2.0F, 0.0F, false);
 
         shotgun = new ModelRenderer(this);
-        shotgun.setRotationPoint(0.0F, 24.0F, 0.0F);
+        shotgun.setRotationPoint(0.0F, 24.0F, 10F);
 
 
         cube_r3 = new ModelRenderer(this);
@@ -66,7 +66,7 @@ public class ModelBulletShell extends EntityModel<Entity> {
         cube_r3.setTextureOffset(0, 0).addBox(-2.5F, -2.5F, -11.0F, 5.0F, 5.0F, 20.0F, 0.0F, false);
 
         grenade = new ModelRenderer(this);
-        grenade.setRotationPoint(0.0F, 24.0F, 0.0F);
+        grenade.setRotationPoint(0.0F, 24.0F, 7.5F);
 
 
         grenade_r1 = new ModelRenderer(this);
@@ -94,7 +94,7 @@ public class ModelBulletShell extends EntityModel<Entity> {
         ModelRenderer renderer = models.get(name);
         if (renderer != null) {
             IRenderTypeBuffer.Impl impl = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
-            renderer.translateRotate(matrixStack);
+            matrixStack.translate(0,0,- renderer.rotationPointZ / 16f);
             renderer.render(matrixStack, impl.getBuffer(RenderType.getEntityCutout(TEXTURE)), light, overlay, 1,1,1,1);
             impl.finish();
         }
